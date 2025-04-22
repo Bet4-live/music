@@ -5,123 +5,7 @@
   <title>Müzik Sitesi</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <style>
-    * {
-      box-sizing: border-box;
-    }
-    body {
-      margin: 0;
-      font-family: 'Segoe UI', sans-serif;
-      display: flex;
-      height: 100vh;
-      overflow: hidden;
-      background: #f1f1f6;
-    }
-    .sidebar {
-      width: 280px;
-      background: linear-gradient(to bottom right, #1e1e2f, #2b2b44);
-      color: white;
-      padding: 20px;
-      overflow-y: auto;
-      box-shadow: 2px 0 10px rgba(0, 0, 0, 0.3);
-    }
-    .sidebar h2 {
-      margin-top: 0;
-      font-size: 24px;
-      border-bottom: 1px solid #444;
-      padding-bottom: 10px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    .music-item {
-      margin-bottom: 15px;
-      cursor: pointer;
-      background: #2d2d3f;
-      padding: 10px;
-      border-radius: 10px;
-      transition: background 0.2s, transform 0.2s;
-    }
-    .music-item:hover {
-      background: #3e3e5c;
-      transform: scale(1.03);
-    }
-    .music-item img {
-      width: 100%;
-      height: auto;
-      border-radius: 8px;
-      margin-bottom: 5px;
-    }
-    .main {
-      flex: 1;
-      background: linear-gradient(to bottom right, #f9f9fa, #e6e6eb);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      position: relative;
-      padding: 40px;
-    }
-    #adminButton {
-      position: absolute;
-      top: 20px;
-      right: 20px;
-      padding: 10px 20px;
-      background: #1e1e2f;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      font-weight: bold;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-      transition: background 0.2s;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    #adminButton:hover {
-      background: #35354d;
-    }
-    .admin-panel {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      background: rgba(0,0,0,0.85);
-      color: white;
-      align-items: center;
-      justify-content: center;
-      flex-direction: column;
-      z-index: 100;
-      padding: 30px;
-    }
-    .admin-panel input, .admin-panel button, .admin-panel select {
-      margin: 10px;
-      padding: 12px 15px;
-      border-radius: 6px;
-      border: none;
-      font-size: 16px;
-    }
-    .admin-panel input[type="password"], .admin-panel input[type="text"] {
-      width: 250px;
-    }
-    .admin-panel button {
-      background: #1e1e2f;
-      color: white;
-      cursor: pointer;
-      transition: background 0.2s;
-    }
-    .admin-panel button:hover {
-      background: #35354d;
-    }
-    #coverImage {
-      border: 5px solid #ddd;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-    }
-    audio {
-      width: 100%;
-      max-width: 500px;
-    }
+    /* Stil kodları burada */
   </style>
 </head>
 <body>
@@ -158,40 +42,40 @@
   </div>
 
   <script>
+    let db;
     const musicList = document.getElementById('musicList');
     const audioPlayer = document.getElementById('audioPlayer');
     const coverImage = document.getElementById('coverImage');
     const deleteSelect = document.getElementById('deleteSelect');
     const adminButton = document.getElementById('adminButton');
 
-    let db;
-    
-    // IndexedDB açılır
-    const openDB = () => {
-      const request = indexedDB.open('musicDatabase', 1);
-      request.onerror = (event) => {
-        console.error('Veritabanı açma hatası:', event.target.errorCode);
-      };
-      request.onsuccess = (event) => {
-        db = event.target.result;
-        renderMusics();
-      };
-      request.onupgradeneeded = (event) => {
-        db = event.target.result;
-        const objectStore = db.createObjectStore('musics', { keyPath: 'id', autoIncrement: true });
-        objectStore.createIndex('name', 'name', { unique: false });
-      };
+    const dbRequest = indexedDB.open('musicDatabase', 1);
+
+    dbRequest.onsuccess = function(event) {
+      db = event.target.result;
+      renderMusics();
     };
 
-    // Müzikleri render etme
+    dbRequest.onerror = function(event) {
+      console.error('Veritabanı açılırken hata oluştu: ', event.target.error);
+    };
+
+    dbRequest.onupgradeneeded = function(event) {
+      const db = event.target.result;
+      const objectStore = db.createObjectStore('musics', { keyPath: 'id', autoIncrement: true });
+      objectStore.createIndex('name', 'name', { unique: false });
+    };
+
     function renderMusics() {
-      musicList.innerHTML = '';
-      deleteSelect.innerHTML = '';
       const transaction = db.transaction(['musics'], 'readonly');
       const objectStore = transaction.objectStore('musics');
       const request = objectStore.getAll();
-      request.onsuccess = (event) => {
+
+      request.onsuccess = function(event) {
         const musics = event.target.result;
+        musicList.innerHTML = '';
+        deleteSelect.innerHTML = '';
+
         musics.forEach((music, index) => {
           const div = document.createElement('div');
           div.className = 'music-item';
@@ -218,17 +102,95 @@
       };
     }
 
-    // Admin panelini göster
+    function addMusic() {
+      const name = document.getElementById('musicName').value;
+      const fileInput = document.getElementById('musicFile');
+      const imageInput = document.getElementById('musicImage');
+
+      const file = fileInput.files[0];
+      const image = imageInput.files[0];
+
+      if (!file || !name) return alert('Müzik adı ve dosyası gerekli');
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const musicObj = {
+          name: name,
+          audioUrl: e.target.result
+        };
+
+        if (image) {
+          const imageReader = new FileReader();
+          imageReader.onload = function(event) {
+            musicObj.imageUrl = event.target.result;
+            saveMusic(musicObj);
+          };
+          imageReader.readAsDataURL(image);
+        } else {
+          saveMusic(musicObj);
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function saveMusic(musicObj) {
+      const transaction = db.transaction(['musics'], 'readwrite');
+      const objectStore = transaction.objectStore('musics');
+      const request = objectStore.add(musicObj);
+
+      request.onsuccess = function() {
+        deleteOldestMusic(); // Eğer 50'den fazla müzik varsa en eskisini sil
+        renderMusics();
+        alert('Müzik eklendi!');
+      };
+
+      request.onerror = function(event) {
+        console.error('Müzik eklenirken hata oluştu: ', event.target.error);
+      };
+    }
+
+    function deleteOldestMusic() {
+      const transaction = db.transaction(['musics'], 'readonly');
+      const objectStore = transaction.objectStore('musics');
+      const request = objectStore.getAll();
+
+      request.onsuccess = function(event) {
+        const musics = event.target.result;
+        if (musics.length > 50) { // Örneğin, sadece 50 müzik saklansın
+          const oldestMusic = musics[0]; // En eski müzik
+          const deleteRequest = objectStore.delete(oldestMusic.id);
+          deleteRequest.onsuccess = function() {
+            console.log('Eski müzik silindi.');
+          };
+        }
+      };
+    }
+
+    function deleteMusic() {
+      const index = deleteSelect.value;
+      if (index === '') return alert('Silinecek müziği seçiniz');
+      const transaction = db.transaction(['musics'], 'readwrite');
+      const objectStore = transaction.objectStore('musics');
+      const request = objectStore.delete(Number(index));
+
+      request.onsuccess = function() {
+        renderMusics();
+        alert('Müzik silindi!');
+      };
+
+      request.onerror = function(event) {
+        console.error('Müzik silinirken hata oluştu: ', event.target.error);
+      };
+    }
+
     function showAdminPanel() {
       document.getElementById('adminPanel').style.display = 'flex';
     }
 
-    // Admin panelini kapat
     function closeAdminPanel() {
       document.getElementById('adminPanel').style.display = 'none';
     }
 
-    // Şifreyi kontrol et
     function checkPassword() {
       const pass = document.getElementById('adminPass').value;
       if (pass === '1234') {
@@ -241,68 +203,6 @@
       }
     }
 
-    // Müzik ekle
-    function addMusic() {
-      const name = document.getElementById('musicName').value;
-      const fileInput = document.getElementById('musicFile');
-      const imageInput = document.getElementById('musicImage');
-
-      const file = fileInput.files[0];
-      const image = imageInput.files[0];
-
-      if (!file || !name) return alert('Müzik adı ve dosyası gerekli');
-
-      const reader = new FileReader();
-      reader.onload = function (e) {
-        const musicObj = {
-          name: name,
-          audioUrl: e.target.result
-        };
-
-        if (image) {
-          const imageReader = new FileReader();
-          imageReader.onload = function (event) {
-            musicObj.imageUrl = event.target.result;
-            saveMusic(musicObj);
-          };
-          imageReader.readAsDataURL(image);
-        } else {
-          saveMusic(musicObj);
-        }
-      };
-      reader.readAsDataURL(file);
-    }
-
-    // Müzik veritabanına kaydet
-    function saveMusic(musicObj) {
-      const transaction = db.transaction(['musics'], 'readwrite');
-      const objectStore = transaction.objectStore('musics');
-      const request = objectStore.add(musicObj);
-      request.onsuccess = () => {
-        renderMusics();
-        alert('Müzik eklendi!');
-      };
-      request.onerror = () => {
-        alert('Bir hata oluştu.');
-      };
-    }
-
-    // Müzik sil
-    function deleteMusic() {
-      const index = deleteSelect.value;
-      if (index === '') return alert('Silinecek müziği seçiniz');
-      if (!confirm('Bu müziği silmek istediğinize emin misiniz?')) return;
-
-      const transaction = db.transaction(['musics'], 'readwrite');
-      const objectStore = transaction.objectStore('musics');
-      const request = objectStore.delete(parseInt(index));
-      request.onsuccess = () => {
-        renderMusics();
-        alert('Müzik silindi!');
-      };
-    }
-
-    openDB();
   </script>
 
 </body>
