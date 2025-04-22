@@ -1,336 +1,556 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-		<meta charset="UTF-8">
-		<title>Müzik Sitesi</title>
-		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-		<style>
-				* {
-						box-sizing: border-box;
-				}
-				body {
-						margin: 0;
-						font-family: 'Segoe UI', sans-serif;
-						display: flex;
-						height: 100vh;
-						overflow: hidden;
-						background: #f1f1f6;
-				}
-				.sidebar {
-						width: 280px;
-						background: linear-gradient(to bottom right, #1e1e2f, #2b2b44);
-						color: white;
-						padding: 20px;
-						overflow-y: auto;
-						box-shadow: 2px 0 10px rgba(0, 0, 0, 0.3);
-				}
-				.sidebar h2 {
-						margin-top: 0;
-						font-size: 24px;
-						border-bottom: 1px solid #444;
-						padding-bottom: 10px;
-						display: flex;
-						align-items: center;
-						gap: 10px;
-				}
-				.music-item {
-						margin-bottom: 15px;
-						cursor: pointer;
-						background: #2d2d3f;
-						padding: 10px;
-						border-radius: 10px;
-						transition: background 0.2s, transform 0.2s;
-				}
-				.music-item:hover {
-						background: #3e3e5c;
-						transform: scale(1.03);
-				}
-				.music-item img {
-						width: 100%;
-						height: auto;
-						border-radius: 8px;
-						margin-bottom: 5px;
-				}
-				.main {
-						flex: 1;
-						background: linear-gradient(to bottom right, #f9f9fa, #e6e6eb);
-						display: flex;
-						flex-direction: column;
-						align-items: center;
-						justify-content: center;
-						position: relative;
-						padding: 40px;
-				}
-				#adminButton {
-						position: absolute;
-						top: 20px;
-						right: 20px;
-						padding: 10px 20px;
-						background: #1e1e2f;
-						color: white;
-						border: none;
-						border-radius: 8px;
-						font-weight: bold;
-						box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-						transition: background 0.2s;
-						display: flex;
-						align-items: center;
-						gap: 8px;
-				}
-				#adminButton:hover {
-						background: #35354d;
-				}
-				.admin-panel {
-						display: none;
-						position: fixed;
-						top: 0;
-						left: 0;
-						width: 100vw;
-						height: 100vh;
-						background: rgba(0,0,0,0.85);
-						color: white;
-						align-items: center;
-						justify-content: center;
-						flex-direction: column;
-						z-index: 100;
-						padding: 30px;
-				}
-				.admin-panel input, .admin-panel button, .admin-panel select {
-						margin: 10px;
-						padding: 12px 15px;
-						border-radius: 6px;
-						border: none;
-						font-size: 16px;
-				}
-				.admin-panel input[type="password"], .admin-panel input[type="text"] {
-						width: 250px;
-				}
-				.admin-panel button {
-						background: #1e1e2f;
-						color: white;
-						cursor: pointer;
-						transition: background 0.2s;
-				}
-				.admin-panel button:hover {
-						background: #35354d;
-				}
-				#coverImage {
-						border: 5px solid #ddd;
-						box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-				}
-				audio {
-						width: 100%;
-						max-width: 500px;
-				}
-		</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Müzik Çalar</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Custom scrollbar styles */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #2d2d3f; /* Sidebar track */
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #555;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #777;
+        }
+        /* Ensure body takes full height and uses Inter font */
+        body {
+            font-family: 'Inter', sans-serif;
+            height: 100vh;
+            overflow: hidden; /* Prevent body scroll */
+        }
+        /* Hide default audio player controls */
+        audio {
+           /* display: none; */ /* We hide it visually but keep the element */
+           /* Let's keep the default controls for now, and build custom ones below */
+           width: 100%;
+           max-width: 500px; /* Limit player width */
+           margin-top: 1rem; /* Add space above player */
+           filter: invert(15%) sepia(5%) saturate(1200%) hue-rotate(190deg) brightness(95%) contrast(90%); /* Subtle color adjustment */
+           border-radius: 999px; /* Rounded corners for the player */
+           opacity: 0.5; /* Make default controls less prominent if shown */
+           pointer-events: none; /* Disable interaction with default controls */
+           height: 40px; /* Give it some height */
+           visibility: hidden; /* Hide it completely, but keep its space */
+        }
+        /* Custom progress bar styling */
+        input[type="range"] {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 100%;
+            height: 6px;
+            background: #ddd; /* Track color */
+            border-radius: 3px;
+            cursor: pointer;
+            outline: none;
+        }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 16px;
+            height: 16px;
+            background: #4f46e5; /* Indigo thumb color */
+            border-radius: 50%;
+            cursor: pointer;
+        }
+        input[type="range"]::-moz-range-thumb {
+            width: 16px;
+            height: 16px;
+            background: #4f46e5; /* Indigo thumb color */
+            border-radius: 50%;
+            cursor: pointer;
+            border: none; /* Remove default border in Firefox */
+        }
+         input[type="range"]::-moz-range-track {
+            background: #ddd;
+             border-radius: 3px;
+        }
+        /* Basic transition for hover effects */
+        .transition-all {
+            transition: all 0.2s ease-in-out;
+        }
+        /* Style for the custom player controls container */
+        .custom-player-controls {
+            background-color: rgba(255, 255, 255, 0.7); /* Semi-transparent white */
+            backdrop-filter: blur(5px); /* Blur effect */
+            border-radius: 12px;
+            padding: 15px 20px;
+            margin-top: 1.5rem; /* Space above controls */
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 500px; /* Match audio player max-width */
+        }
+    </style>
 </head>
-<body>
+<body class="bg-gray-100 flex">
 
-		<div class="sidebar">
-				<h2><i class="fa fa-music"></i> Müzikler</h2>
-				<div id="musicList"></div>
-		</div>
+    <aside class="w-64 md:w-72 lg:w-80 bg-gradient-to-br from-gray-900 to-slate-800 text-white p-5 flex flex-col h-screen shadow-lg">
+        <h2 class="text-2xl font-bold border-b border-gray-700 pb-3 mb-4 flex items-center gap-3">
+            <i class="fa fa-music text-indigo-400"></i> Müzikler
+        </h2>
+        <div id="musicList" class="flex-grow overflow-y-auto space-y-3 pr-2">
+            </div>
+    </aside>
 
-		<div class="main">
-				<button id="adminButton" onclick="showAdminPanel()"><i class="fa fa-lock"></i> Admin Girişi</button>
-				<div id="player">
-						<img id="coverImage" src="" alt="Kapak" width="300" style="display:none; margin-bottom: 20px; border-radius: 10px;"/>
-						<audio id="audioPlayer" controls></audio>
-				</div>
-		</div>
+    <main class="flex-1 bg-gradient-to-br from-gray-100 to-gray-200 flex flex-col items-center justify-center p-5 md:p-10 relative h-screen overflow-y-auto">
+        <button id="adminButton" onclick="showAdminPanel()" class="absolute top-5 right-5 bg-slate-800 hover:bg-indigo-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition-all flex items-center gap-2 z-10">
+            <i class="fa fa-lock"></i> Admin Girişi
+        </button>
 
-		<div class="admin-panel" id="adminPanel">
-				<h2><i class="fa fa-user-shield"></i> Admin Paneli</h2>
-				<input type="password" id="adminPass" placeholder="Şifre">
-				<button id="loginBtn" onclick="checkPassword()"><i class="fa fa-sign-in-alt"></i> Giriş</button>
+        <div id="player" class="text-center flex flex-col items-center w-full px-4">
+            <img id="coverImage" src="https://placehold.co/300x300/e2e8f0/94a3b8?text=Müzik+Seçin" alt="Albüm Kapağı" width="300" height="300" class="rounded-xl shadow-xl mb-6 object-cover border-4 border-white"/>
+            <audio id="audioPlayer"></audio>
 
-				<div id="adminControls" style="display:none; flex-direction: column; align-items: center;">
-						<input type="text" id="musicName" placeholder="Müzik Adı">
-						<input type="file" id="musicFile" accept="audio/*">
-						<input type="file" id="musicImage" accept="image/*">
-						<button onclick="addMusic()"><i class="fa fa-plus"></i> Müziği Ekle</button>
+            <div class="custom-player-controls">
+                <div class="flex items-center gap-3 mb-2">
+                    <span id="currentTime" class="text-xs font-medium text-gray-600 w-10 text-left">0:00</span>
+                    <input type="range" id="seekBar" value="0" class="flex-grow">
+                    <span id="totalDuration" class="text-xs font-medium text-gray-600 w-10 text-right">0:00</span>
+                </div>
 
-						<select id="deleteSelect"></select>
-						<button onclick="deleteMusic()"><i class="fa fa-trash"></i> Seçilen Müziği Sil</button>
+                <div class="flex items-center justify-between">
+                     <button class="text-gray-500 hover:text-gray-800 transition-colors w-8 h-8" disabled aria-label="Önceki Şarkı">
+                          <i class="fa fa-backward-step"></i>
+                     </button>
 
-						<button onclick="closeAdminPanel()"><i class="fa fa-times"></i> Kapat</button>
-				</div>
-		</div>
+                    <button id="playPauseBtn" class="bg-indigo-600 hover:bg-indigo-700 text-white rounded-full w-12 h-12 flex items-center justify-center text-xl shadow-md transition-all mx-4">
+                        <i class="fa fa-play"></i>
+                    </button>
 
-		<script>
-				let db;
-				const musicList = document.getElementById('musicList');
-				const audioPlayer = document.getElementById('audioPlayer');
-				const coverImage = document.getElementById('coverImage');
-				const deleteSelect = document.getElementById('deleteSelect');
-				const adminButton = document.getElementById('adminButton');
-				const adminPanelDiv = document.getElementById('adminPanel');
-				const adminControlsDiv = document.getElementById('adminControls');
-				const adminPassInput = document.getElementById('adminPass');
-				const loginButton = document.getElementById('loginBtn');
+                     <button class="text-gray-500 hover:text-gray-800 transition-colors w-8 h-8" disabled aria-label="Sonraki Şarkı">
+                          <i class="fa fa-forward-step"></i>
+                     </button>
 
-				const dbRequest = indexedDB.open('musicDatabase', 1);
+                    <div class="flex items-center gap-2 w-28 ml-auto">
+                        <i id="volumeIcon" class="fa fa-volume-high text-gray-600"></i>
+                        <input type="range" id="volumeBar" min="0" max="1" step="0.01" value="1" class="w-full h-1.5 bg-gray-300 rounded-full appearance-none cursor-pointer accent-indigo-500">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
 
-				dbRequest.onsuccess = function(event) {
-						db = event.target.result;
-						renderMusics();
-				};
+    <div id="adminPanel" class="fixed inset-0 bg-black bg-opacity-80 backdrop-blur-sm text-white flex items-center justify-center z-50 hidden p-5">
+        <div class="bg-slate-800 p-6 md:p-8 rounded-xl shadow-2xl w-full max-w-md relative">
+            <button onclick="closeAdminPanel()" class="absolute top-3 right-3 text-gray-400 hover:text-white text-2xl transition-colors">
+                <i class="fa fa-times"></i>
+            </button>
 
-				dbRequest.onerror = function(event) {
-						console.error('Veritabanı açılırken hata oluştu: ', event.target.error);
-				};
+            <h2 class="text-2xl font-semibold mb-6 text-center flex items-center justify-center gap-3"><i class="fa fa-user-shield text-indigo-400"></i> Admin Paneli</h2>
 
-				dbRequest.onupgradeneeded = function(event) {
-						const db = event.target.result;
-						const objectStore = db.createObjectStore('musics', { keyPath: 'id', autoIncrement: true });
-						objectStore.createIndex('name', 'name', { unique: false });
-				};
+            <div id="loginForm" class="flex flex-col items-center">
+                 <input type="password" id="adminPass" placeholder="Şifre" class="w-full p-3 mb-4 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-white placeholder-gray-400">
+                 <button id="loginBtn" onclick="checkPassword()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded-lg transition-all flex items-center justify-center gap-2">
+                     <i class="fa fa-sign-in-alt"></i> Giriş Yap
+                 </button>
+            </div>
 
-				function renderMusics() {
-						const transaction = db.transaction(['musics'], 'readonly');
-						const objectStore = transaction.objectStore('musics');
-						const request = objectStore.getAll();
+            <div id="adminControls" class="hidden flex-col space-y-4 mt-6">
+                <input type="text" id="musicName" placeholder="Müzik Adı" class="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-white placeholder-gray-400">
 
-						request.onsuccess = function(event) {
-								const musics = event.target.result;
-								musicList.innerHTML = '';
-								deleteSelect.innerHTML = '';
+                <label class="block text-sm font-medium text-gray-300">Müzik Dosyası (MP3, WAV...):</label>
+                <input type="file" id="musicFile" accept="audio/*" class="w-full text-sm text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-indigo-100 file:text-indigo-700 hover:file:bg-indigo-200 cursor-pointer">
 
-								musics.forEach(music => {
-										const div = document.createElement('div');
-										div.className = 'music-item';
-										div.dataset.id = music.id; // Müzik ID'sini data attribute olarak ekle
-										if (music.imageUrl) {
-												const img = document.createElement('img');
-												img.src = music.imageUrl;
-												div.appendChild(img);
-										}
-										const title = document.createElement('div');
-										title.innerText = music.name;
-										div.appendChild(title);
-										div.onclick = () => {
-												audioPlayer.src = music.audioUrl;
-												coverImage.style.display = music.imageUrl ? 'block' : 'none';
-												coverImage.src = music.imageUrl || '';
-										};
-										musicList.appendChild(div);
+                <label class="block text-sm font-medium text-gray-300">Kapak Resmi (İsteğe Bağlı):</label>
+                <input type="file" id="musicImage" accept="image/*" class="w-full text-sm text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-indigo-100 file:text-indigo-700 hover:file:bg-indigo-200 cursor-pointer">
 
-										const option = document.createElement('option');
-										option.value = music.id; // Option değerine müzik ID'sini ata
-										option.text = music.name;
-										deleteSelect.appendChild(option);
-								});
-						};
-				}
+                <button onclick="addMusic()" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded-lg transition-all flex items-center justify-center gap-2">
+                    <i class="fa fa-plus"></i> Müziği Ekle
+                </button>
 
-				function addMusic() {
-						const name = document.getElementById('musicName').value;
-						const fileInput = document.getElementById('musicFile');
-						const imageInput = document.getElementById('musicImage');
+                <hr class="border-gray-600 my-4">
 
-						const file = fileInput.files[0];
-						const image = imageInput.files[0];
+                <label for="deleteSelect" class="block text-sm font-medium text-gray-300">Silinecek Müziği Seç:</label>
+                <select id="deleteSelect" class="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-white">
+                    </select>
+                <button onclick="deleteMusic()" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-4 rounded-lg transition-all flex items-center justify-center gap-2">
+                    <i class="fa fa-trash"></i> Seçilen Müziği Sil
+                </button>
+            </div>
+        </div>
+    </div>
 
-						if (!file || !name) return alert('Müzik adı ve dosyası gerekli');
+    <script>
+        let db;
+        const musicList = document.getElementById('musicList');
+        const audioPlayer = document.getElementById('audioPlayer');
+        const coverImage = document.getElementById('coverImage');
+        const deleteSelect = document.getElementById('deleteSelect');
+        const adminButton = document.getElementById('adminButton');
+        const adminPanelDiv = document.getElementById('adminPanel');
+        const adminControlsDiv = document.getElementById('adminControls');
+        const adminPassInput = document.getElementById('adminPass');
+        const loginButton = document.getElementById('loginBtn');
+        const loginForm = document.getElementById('loginForm');
 
-						const reader = new FileReader();
-						reader.onload = function(e) {
-								const musicObj = {
-										name: name,
-										audioUrl: e.target.result
-								};
+        // Custom Player Elements
+        const playPauseBtn = document.getElementById('playPauseBtn');
+        const playPauseIcon = playPauseBtn.querySelector('i');
+        const seekBar = document.getElementById('seekBar');
+        const currentTimeSpan = document.getElementById('currentTime');
+        const totalDurationSpan = document.getElementById('totalDuration');
+        const volumeBar = document.getElementById('volumeBar');
+        const volumeIcon = document.getElementById('volumeIcon');
 
-								if (image) {
-										const imageReader = new FileReader();
-										imageReader.onload = function(event) {
-												musicObj.imageUrl = event.target.result;
-												saveMusic(musicObj);
-										};
-										imageReader.readAsDataURL(image);
-								} else {
-										saveMusic(musicObj);
-								}
-						};
-						reader.readAsDataURL(file);
-				}
+        const defaultCover = 'https://placehold.co/300x300/e2e8f0/94a3b8?text=Müzik+Seçin';
+        let currentMusicId = null; // Track the ID of the currently loaded music
 
-				function saveMusic(musicObj) {
-						const transaction = db.transaction(['musics'], 'readwrite');
-						const objectStore = transaction.objectStore('musics');
-						const request = objectStore.add(musicObj);
+        // --- IndexedDB Setup ---
+        const dbRequest = indexedDB.open('musicDatabase', 1);
 
-						request.onsuccess = function() {
-								deleteOldestMusic(); // Eğer 50'den fazla müzik varsa en eskisini sil
-								renderMusics();
-								alert('Müzik eklendi!');
-						};
+        dbRequest.onsuccess = function(event) {
+            db = event.target.result;
+            console.log("Veritabanı başarıyla açıldı.");
+            renderMusics();
+        };
 
-						request.onerror = function(event) {
-								console.error('Müzik eklenirken hata oluştu: ', event.target.error);
-						};
-				}
+        dbRequest.onerror = function(event) {
+            console.error('Veritabanı açılırken hata oluştu: ', event.target.error);
+            alert('Veritabanı hatası. Lütfen konsolu kontrol edin.');
+        };
 
-				function deleteOldestMusic() {
-						const transaction = db.transaction(['musics'], 'readonly');
-						const objectStore = transaction.objectStore('musics');
-						const request = objectStore.getAll();
+        dbRequest.onupgradeneeded = function(event) {
+            console.log("Veritabanı yükseltiliyor...");
+            const db = event.target.result;
+            if (!db.objectStoreNames.contains('musics')) {
+                const objectStore = db.createObjectStore('musics', { keyPath: 'id', autoIncrement: true });
+                objectStore.createIndex('name', 'name', { unique: false });
+                console.log("Müzikler object store oluşturuldu.");
+            }
+        };
 
-						request.onsuccess = function(event) {
-								const musics = event.target.result;
-								if (musics.length > 50) { // Örneğin, sadece 50 müzik saklansın
-										const oldestMusic = musics[0]; // En eski müzik
-										const deleteRequest = objectStore.delete(oldestMusic.id);
-										deleteRequest.onsuccess = function() {
-												console.log('Eski müzik silindi.');
-										};
-								}
-						};
-				}
+        // --- Format Time (Helper Function) ---
+        function formatTime(seconds) {
+            const minutes = Math.floor(seconds / 60);
+            const secs = Math.floor(seconds % 60);
+            return `${minutes}:${secs < 10 ? '0' : ''}${secs}`;
+        }
 
-				function deleteMusic() {
-						const musicIdToDelete = parseInt(deleteSelect.value);
-						if (isNaN(musicIdToDelete)) return alert('Silinecek müziği seçiniz');
+        // --- Player Event Listeners ---
+        playPauseBtn.addEventListener('click', togglePlayPause);
+        audioPlayer.addEventListener('timeupdate', updateSeekBar);
+        audioPlayer.addEventListener('loadedmetadata', setDuration);
+        audioPlayer.addEventListener('play', () => playPauseIcon.className = 'fa fa-pause');
+        audioPlayer.addEventListener('pause', () => playPauseIcon.className = 'fa fa-play');
+        audioPlayer.addEventListener('ended', () => {
+            playPauseIcon.className = 'fa fa-play'; // Reset icon
+            seekBar.value = 0; // Reset seek bar
+            currentTimeSpan.textContent = formatTime(0);
+            // Optionally: Play next song here
+        });
+        seekBar.addEventListener('input', seek);
+        volumeBar.addEventListener('input', changeVolume);
 
-						const transaction = db.transaction(['musics'], 'readwrite');
-						const objectStore = transaction.objectStore('musics');
-						const request = objectStore.delete(musicIdToDelete);
+        // --- Player Control Functions ---
+        function togglePlayPause() {
+            if (!audioPlayer.src) return; // Do nothing if no song is loaded
+            if (audioPlayer.paused) {
+                audioPlayer.play();
+            } else {
+                audioPlayer.pause();
+            }
+        }
 
-						request.onsuccess = function() {
-								renderMusics();
-								alert('Müzik silindi!');
-						};
+        function updateSeekBar() {
+            if (audioPlayer.duration) {
+                const percentage = (audioPlayer.currentTime / audioPlayer.duration) * 100;
+                seekBar.value = percentage;
+                currentTimeSpan.textContent = formatTime(audioPlayer.currentTime);
+            }
+        }
 
-						request.onerror = function(event) {
-								console.error('Müzik silinirken hata oluştu: ', event.target.error);
-						};
-				}
+        function setDuration() {
+             if (audioPlayer.duration && isFinite(audioPlayer.duration)) {
+                totalDurationSpan.textContent = formatTime(audioPlayer.duration);
+                seekBar.value = 0; // Reset seek bar on new song load
+                currentTimeSpan.textContent = formatTime(0);
+            } else {
+                // Handle cases where duration might be infinite (live streams) or NaN
+                totalDurationSpan.textContent = "0:00";
+                currentTimeSpan.textContent = "0:00";
+                seekBar.value = 0;
+            }
+        }
 
-				function showAdminPanel() {
-						adminPanelDiv.style.display = 'flex';
-				}
+        function seek() {
+            if (!audioPlayer.src || !audioPlayer.duration || !isFinite(audioPlayer.duration)) return;
+            const time = (seekBar.value / 100) * audioPlayer.duration;
+            audioPlayer.currentTime = time;
+        }
 
-				function closeAdminPanel() {
-						adminPanelDiv.style.display = 'none';
-						adminControlsDiv.style.display = 'none';
-						adminPassInput.style.display = 'block';
-						loginButton.style.display = 'block';
-						adminButton.style.display = 'flex'; // Admin butonunu tekrar görünür yap
-						adminPassInput.value = ''; // Şifre alanını temizle
-				}
+        function changeVolume() {
+            audioPlayer.volume = volumeBar.value;
+            // Update volume icon based on volume level
+            if (audioPlayer.volume === 0) {
+                volumeIcon.className = 'fa fa-volume-xmark text-gray-600';
+            } else if (audioPlayer.volume < 0.5) {
+                volumeIcon.className = 'fa fa-volume-low text-gray-600';
+            } else {
+                volumeIcon.className = 'fa fa-volume-high text-gray-600';
+            }
+        }
 
-				function checkPassword() {
-						const pass = adminPassInput.value;
-						if (pass === '1234') {
-								adminControlsDiv.style.display = 'flex';
-								adminPassInput.style.display = 'none';
-								loginButton.style.display = 'none';
-								adminButton.style.display = 'none';
-						} else {
-								alert('Şifre yanlış!');
-						}
-				}
+        // --- Render Music List ---
+        function renderMusics() {
+            if (!db) {
+                console.error("Veritabanı henüz hazır değil.");
+                return;
+            }
+            musicList.innerHTML = '';
+            deleteSelect.innerHTML = '<option value="" disabled selected>Silmek için seçin...</option>';
 
-		</script>
+            try {
+                const transaction = db.transaction(['musics'], 'readonly');
+                const objectStore = transaction.objectStore('musics');
+                const request = objectStore.getAll();
+
+                request.onsuccess = function(event) {
+                    const musics = event.target.result;
+                    console.log(`Bulunan müzik sayısı: ${musics.length}`);
+
+                    if (musics.length === 0) {
+                        musicList.innerHTML = '<p class="text-gray-400 text-center mt-4">Henüz müzik eklenmemiş.</p>';
+                    }
+
+                    musics.forEach(music => {
+                        const div = document.createElement('div');
+                        div.className = `music-item flex items-center gap-3 p-3 rounded-lg bg-gray-800 hover:bg-indigo-700 cursor-pointer transition-all transform hover:scale-[1.03] ${music.id === currentMusicId ? 'bg-indigo-600' : ''}`; // Highlight current song
+                        div.dataset.id = music.id;
+
+                        const img = document.createElement('img');
+                        img.src = music.imageUrl || 'https://placehold.co/60x60/7f9cf5/ffffff?text=♪';
+                        img.alt = "Kapak";
+                        img.className = "w-12 h-12 rounded-md object-cover flex-shrink-0";
+                        div.appendChild(img);
+
+                        const title = document.createElement('span');
+                        title.className = "font-medium truncate flex-grow";
+                        title.innerText = music.name;
+                        div.appendChild(title);
+
+                        div.onclick = () => {
+                            // Only load if it's a different song or no song is loaded
+                            if (currentMusicId !== music.id) {
+                                audioPlayer.src = music.audioUrl;
+                                coverImage.src = music.imageUrl || defaultCover;
+                                currentMusicId = music.id; // Update current music ID
+
+                                // Update active state styling
+                                document.querySelectorAll('.music-item').forEach(item => item.classList.remove('bg-indigo-600'));
+                                div.classList.add('bg-indigo-600');
+
+                                // Reset and play
+                                audioPlayer.load(); // Important to load the new source
+                                audioPlayer.play().catch(e => console.error("Oynatma hatası:", e)); // Autoplay might be blocked
+                                playPauseIcon.className = 'fa fa-pause'; // Assume play starts
+                            } else {
+                                // If clicking the same song, just toggle play/pause
+                                togglePlayPause();
+                            }
+                        };
+                        musicList.appendChild(div);
+
+                        const option = document.createElement('option');
+                        option.value = music.id;
+                        option.text = music.name;
+                        deleteSelect.appendChild(option);
+                    });
+                };
+
+                request.onerror = function(event) {
+                    console.error('Müzikler alınırken hata: ', event.target.error);
+                    musicList.innerHTML = '<p class="text-red-400 text-center mt-4">Müzikler yüklenemedi.</p>';
+                }
+
+            } catch (error) {
+                console.error("RenderMusics içinde hata:", error);
+                alert("Müzikleri listelerken bir sorun oluştu.");
+            }
+        }
+
+        // --- Add Music ---
+        function addMusic() {
+            const nameInput = document.getElementById('musicName');
+            const fileInput = document.getElementById('musicFile');
+            const imageInput = document.getElementById('musicImage');
+
+            const name = nameInput.value.trim();
+            const file = fileInput.files[0];
+            const image = imageInput.files[0];
+
+            if (!file || !name) {
+                alert('Müzik adı ve müzik dosyası alanları zorunludur!');
+                return;
+            }
+
+            const audioReader = new FileReader();
+            audioReader.onload = function(e) {
+                const musicObj = {
+                    name: name,
+                    audioUrl: e.target.result,
+                    imageUrl: null
+                };
+
+                if (image) {
+                    if (image.size > 5 * 1024 * 1024) {
+                       alert("Resim dosyası çok büyük! (Maksimum 5MB)");
+                       return;
+                    }
+                    const imageReader = new FileReader();
+                    imageReader.onload = function(event) {
+                        musicObj.imageUrl = event.target.result;
+                        saveMusic(musicObj);
+                    };
+                    imageReader.onerror = function() {
+                        console.error("Resim dosyası okunurken hata.");
+                        alert("Resim dosyası okunurken bir hata oluştu.");
+                    }
+                    imageReader.readAsDataURL(image);
+                } else {
+                    saveMusic(musicObj);
+                }
+            };
+            audioReader.onerror = function() {
+                console.error("Ses dosyası okunurken hata.");
+                alert("Ses dosyası okunurken bir hata oluştu.");
+            }
+            audioReader.readAsDataURL(file);
+        }
+
+        // --- Save Music to DB ---
+        function saveMusic(musicObj) {
+            if (!db) {
+                alert("Veritabanı bağlantısı yok.");
+                return;
+            }
+            try {
+                const transaction = db.transaction(['musics'], 'readwrite');
+                const objectStore = transaction.objectStore('musics');
+                const request = objectStore.add(musicObj);
+
+                request.onsuccess = function() {
+                    console.log("Müzik başarıyla eklendi:", musicObj.name);
+                    renderMusics();
+                    document.getElementById('musicName').value = '';
+                    document.getElementById('musicFile').value = '';
+                    document.getElementById('musicImage').value = '';
+                    alert('Müzik başarıyla eklendi!');
+                    // limitMusicCount(50); // Optional
+                };
+
+                request.onerror = function(event) {
+                    console.error('Müzik eklenirken hata oluştu: ', event.target.error);
+                    alert(`Müzik eklenemedi: ${event.target.error.message}`);
+                };
+            } catch (error) {
+                 console.error("SaveMusic içinde hata:", error);
+                 alert("Müzik kaydedilirken bir sorun oluştu.");
+            }
+        }
+
+        // --- OPTIONAL: Limit Music Count ---
+        // function limitMusicCount(maxCount) { ... } // Keep the function if needed
+
+        // --- Delete Music ---
+        function deleteMusic() {
+            const musicIdToDelete = parseInt(deleteSelect.value);
+            if (isNaN(musicIdToDelete)) {
+                alert('Lütfen silinecek bir müzik seçin.');
+                return;
+            }
+
+            if (!confirm(`"${deleteSelect.options[deleteSelect.selectedIndex].text}" adlı müziği silmek istediğinizden emin misiniz?`)) {
+                return;
+            }
+
+            if (!db) {
+                 alert("Veritabanı bağlantısı yok.");
+                 return;
+            }
+
+            try {
+                const transaction = db.transaction(['musics'], 'readwrite');
+                const objectStore = transaction.objectStore('musics');
+                const request = objectStore.delete(musicIdToDelete);
+
+                request.onsuccess = function() {
+                    console.log(`Müzik ID ${musicIdToDelete} silindi.`);
+                    // Reset player if the deleted music was playing
+                    if (currentMusicId === musicIdToDelete) {
+                        audioPlayer.pause();
+                        audioPlayer.src = '';
+                        coverImage.src = defaultCover;
+                        totalDurationSpan.textContent = "0:00";
+                        currentTimeSpan.textContent = "0:00";
+                        seekBar.value = 0;
+                        playPauseIcon.className = 'fa fa-play';
+                        currentMusicId = null; // Clear current ID
+                    }
+                    renderMusics(); // Refresh lists AFTER potentially resetting player
+                    alert('Müzik başarıyla silindi!');
+                };
+
+                request.onerror = function(event) {
+                    console.error('Müzik silinirken hata oluştu: ', event.target.error);
+                    alert(`Müzik silinemedi: ${event.target.error.message}`);
+                };
+            } catch(error) {
+                 console.error("DeleteMusic içinde hata:", error);
+                 alert("Müzik silinirken bir sorun oluştu.");
+            }
+        }
+
+        // --- Admin Panel Visibility ---
+        function showAdminPanel() {
+            adminPanelDiv.classList.remove('hidden');
+            adminPanelDiv.classList.add('flex');
+            adminPassInput.focus();
+        }
+
+        function closeAdminPanel() {
+            adminPanelDiv.classList.add('hidden');
+            adminPanelDiv.classList.remove('flex');
+            adminControlsDiv.classList.add('hidden');
+            loginForm.classList.remove('hidden');
+            loginForm.classList.add('flex');
+            adminPassInput.value = '';
+        }
+
+        // --- Admin Password Check ---
+        function checkPassword() {
+            const pass = adminPassInput.value;
+            // !!! GÜVENLİK UYARISI: Şifre KESİNLİKLE sunucu tarafında kontrol edilmelidir. !!!
+            if (pass === '1234') { // Örnek şifre
+                loginForm.classList.add('hidden');
+                loginForm.classList.remove('flex');
+                adminControlsDiv.classList.remove('hidden');
+                adminControlsDiv.classList.add('flex', 'flex-col', 'space-y-4');
+            } else {
+                alert('Şifre yanlış!');
+                adminPassInput.value = '';
+                adminPassInput.focus();
+            }
+        }
+
+        // --- Initial Setup ---
+        coverImage.src = defaultCover;
+        adminControlsDiv.classList.add('hidden');
+        // Set initial volume bar value based on player's default volume
+        volumeBar.value = audioPlayer.volume;
+        changeVolume(); // Update icon initially
+
+    </script>
 
 </body>
 </html>
