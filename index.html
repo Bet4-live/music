@@ -196,10 +196,12 @@
 
     function showAdminPanel() {
       document.getElementById('adminPanel').style.display = 'flex';
+      adminButton.style.display = 'none'; // Admin paneli açıldığında butonu gizle
     }
 
     function closeAdminPanel() {
       document.getElementById('adminPanel').style.display = 'none';
+      adminButton.style.display = 'flex'; // Admin paneli kapandığında butonu tekrar göster
     }
 
     function checkPassword() {
@@ -208,7 +210,7 @@
         document.getElementById('adminControls').style.display = 'flex';
         document.getElementById('adminPass').style.display = 'none';
         document.getElementById('loginBtn').style.display = 'none';
-        adminButton.style.display = 'none';
+        adminButton.style.display = 'none'; // Admin giriş yapıldığında buton gizlensin
       } else {
         alert('Şifre yanlış!');
       }
