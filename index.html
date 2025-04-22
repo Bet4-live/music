@@ -15,7 +15,7 @@
       height: 100vh;
       overflow: hidden;
       background: #f1f1f6;
-      flex-direction: column; /* Ana ekseni dikey yap */
+      flex-direction: column;
     }
     .sidebar {
       width: 280px;
@@ -53,12 +53,12 @@
       margin-bottom: 5px;
     }
     .main {
-      flex: 1; /* Ana içeriğin büyümesine izin ver */
+      flex: 1;
       background: linear-gradient(to bottom right, #f9f9fa, #e6e6eb);
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center; /* Dikeyde ortala */
+      justify-content: center;
       position: relative;
       padding: 40px;
     }
@@ -77,7 +77,7 @@
       display: flex;
       align-items: center;
       gap: 8px;
-      z-index: 10; /* Diğer elementlerin üzerinde kalsın */
+      z-index: 10;
     }
     #adminButton:hover {
       background: #35354d;
@@ -116,6 +116,12 @@
     .admin-panel button:hover {
       background: #35354d;
     }
+    #player {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 70px;
+    }
     #coverImage {
       width: 250px;
       height: 250px;
@@ -125,20 +131,21 @@
       box-shadow: 0 8px 20px rgba(0,0,0,0.2);
     }
     audio {
-      display: none; /* Ana alanda ses çaları gizle */
+      display: none;
     }
     .audio-controls {
       position: fixed;
       bottom: 0;
       left: 0;
       width: 100%;
-      background-color: rgba(255, 255, 255, 0.9); /* Yarı saydam beyaz */
+      background-color: rgba(255, 255, 255, 0.9);
       box-shadow: 0 -5px 15px rgba(0,0,0,0.1);
       padding: 15px 20px;
       display: flex;
       align-items: center;
       justify-content: center;
       gap: 20px;
+      z-index: 20;
     }
     .audio-controls button {
       background: none;
@@ -239,7 +246,7 @@
         musics.forEach((music, index) => {
           const div = document.createElement('div');
           div.className = 'music-item';
-          div.dataset.audioUrl = music.audioUrl; // Veri özelliklerini ekle
+          div.dataset.audioUrl = music.audioUrl;
           div.dataset.imageUrl = music.imageUrl || '';
           if (music.imageUrl) {
             const img = document.createElement('img');
@@ -254,7 +261,7 @@
             audioPlayer.src = currentMusicUrl;
             coverImage.style.display = music.imageUrl ? 'block' : 'none';
             coverImage.src = music.imageUrl || '';
-            audioPlayer.load(); // Verilerin yüklenmesini başlat
+            audioPlayer.load();
             playMusic();
           };
           musicList.appendChild(div);
@@ -265,14 +272,13 @@
           deleteSelect.appendChild(option);
         });
 
-        // İlk müziği otomatik olarak yükle (isteğe bağlı)
         if (musics.length > 0) {
           const firstMusic = musics[0];
           currentMusicUrl = firstMusic.audioUrl;
           audioPlayer.src = currentMusicUrl;
           coverImage.style.display = firstMusic.imageUrl ? 'block' : 'none';
           coverImage.src = firstMusic.imageUrl || '';
-          audioPlayer.load(); // Verilerin yüklenmesini başlat
+          audioPlayer.load();
         }
       };
     }
@@ -314,7 +320,7 @@
       const request = objectStore.add(musicObj);
 
       request.onsuccess = function() {
-        deleteOldestMusic(); // Eğer 50'den fazla müzik varsa en eskisini sil
+        deleteOldestMusic();
         renderMusics();
         alert('Müzik eklendi!');
       };
@@ -331,8 +337,8 @@
 
       request.onsuccess = function(event) {
         const musics = event.target.result;
-        if (musics.length > 50) { // Örneğin, sadece 50 müzik saklansın
-          const oldestMusic = musics[0]; // En eski müzik
+        if (musics.length > 50) {
+          const oldestMusic = musics[0];
           const deleteRequest = objectStore.delete(oldestMusic.id);
           deleteRequest.onsuccess = function() {
             console.log('Eski müzik silindi.');
