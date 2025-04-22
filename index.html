@@ -15,6 +15,7 @@
       height: 100vh;
       overflow: hidden;
       background: #f1f1f6;
+      flex-direction: column; /* Ana ekseni dikey yap */
     }
     .sidebar {
       width: 280px;
@@ -52,12 +53,12 @@
       margin-bottom: 5px;
     }
     .main {
-      flex: 1;
+      flex: 1; /* Ana içeriğin büyümesine izin ver */
       background: linear-gradient(to bottom right, #f9f9fa, #e6e6eb);
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
+      justify-content: center; /* Dikeyde ortala */
       position: relative;
       padding: 40px;
     }
@@ -76,6 +77,7 @@
       display: flex;
       align-items: center;
       gap: 8px;
+      z-index: 10; /* Diğer elementlerin üzerinde kalsın */
     }
     #adminButton:hover {
       background: #35354d;
@@ -115,12 +117,38 @@
       background: #35354d;
     }
     #coverImage {
-      border: 5px solid #ddd;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      width: 250px;
+      height: 250px;
+      border-radius: 10px;
+      object-fit: cover;
+      margin-bottom: 30px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.2);
     }
     audio {
+      display: none; /* Ana alanda ses çaları gizle */
+    }
+    .audio-controls {
+      position: fixed;
+      bottom: 0;
+      left: 0;
       width: 100%;
-      max-width: 500px;
+      background-color: rgba(255, 255, 255, 0.9); /* Yarı saydam beyaz */
+      box-shadow: 0 -5px 15px rgba(0,0,0,0.1);
+      padding: 15px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+    }
+    .audio-controls button {
+      background: none;
+      border: none;
+      font-size: 20px;
+      cursor: pointer;
+      color: #333;
+    }
+    .audio-controls input[type="range"] {
+      flex-grow: 1;
     }
   </style>
 </head>
@@ -157,6 +185,15 @@
     </div>
   </div>
 
+  <div class="audio-controls">
+    <button><i class="fa fa-backward"></i></button>
+    <button><i class="fa fa-play play-pause-icon"></i></button>
+    <button><i class="fa fa-forward"></i></button>
+    <input type="range" id="progressBar" value="0" step="0.01">
+    <span id="currentTime">0:00</span> / <span id="duration">0:00</span>
+    <button><i class="fa fa-volume-up"></i></button>
+  </div>
+
   <script>
     let db;
     const musicList = document.getElementById('musicList');
@@ -164,6 +201,13 @@
     const coverImage = document.getElementById('coverImage');
     const deleteSelect = document.getElementById('deleteSelect');
     const adminButton = document.getElementById('adminButton');
+    const playPauseButton = document.querySelector('.play-pause-icon');
+    const progressBar = document.getElementById('progressBar');
+    const currentTimeDisplay = document.getElementById('currentTime');
+    const durationDisplay = document.getElementById('duration');
+
+    let currentMusicUrl = '';
+    let isPlaying = false;
 
     const dbRequest = indexedDB.open('musicDatabase', 1);
 
@@ -195,6 +239,8 @@
         musics.forEach((music, index) => {
           const div = document.createElement('div');
           div.className = 'music-item';
+          div.dataset.audioUrl = music.audioUrl; // Veri özelliklerini ekle
+          div.dataset.imageUrl = music.imageUrl || '';
           if (music.imageUrl) {
             const img = document.createElement('img');
             img.src = music.imageUrl;
@@ -204,9 +250,12 @@
           title.innerText = music.name;
           div.appendChild(title);
           div.onclick = () => {
-            audioPlayer.src = music.audioUrl;
+            currentMusicUrl = music.audioUrl;
+            audioPlayer.src = currentMusicUrl;
             coverImage.style.display = music.imageUrl ? 'block' : 'none';
             coverImage.src = music.imageUrl || '';
+            audioPlayer.load(); // Verilerin yüklenmesini başlat
+            playMusic();
           };
           musicList.appendChild(div);
 
@@ -215,6 +264,16 @@
           option.text = music.name;
           deleteSelect.appendChild(option);
         });
+
+        // İlk müziği otomatik olarak yükle (isteğe bağlı)
+        if (musics.length > 0) {
+          const firstMusic = musics[0];
+          currentMusicUrl = firstMusic.audioUrl;
+          audioPlayer.src = currentMusicUrl;
+          coverImage.style.display = firstMusic.imageUrl ? 'block' : 'none';
+          coverImage.src = firstMusic.imageUrl || '';
+          audioPlayer.load(); // Verilerin yüklenmesini başlat
+        }
       };
     }
 
@@ -319,6 +378,49 @@
       }
     }
 
+    function playMusic() {
+      audioPlayer.play();
+      isPlaying = true;
+      playPauseButton.classList.remove('fa-play');
+      playPauseButton.classList.add('fa-pause');
+    }
+
+    function pauseMusic() {
+      audioPlayer.pause();
+      isPlaying = false;
+      playPauseButton.classList.remove('fa-pause');
+      playPauseButton.classList.add('fa-play');
+    }
+
+    playPauseButton.addEventListener('click', () => {
+      if (isPlaying) {
+        pauseMusic();
+      } else {
+        playMusic();
+      }
+    });
+
+    audioPlayer.addEventListener('loadedmetadata', () => {
+      const duration = formatTime(audioPlayer.duration);
+      durationDisplay.textContent = duration;
+      progressBar.max = audioPlayer.duration;
+    });
+
+    audioPlayer.addEventListener('timeupdate', () => {
+      const currentTime = formatTime(audioPlayer.currentTime);
+      currentTimeDisplay.textContent = currentTime;
+      progressBar.value = audioPlayer.currentTime;
+    });
+
+    progressBar.addEventListener('input', () => {
+      audioPlayer.currentTime = progressBar.value;
+    });
+
+    function formatTime(seconds) {
+      const minutes = Math.floor(seconds / 60);
+      const remainingSeconds = Math.floor(seconds % 60).toString().padStart(2, '0');
+      return `${minutes}:${remainingSeconds}`;
+    }
   </script>
 
 </body>
