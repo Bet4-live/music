@@ -164,58 +164,84 @@
     const deleteSelect = document.getElementById('deleteSelect');
     const adminButton = document.getElementById('adminButton');
 
-    let musics = JSON.parse(localStorage.getItem('musics')) || [];
+    let db;
+    
+    // IndexedDB açılır
+    const openDB = () => {
+      const request = indexedDB.open('musicDatabase', 1);
+      request.onerror = (event) => {
+        console.error('Veritabanı açma hatası:', event.target.errorCode);
+      };
+      request.onsuccess = (event) => {
+        db = event.target.result;
+        renderMusics();
+      };
+      request.onupgradeneeded = (event) => {
+        db = event.target.result;
+        const objectStore = db.createObjectStore('musics', { keyPath: 'id', autoIncrement: true });
+        objectStore.createIndex('name', 'name', { unique: false });
+      };
+    };
 
+    // Müzikleri render etme
     function renderMusics() {
       musicList.innerHTML = '';
       deleteSelect.innerHTML = '';
-      musics.forEach((music, index) => {
-        const div = document.createElement('div');
-        div.className = 'music-item';
-        if (music.imageUrl) {
-          const img = document.createElement('img');
-          img.src = music.imageUrl;
-          div.appendChild(img);
-        }
-        const title = document.createElement('div');
-        title.innerText = music.name;
-        div.appendChild(title);
-        div.onclick = () => {
-          audioPlayer.src = music.audioUrl;
-          coverImage.style.display = music.imageUrl ? 'block' : 'none';
-          coverImage.src = music.imageUrl || '';
-        };
-        musicList.appendChild(div);
+      const transaction = db.transaction(['musics'], 'readonly');
+      const objectStore = transaction.objectStore('musics');
+      const request = objectStore.getAll();
+      request.onsuccess = (event) => {
+        const musics = event.target.result;
+        musics.forEach((music, index) => {
+          const div = document.createElement('div');
+          div.className = 'music-item';
+          if (music.imageUrl) {
+            const img = document.createElement('img');
+            img.src = music.imageUrl;
+            div.appendChild(img);
+          }
+          const title = document.createElement('div');
+          title.innerText = music.name;
+          div.appendChild(title);
+          div.onclick = () => {
+            audioPlayer.src = music.audioUrl;
+            coverImage.style.display = music.imageUrl ? 'block' : 'none';
+            coverImage.src = music.imageUrl || '';
+          };
+          musicList.appendChild(div);
 
-        const option = document.createElement('option');
-        option.value = index;
-        option.text = music.name;
-        deleteSelect.appendChild(option);
-      });
+          const option = document.createElement('option');
+          option.value = index;
+          option.text = music.name;
+          deleteSelect.appendChild(option);
+        });
+      };
     }
 
+    // Admin panelini göster
     function showAdminPanel() {
       document.getElementById('adminPanel').style.display = 'flex';
-      adminButton.style.display = 'none'; // Admin paneli açıldığında butonu gizle
     }
 
+    // Admin panelini kapat
     function closeAdminPanel() {
       document.getElementById('adminPanel').style.display = 'none';
-      adminButton.style.display = 'flex'; // Admin paneli kapandığında butonu tekrar göster
     }
 
+    // Şifreyi kontrol et
     function checkPassword() {
       const pass = document.getElementById('adminPass').value;
       if (pass === '1234') {
         document.getElementById('adminControls').style.display = 'flex';
         document.getElementById('adminPass').style.display = 'none';
         document.getElementById('loginBtn').style.display = 'none';
-        adminButton.style.display = 'none'; // Admin giriş yapıldığında buton gizlensin
+        adminButton.style.display = 'none';
       } else {
         alert('Şifre yanlış!');
       }
     }
 
+    // Müzik ekle
     function addMusic() {
       const name = document.getElementById('musicName').value;
       const fileInput = document.getElementById('musicFile');
@@ -237,40 +263,46 @@
           const imageReader = new FileReader();
           imageReader.onload = function (event) {
             musicObj.imageUrl = event.target.result;
-            musics.push(musicObj);
-            saveAndRender();
+            saveMusic(musicObj);
           };
           imageReader.readAsDataURL(image);
         } else {
-          musics.push(musicObj);
-          saveAndRender();
+          saveMusic(musicObj);
         }
       };
       reader.readAsDataURL(file);
     }
 
-    function saveAndRender() {
-      try {
-        localStorage.setItem('musics', JSON.stringify(musics));
+    // Müzik veritabanına kaydet
+    function saveMusic(musicObj) {
+      const transaction = db.transaction(['musics'], 'readwrite');
+      const objectStore = transaction.objectStore('musics');
+      const request = objectStore.add(musicObj);
+      request.onsuccess = () => {
         renderMusics();
         alert('Müzik eklendi!');
-      } catch (e) {
-        alert('Hata: Tarayıcı depolama sınırı aşıldı. Daha küçük dosyalar kullanın.');
-        musics.pop();
-      }
+      };
+      request.onerror = () => {
+        alert('Bir hata oluştu.');
+      };
     }
 
+    // Müzik sil
     function deleteMusic() {
       const index = deleteSelect.value;
       if (index === '') return alert('Silinecek müziği seçiniz');
       if (!confirm('Bu müziği silmek istediğinize emin misiniz?')) return;
-      musics.splice(index, 1);
-      localStorage.setItem('musics', JSON.stringify(musics));
-      renderMusics();
-      alert('Müzik silindi!');
+
+      const transaction = db.transaction(['musics'], 'readwrite');
+      const objectStore = transaction.objectStore('musics');
+      const request = objectStore.delete(parseInt(index));
+      request.onsuccess = () => {
+        renderMusics();
+        alert('Müzik silindi!');
+      };
     }
 
-    renderMusics();
+    openDB();
   </script>
 
 </body>
