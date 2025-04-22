@@ -1,254 +1,262 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-	<meta charset="UTF-8">
-	<title>Müzik Sitesi</title>
-	<style>
-		* {
-			box-sizing: border-box;
-		}
-		body {
-			margin: 0;
-			font-family: 'Segoe UI', sans-serif;
-			display: flex;
-			height: 100vh;
-			overflow: hidden;
-		}
-		.sidebar {
-			width: 250px;
-			background: linear-gradient(to bottom right, #1e1e2f, #2b2b44);
-			color: white;
-			padding: 20px;
-			overflow-y: auto;
-			box-shadow: 2px 0 10px rgba(0, 0, 0, 0.3);
-		}
-		.sidebar h2 {
-			margin-top: 0;
-			font-size: 24px;
-			border-bottom: 1px solid #444;
-			padding-bottom: 10px;
-		}
-		.music-item {
-			margin-bottom: 15px;
-			cursor: pointer;
-			background: #2d2d3f;
-			padding: 10px;
-			border-radius: 10px;
-			transition: background 0.2s, transform 0.2s;
-		}
-		.music-item:hover {
-			background: #3e3e5c;
-			transform: scale(1.03);
-		}
-		.music-item img {
-			width: 100%;
-			height: auto;
-			border-radius: 8px;
-			margin-bottom: 5px;
-		}
-		.main {
-			flex: 1;
-			background: linear-gradient(to bottom right, #f9f9fa, #e6e6eb);
-			display: flex;
-			flex-direction: column;
-			align-items: center;
-			justify-content: center;
-			position: relative;
-			padding: 40px;
-		}
-		#adminButton {
-			position: absolute;
-			top: 20px;
-			right: 20px;
-			padding: 10px 20px;
-			background: #1e1e2f;
-			color: white;
-			border: none;
-			border-radius: 8px;
-			font-weight: bold;
-			box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-			transition: background 0.2s;
-		}
-		#adminButton:hover {
-			background: #35354d;
-		}
-		.admin-panel {
-			display: none;
-			position: fixed;
-			top: 0;
-			left: 0;
-			width: 100vw;
-			height: 100vh;
-			background: rgba(0,0,0,0.85);
-			color: white;
-			align-items: center;
-			justify-content: center;
-			flex-direction: column;
-			z-index: 100;
-			padding: 30px;
-		}
-		.admin-panel input, .admin-panel button, .admin-panel select {
-			margin: 10px;
-			padding: 12px 15px;
-			border-radius: 6px;
-			border: none;
-			font-size: 16px;
-		}
-		.admin-panel input[type="password"], .admin-panel input[type="text"] {
-			width: 250px;
-		}
-		.admin-panel button {
-			background: #1e1e2f;
-			color: white;
-			cursor: pointer;
-			transition: background 0.2s;
-		}
-		.admin-panel button:hover {
-			background: #35354d;
-		}
-		#coverImage {
-			border: 5px solid #ddd;
-			box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-		}
-		audio {
-			width: 100%;
-			max-width: 500px;
-		}
-	</style>
+  <meta charset="UTF-8">
+  <title>Müzik Sitesi</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      display: flex;
+      height: 100vh;
+      overflow: hidden;
+      background: #f1f1f6;
+    }
+    .sidebar {
+      width: 280px;
+      background: linear-gradient(to bottom right, #1e1e2f, #2b2b44);
+      color: white;
+      padding: 20px;
+      overflow-y: auto;
+      box-shadow: 2px 0 10px rgba(0, 0, 0, 0.3);
+    }
+    .sidebar h2 {
+      margin-top: 0;
+      font-size: 24px;
+      border-bottom: 1px solid #444;
+      padding-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .music-item {
+      margin-bottom: 15px;
+      cursor: pointer;
+      background: #2d2d3f;
+      padding: 10px;
+      border-radius: 10px;
+      transition: background 0.2s, transform 0.2s;
+    }
+    .music-item:hover {
+      background: #3e3e5c;
+      transform: scale(1.03);
+    }
+    .music-item img {
+      width: 100%;
+      height: auto;
+      border-radius: 8px;
+      margin-bottom: 5px;
+    }
+    .main {
+      flex: 1;
+      background: linear-gradient(to bottom right, #f9f9fa, #e6e6eb);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      padding: 40px;
+    }
+    #adminButton {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      padding: 10px 20px;
+      background: #1e1e2f;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-weight: bold;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+      transition: background 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    #adminButton:hover {
+      background: #35354d;
+    }
+    .admin-panel {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0,0,0,0.85);
+      color: white;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      z-index: 100;
+      padding: 30px;
+    }
+    .admin-panel input, .admin-panel button, .admin-panel select {
+      margin: 10px;
+      padding: 12px 15px;
+      border-radius: 6px;
+      border: none;
+      font-size: 16px;
+    }
+    .admin-panel input[type="password"], .admin-panel input[type="text"] {
+      width: 250px;
+    }
+    .admin-panel button {
+      background: #1e1e2f;
+      color: white;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .admin-panel button:hover {
+      background: #35354d;
+    }
+    #coverImage {
+      border: 5px solid #ddd;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+    audio {
+      width: 100%;
+      max-width: 500px;
+    }
+  </style>
 </head>
 <body>
 
-	<div class="sidebar">
-		<h2>Müzikler</h2>
-		<div id="musicList"></div>
-	</div>
+  <div class="sidebar">
+    <h2><i class="fa fa-music"></i> Müzikler</h2>
+    <div id="musicList"></div>
+  </div>
 
-	<div class="main">
-		<button id="adminButton" onclick="showAdminPanel()">Admin Girişi</button>
-		<div id="player">
-			<img id="coverImage" src="" alt="Kapak" width="300" style="display:none; margin-bottom: 20px; border-radius: 10px;"/>
-			<audio id="audioPlayer" controls></audio>
-		</div>
-	</div>
+  <div class="main">
+    <button id="adminButton" onclick="showAdminPanel()"><i class="fa fa-lock"></i> Admin Girişi</button>
+    <div id="player">
+      <img id="coverImage" src="" alt="Kapak" width="300" style="display:none; margin-bottom: 20px; border-radius: 10px;"/>
+      <audio id="audioPlayer" controls></audio>
+    </div>
+  </div>
 
-	<div class="admin-panel" id="adminPanel">
-		<h2>Admin Paneli</h2>
-		<input type="password" id="adminPass" placeholder="Şifre">
-		<button onclick="checkPassword()">Giriş</button>
+  <div class="admin-panel" id="adminPanel">
+    <h2><i class="fa fa-user-shield"></i> Admin Paneli</h2>
+    <input type="password" id="adminPass" placeholder="Şifre">
+    <button onclick="checkPassword()"><i class="fa fa-sign-in-alt"></i> Giriş</button>
 
-		<div id="adminControls" style="display:none; flex-direction: column; align-items: center;">
-			<input type="text" id="musicName" placeholder="Müzik Adı">
-			<input type="file" id="musicFile" accept="audio/*">
-			<input type="file" id="musicImage" accept="image/*">
-			<button onclick="addMusic()">Müziği Ekle</button>
+    <div id="adminControls" style="display:none; flex-direction: column; align-items: center;">
+      <input type="text" id="musicName" placeholder="Müzik Adı">
+      <input type="file" id="musicFile" accept="audio/*">
+      <input type="file" id="musicImage" accept="image/*">
+      <button onclick="addMusic()"><i class="fa fa-plus"></i> Müziği Ekle</button>
 
-			<select id="deleteSelect"></select>
-			<button onclick="deleteMusic()">Seçilen Müziği Sil</button>
+      <select id="deleteSelect"></select>
+      <button onclick="deleteMusic()"><i class="fa fa-trash"></i> Seçilen Müziği Sil</button>
 
-			<button onclick="closeAdminPanel()">Kapat</button>
-		</div>
-	</div>
+      <button onclick="closeAdminPanel()"><i class="fa fa-times"></i> Kapat</button>
+    </div>
+  </div>
 
-	<script>
-		const musicList = document.getElementById('musicList');
-		const audioPlayer = document.getElementById('audioPlayer');
-		const coverImage = document.getElementById('coverImage');
-		const deleteSelect = document.getElementById('deleteSelect');
+  <script>
+    const musicList = document.getElementById('musicList');
+    const audioPlayer = document.getElementById('audioPlayer');
+    const coverImage = document.getElementById('coverImage');
+    const deleteSelect = document.getElementById('deleteSelect');
 
-		let musics = JSON.parse(localStorage.getItem('musics')) || [];
+    let musics = JSON.parse(localStorage.getItem('musics')) || [];
 
-		function renderMusics() {
-			musicList.innerHTML = '';
-			deleteSelect.innerHTML = '';
-			musics.forEach((music, index) => {
-				const div = document.createElement('div');
-				div.className = 'music-item';
-				if (music.imageUrl) {
-					const img = document.createElement('img');
-					img.src = music.imageUrl;
-					div.appendChild(img);
-				}
-				const title = document.createElement('div');
-				title.innerText = music.name;
-				div.appendChild(title);
-				div.onclick = () => {
-					audioPlayer.src = music.audioUrl;
-					coverImage.style.display = music.imageUrl ? 'block' : 'none';
-					coverImage.src = music.imageUrl || '';
-				};
-				musicList.appendChild(div);
+    function renderMusics() {
+      musicList.innerHTML = '';
+      deleteSelect.innerHTML = '';
+      musics.forEach((music, index) => {
+        const div = document.createElement('div');
+        div.className = 'music-item';
+        if (music.imageUrl) {
+          const img = document.createElement('img');
+          img.src = music.imageUrl;
+          div.appendChild(img);
+        }
+        const title = document.createElement('div');
+        title.innerText = music.name;
+        div.appendChild(title);
+        div.onclick = () => {
+          audioPlayer.src = music.audioUrl;
+          coverImage.style.display = music.imageUrl ? 'block' : 'none';
+          coverImage.src = music.imageUrl || '';
+        };
+        musicList.appendChild(div);
 
-				const option = document.createElement('option');
-				option.value = index;
-				option.text = music.name;
-				deleteSelect.appendChild(option);
-			});
-		}
+        const option = document.createElement('option');
+        option.value = index;
+        option.text = music.name;
+        deleteSelect.appendChild(option);
+      });
+    }
 
-		function showAdminPanel() {
-			const panel = document.getElementById('adminPanel');
-			panel.style.display = 'flex';
-		}
+    function showAdminPanel() {
+      const panel = document.getElementById('adminPanel');
+      panel.style.display = 'flex';
+    }
 
-		function closeAdminPanel() {
-			const panel = document.getElementById('adminPanel');
-			panel.style.display = 'none';
-		}
+    function closeAdminPanel() {
+      const panel = document.getElementById('adminPanel');
+      panel.style.display = 'none';
+    }
 
-		function checkPassword() {
-			const pass = document.getElementById('adminPass').value;
-			if (pass === '1234') {
-				document.getElementById('adminControls').style.display = 'flex';
-			} else {
-				alert('Şifre yanlış!');
-			}
-		}
+    function checkPassword() {
+      const pass = document.getElementById('adminPass').value;
+      if (pass === '1234') {
+        document.getElementById('adminControls').style.display = 'flex';
+      } else {
+        alert('Şifre yanlış!');
+      }
+    }
 
-		function addMusic() {
-			const name = document.getElementById('musicName').value;
-			const fileInput = document.getElementById('musicFile');
-			const imageInput = document.getElementById('musicImage');
+    function addMusic() {
+      const name = document.getElementById('musicName').value;
+      const fileInput = document.getElementById('musicFile');
+      const imageInput = document.getElementById('musicImage');
 
-			const file = fileInput.files[0];
-			const image = imageInput.files[0];
+      const file = fileInput.files[0];
+      const image = imageInput.files[0];
 
-			if (!file || !name) return alert('Müzik adı ve dosyası gerekli');
+      if (!file || !name) return alert('Müzik adı ve dosyası gerekli');
 
-			const musicURL = URL.createObjectURL(file);
-			const musicObj = {
-				name: name,
-				audioUrl: musicURL
-			};
+      const musicURL = URL.createObjectURL(file);
+      const musicObj = {
+        name: name,
+        audioUrl: musicURL
+      };
 
-			if (image) {
-				const imageURL = URL.createObjectURL(image);
-				musicObj.imageUrl = imageURL;
-			}
+      if (image) {
+        const imageURL = URL.createObjectURL(image);
+        musicObj.imageUrl = imageURL;
+      }
 
-			musics.push(musicObj);
-			try {
-				localStorage.setItem('musics', JSON.stringify(musics.map(m => ({ name: m.name, audioUrl: m.audioUrl, imageUrl: m.imageUrl }))));
-			} catch (e) {
-				alert('Hata: Tarayıcı depolama sınırı aşıldı. Daha küçük dosyalar kullanın.');
-				musics.pop();
-				return;
-			}
-			renderMusics();
-			alert('Müzik eklendi!');
-		}
+      musics.push(musicObj);
+      try {
+        localStorage.setItem('musics', JSON.stringify(musics.map(m => ({ name: m.name, audioUrl: m.audioUrl, imageUrl: m.imageUrl }))));
+      } catch (e) {
+        alert('Hata: Tarayıcı depolama sınırı aşıldı. Daha küçük dosyalar kullanın.');
+        musics.pop();
+        return;
+      }
+      renderMusics();
+      alert('Müzik eklendi!');
+    }
 
-		function deleteMusic() {
-			const index = deleteSelect.value;
-			if (index === '') return alert('Silinecek müziği seçiniz');
-			if (!confirm('Bu müziği silmek istediğinize emin misiniz?')) return;
-			musics.splice(index, 1);
-			localStorage.setItem('musics', JSON.stringify(musics));
-			renderMusics();
-			alert('Müzik silindi!');
-		}
+    function deleteMusic() {
+      const index = deleteSelect.value;
+      if (index === '') return alert('Silinecek müziği seçiniz');
+      if (!confirm('Bu müziği silmek istediğinize emin misiniz?')) return;
+      musics.splice(index, 1);
+      localStorage.setItem('musics', JSON.stringify(musics));
+      renderMusics();
+      alert('Müzik silindi!');
+    }
 
-		renderMusics();
-	</script>
+    renderMusics();
+  </script>
 
 </body>
 </html>
