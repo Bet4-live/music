@@ -142,7 +142,7 @@
   <div class="admin-panel" id="adminPanel">
     <h2><i class="fa fa-user-shield"></i> Admin Paneli</h2>
     <input type="password" id="adminPass" placeholder="Şifre">
-    <button onclick="checkPassword()"><i class="fa fa-sign-in-alt"></i> Giriş</button>
+    <button id="loginBtn" onclick="checkPassword()"><i class="fa fa-sign-in-alt"></i> Giriş</button>
 
     <div id="adminControls" style="display:none; flex-direction: column; align-items: center;">
       <input type="text" id="musicName" placeholder="Müzik Adı">
@@ -162,6 +162,7 @@
     const audioPlayer = document.getElementById('audioPlayer');
     const coverImage = document.getElementById('coverImage');
     const deleteSelect = document.getElementById('deleteSelect');
+    const adminButton = document.getElementById('adminButton');
 
     let musics = JSON.parse(localStorage.getItem('musics')) || [];
 
@@ -194,19 +195,20 @@
     }
 
     function showAdminPanel() {
-      const panel = document.getElementById('adminPanel');
-      panel.style.display = 'flex';
+      document.getElementById('adminPanel').style.display = 'flex';
     }
 
     function closeAdminPanel() {
-      const panel = document.getElementById('adminPanel');
-      panel.style.display = 'none';
+      document.getElementById('adminPanel').style.display = 'none';
     }
 
     function checkPassword() {
       const pass = document.getElementById('adminPass').value;
       if (pass === '1234') {
         document.getElementById('adminControls').style.display = 'flex';
+        document.getElementById('adminPass').style.display = 'none';
+        document.getElementById('loginBtn').style.display = 'none';
+        adminButton.style.display = 'none';
       } else {
         alert('Şifre yanlış!');
       }
@@ -222,27 +224,38 @@
 
       if (!file || !name) return alert('Müzik adı ve dosyası gerekli');
 
-      const musicURL = URL.createObjectURL(file);
-      const musicObj = {
-        name: name,
-        audioUrl: musicURL
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        const musicObj = {
+          name: name,
+          audioUrl: e.target.result
+        };
+
+        if (image) {
+          const imageReader = new FileReader();
+          imageReader.onload = function (event) {
+            musicObj.imageUrl = event.target.result;
+            musics.push(musicObj);
+            saveAndRender();
+          };
+          imageReader.readAsDataURL(image);
+        } else {
+          musics.push(musicObj);
+          saveAndRender();
+        }
       };
+      reader.readAsDataURL(file);
+    }
 
-      if (image) {
-        const imageURL = URL.createObjectURL(image);
-        musicObj.imageUrl = imageURL;
-      }
-
-      musics.push(musicObj);
+    function saveAndRender() {
       try {
-        localStorage.setItem('musics', JSON.stringify(musics.map(m => ({ name: m.name, audioUrl: m.audioUrl, imageUrl: m.imageUrl }))));
+        localStorage.setItem('musics', JSON.stringify(musics));
+        renderMusics();
+        alert('Müzik eklendi!');
       } catch (e) {
         alert('Hata: Tarayıcı depolama sınırı aşıldı. Daha küçük dosyalar kullanın.');
         musics.pop();
-        return;
       }
-      renderMusics();
-      alert('Müzik eklendi!');
     }
 
     function deleteMusic() {
