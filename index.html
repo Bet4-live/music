@@ -10,13 +10,14 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="shortcut icon" href="music.png" />
+
     <style>
-        /* Custom scrollbar styles */
+        /* Custom scrollbar styles for better look */
         ::-webkit-scrollbar {
             width: 8px;
         }
         ::-webkit-scrollbar-track {
-            background: #2d2d3f; /* Sidebar track */
+            background: #2d2d3f; /* Sidebar track color */
         }
         ::-webkit-scrollbar-thumb {
             background: #555;
@@ -25,25 +26,29 @@
         ::-webkit-scrollbar-thumb:hover {
             background: #777;
         }
+
         /* Ensure body takes full height and uses Inter font */
         body {
             font-family: 'Inter', sans-serif;
             height: 100vh;
-            overflow: hidden; /* Prevent body scroll */
+            overflow: hidden; /* Prevent body scroll to manage scrolling within main/aside */
+            display: flex; /* Use flexbox for layout */
         }
-        /* Hide default audio player controls */
+
+        /* Hide default audio player controls completely */
         audio {
            width: 100%;
-           max-width: 500px; /* Limit player width */
-           margin-top: 1rem; /* Add space above player */
+           max-width: 500px; /* Limit player width on larger screens */
+           margin-top: 1rem; /* Space above player */
            filter: invert(15%) sepia(5%) saturate(1200%) hue-rotate(190deg) brightness(95%) contrast(90%); /* Subtle color adjustment */
-           border-radius: 999px; /* Rounded corners for the player */
+           border-radius: 999px; /* Fully rounded corners */
            opacity: 0; /* Hide completely */
-           pointer-events: none; /* Disable interaction with default controls */
+           pointer-events: none; /* Disable interaction */
            height: 0px; /* No height */
            visibility: hidden; /* Hide it completely */
            position: absolute; /* Remove from layout flow */
         }
+
         /* Custom progress bar styling */
         input[type="range"] {
             -webkit-appearance: none;
@@ -55,7 +60,8 @@
             cursor: pointer;
             outline: none;
         }
-        /* Progress fill */
+
+        /* Progress fill for seek bar */
         input[type="range"].seek-bar::-webkit-slider-runnable-track {
             background: linear-gradient(to right, #4f46e5 var(--progress, 0%), #e5e7eb var(--progress, 0%));
             height: 6px;
@@ -72,6 +78,7 @@
              border-radius: 3px;
          }
 
+        /* Thumb styling for seek bar */
         input[type="range"]::-webkit-slider-thumb {
             -webkit-appearance: none;
             appearance: none;
@@ -81,6 +88,7 @@
             border-radius: 50%;
             cursor: pointer;
             margin-top: -5px; /* Center thumb vertically */
+            box-shadow: 0 1px 3px rgba(0,0,0,0.2); /* Add a subtle shadow */
         }
         input[type="range"]::-moz-range-thumb {
             width: 16px;
@@ -89,19 +97,22 @@
             border-radius: 50%;
             cursor: pointer;
             border: none; /* Remove default border in Firefox */
+             box-shadow: 0 1px 3px rgba(0,0,0,0.2); /* Add a subtle shadow */
         }
 
-        /* Volume bar specific thumb */
+        /* Volume bar specific thumb styling */
         input[type="range"].volume-bar::-webkit-slider-thumb {
             background: #6b7280; /* Gray thumb for volume */
              width: 12px;
             height: 12px;
             margin-top: -3px; /* Center thumb vertically */
+             box-shadow: 0 1px 3px rgba(0,0,0,0.2); /* Add a subtle shadow */
         }
          input[type="range"].volume-bar::-moz-range-thumb {
             background: #6b7280; /* Gray thumb for volume */
             width: 12px;
             height: 12px;
+             box-shadow: 0 1px 3px rgba(0,0,0,0.2); /* Add a subtle shadow */
         }
 
 
@@ -109,42 +120,198 @@
         .transition-all {
             transition: all 0.2s ease-in-out;
         }
+
         /* Style for the custom player controls container */
         .custom-player-controls {
-            background-color: rgba(255, 255, 255, 0.8); /* Slightly more opaque white */
-            backdrop-filter: blur(8px); /* Stronger blur effect */
+            background-color: rgba(255, 255, 255, 0.9); /* Slightly more opaque white */
+            backdrop-filter: blur(10px); /* Stronger blur effect */
             border-radius: 16px; /* More rounded */
             padding: 15px 25px; /* Adjust padding */
             margin-top: 1.5rem; /* Space above controls */
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1); /* Softer shadow */
+            box-shadow: 0 6px 25px rgba(0, 0, 0, 0.15); /* Softer, larger shadow */
             width: 100%;
             max-width: 500px; /* Match audio player max-width */
-            border: 1px solid rgba(255, 255, 255, 0.2); /* Subtle border */
+            border: 1px solid rgba(255, 255, 255, 0.3); /* Subtle border */
         }
+
         /* Styling for disabled buttons */
         button:disabled {
             opacity: 0.4;
             cursor: not-allowed;
         }
+
+        /* Mobile Music List Modal */
+        #mobileMusicListModal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.7); /* Darker overlay */
+            backdrop-filter: blur(5px); /* Subtle blur */
+            z-index: 1000; /* Significantly increased z-index */
+            display: flex; /* Always use flexbox for centering */
+            align-items: center; /* Center vertically */
+            justify-content: center; /* Center horizontally */
+            opacity: 0; /* Start hidden */
+            visibility: hidden;
+            transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+        }
+
+        #mobileMusicListModal.open {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        #mobileMusicListContent {
+            background-color: #1e293b; /* Slate-800 */
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            max-width: 90%; /* Max width on small screens */
+            width: 300px; /* A fixed width for the modal content */
+            max-height: 80vh; /* Limit height to prevent overflow */
+            overflow-y: auto; /* Add scrolling if content exceeds max height */
+            position: relative; /* For close button positioning */
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3); /* More prominent shadow */
+        }
+
+         #mobileMusicListContent h2 {
+             font-size: 1.5rem; /* Text-2xl */
+             font-weight: 700; /* Font-bold */
+             border-bottom: 1px solid #475569; /* Slate-600 */
+             padding-bottom: 12px; /* pb-3 */
+             margin-bottom: 16px; /* mb-4 */
+             display: flex;
+             align-items: center;
+             gap: 12px; /* gap-3 */
+         }
+
+        /* Responsive layout for sidebar and main content */
+        @media (max-width: 767px) { /* Apply below md breakpoint */
+            body {
+                flex-direction: column; /* Stack elements vertically on small screens */
+                overflow-y: auto; /* Allow scrolling on the body when stacked */
+            }
+            aside {
+                display: none !important; /* Hide desktop sidebar on mobile with high priority */
+            }
+
+            main {
+                width: 100%; /* Main content takes full width */
+                height: auto; /* Auto height */
+                flex-grow: 1; /* Allow main content to take remaining space */
+                 overflow-y: visible; /* Main content handles its own potential scrolling */
+                 padding-top: 1rem; /* Adjust padding */
+                 padding-bottom: 6rem; /* Add padding at the bottom for controls */
+            }
+             .custom-player-controls {
+                 padding: 10px 15px; /* Reduce padding on small screens */
+                 margin-top: 1rem; /* Adjust margin */
+             }
+             /* Hide the top buttons container on mobile */
+             .top-buttons-mobile {
+                 display: none;
+             }
+             /* Hide admin button on mobile */
+             #adminButton {
+                 display: none;
+             }
+             #coverImage {
+                 width: 250px; /* Smaller cover image on mobile */
+                 height: 250px;
+                 margin-bottom: 1rem; /* Adjust margin */
+             }
+             #player {
+                 padding-top: 0; /* Remove extra top padding */
+             }
+             /* Hide mobile song count on mobile (as the container is hidden) */
+             #songCountMobile {
+                 display: none;
+             }
+        }
+
+         @media (min-width: 768px) { /* Apply from md breakpoint */
+            body {
+                flex-direction: row; /* Side-by-side layout */
+            }
+             /* Show desktop sidebar on desktop */
+            aside {
+                display: flex;
+                width: 18rem; /* md:w-72 */
+                height: 100vh; /* Full height */
+                overflow-y: auto; /* Allow scrolling */
+                 position: static; /* Static position on desktop */
+                 left: auto; /* Reset left property */
+            }
+             main {
+                flex-grow: 1; /* Main content takes remaining space */
+                height: 100vh; /* Full height */
+                overflow-y: auto; /* Allow scrolling */
+                padding-top: 2.5rem; /* top-10 */
+                padding-bottom: 2.5rem; /* bottom-10 */
+             }
+             /* Hide mobile menu button on desktop */
+             .menu-button-mobile {
+                 display: none !important;
+             }
+             /* Hide mobile button container on desktop */
+             .top-buttons-mobile {
+                 display: none;
+             }
+             #adminButton {
+                 position: absolute; /* Absolute positioning on larger screens */
+                 top: 1.25rem; /* top-5 */
+                 right: 1.25rem; /* right-5 */
+                 display: flex; /* Show admin button on desktop */
+                 padding: 0.5rem 0.75rem; /* Adjust padding for icon-only button */
+             }
+              #adminButton i {
+                  margin: 0; /* Remove margin next to text */
+              }
+              #coverImage {
+                 width: 300px; /* Original size on larger screens */
+                 height: 300px;
+                 margin-bottom: 1.5rem; /* mb-6 */
+             }
+             /* Hide mobile music list modal on desktop */
+             #mobileMusicListModal {
+                 display: none !important;
+             }
+             #songCountMobile {
+                 display: none; /* Hide mobile song count on desktop */
+             }
+             #songCountDesktop {
+                 display: inline-block; /* Show desktop song count */
+                 font-size: 1rem; /* text-base */
+                 color: #9ca3af; /* gray-400 */
+                 font-weight: 500; /* font-medium */
+                 margin-left: auto; /* Push to the right */
+             }
+        }
+
     </style>
 </head>
-<body class="bg-gray-100 flex">
+<body class="bg-gray-100">
 
-    <aside class="w-64 md:w-72 lg:w-80 bg-gradient-to-br from-gray-900 to-slate-800 text-white p-5 flex flex-col h-screen shadow-lg">
+    <aside class="w-64 md:w-72 lg:w-80 bg-gradient-to-br from-gray-900 to-slate-800 text-white p-5 flex flex-col shadow-lg">
         <h2 class="text-2xl font-bold border-b border-gray-700 pb-3 mb-4 flex items-center gap-3">
             <i class="fa fa-music text-indigo-400"></i> Müzikler
+            <span id="songCountDesktop" class="text-base font-medium text-gray-400 ml-auto">0 Şarkı</span>
         </h2>
-        <div id="musicList" class="flex-grow overflow-y-auto space-y-3 pr-2">
+        <div id="musicListDesktop" class="flex-grow overflow-y-auto space-y-3 pr-2">
             </div>
     </aside>
 
-    <main class="flex-1 bg-gradient-to-br from-gray-100 to-gray-200 flex flex-col items-center justify-center p-5 md:p-10 relative h-screen overflow-y-auto">
-        <button id="adminButton" onclick="showAdminPanel()" class="absolute top-5 right-5 bg-slate-800 hover:bg-indigo-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition-all flex items-center gap-2 z-10">
-            <i class="fa fa-lock"></i> Admin Girişi
-        </button>
+    <main class="flex-1 bg-gradient-to-br from-gray-100 to-gray-200 flex flex-col items-center justify-center p-5 md:p-10 relative overflow-y-auto">
+
+        <button id="adminButton" onclick="showAdminPanel()" class="bg-slate-800 hover:bg-indigo-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition-all flex items-center justify-center z-10">
+            <i class="fa fa-lock"></i> </button>
 
         <div id="player" class="text-center flex flex-col items-center w-full px-4">
             <img id="coverImage" src="https://placehold.co/300x300/e2e8f0/94a3b8?text=Müzik+Seçin" alt="Albüm Kapağı" width="300" height="300" class="rounded-xl shadow-xl mb-6 object-cover border-4 border-white"/>
+            <h3 id="currentSongTitle" class="text-xl font-semibold text-gray-800 mb-4 truncate w-full px-4">Müzik Seçin</h3>
+
             <audio id="audioPlayer"></audio>
 
             <div class="custom-player-controls">
@@ -155,8 +322,7 @@
                 </div>
 
                 <div class="flex items-center justify-between">
-                     <div class="w-1/4 flex justify-start">
-                        </div>
+                     <div class="w-1/4 flex justify-start"></div>
 
                     <div class="flex items-center justify-center gap-4 flex-grow">
                         <button id="prevBtn" class="text-gray-600 hover:text-gray-900 transition-colors w-8 h-8" aria-label="Önceki Şarkı" onclick="playPrevious()" disabled>
@@ -178,6 +344,18 @@
             </div>
         </div>
     </main>
+
+    <div id="mobileMusicListModal">
+        <div id="mobileMusicListContent">
+            <button onclick="closeMobileMusicList()" class="absolute top-3 right-3 text-gray-400 hover:text-white text-2xl transition-colors">
+                <i class="fa fa-times"></i>
+            </button>
+             <h2><i class="fa fa-music text-indigo-400"></i> Müzikler</h2>
+            <div id="musicListMobile" class="space-y-3 pr-2">
+                 </div>
+        </div>
+    </div>
+
 
     <div id="adminPanel" class="fixed inset-0 bg-black bg-opacity-80 backdrop-blur-sm text-white flex items-center justify-center z-50 hidden p-5">
         <div class="bg-slate-800 p-6 md:p-8 rounded-xl shadow-2xl w-full max-w-md relative">
@@ -211,6 +389,7 @@
 
                 <label for="deleteSelect" class="block text-sm font-medium text-gray-300">Silinecek Müziği Seç:</label>
                 <select id="deleteSelect" class="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-white">
+                    <option value="" disabled selected>Silmek için seçin...</option>
                     </select>
                 <button onclick="deleteMusic()" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-4 rounded-lg transition-all flex items-center justify-center gap-2">
                     <i class="fa fa-trash"></i> Seçilen Müziği Sil
@@ -220,9 +399,14 @@
     </div>
 
     <script>
+        // --- IndexedDB Setup and Variables ---
         let db;
+        const dbRequest = indexedDB.open('musicDatabase', 1);
+
         // DOM Elements
-        const musicList = document.getElementById('musicList');
+        const musicListDesktop = document.getElementById('musicListDesktop'); // Desktop list
+        const musicListMobile = document.getElementById('musicListMobile'); // Mobile list
+        const mobileMusicListModal = document.getElementById('mobileMusicListModal'); // Mobile modal
         const audioPlayer = document.getElementById('audioPlayer');
         const coverImage = document.getElementById('coverImage');
         const deleteSelect = document.getElementById('deleteSelect');
@@ -232,6 +416,10 @@
         const adminPassInput = document.getElementById('adminPass');
         const loginButton = document.getElementById('loginBtn');
         const loginForm = document.getElementById('loginForm');
+        const body = document.body; // Get the body element
+        const songCountDesktop = document.getElementById('songCountDesktop'); // Desktop song count element
+        const currentSongTitleElement = document.getElementById('currentSongTitle'); // Current song title element
+
 
         // Custom Player Elements
         const playPauseBtn = document.getElementById('playPauseBtn');
@@ -251,13 +439,11 @@
         let musicData = []; // Array to hold the current list of music objects
         let lastVolume = 1; // Store volume before mute
 
-        // --- IndexedDB Setup ---
-        const dbRequest = indexedDB.open('musicDatabase', 1);
-
+        // --- IndexedDB Event Handlers ---
         dbRequest.onsuccess = function(event) {
             db = event.target.result;
             console.log("Veritabanı başarıyla açıldı.");
-            renderMusics(); // Initial render
+            renderMusics(); // Initial render of the music list
         };
 
         dbRequest.onerror = function(event) {
@@ -268,6 +454,7 @@
         dbRequest.onupgradeneeded = function(event) {
             console.log("Veritabanı yükseltiliyor...");
             const db = event.target.result;
+            // Create object store if it doesn't exist
             if (!db.objectStoreNames.contains('musics')) {
                 const objectStore = db.createObjectStore('musics', { keyPath: 'id', autoIncrement: true });
                 objectStore.createIndex('name', 'name', { unique: false });
@@ -275,7 +462,9 @@
             }
         };
 
-        // --- Format Time (Helper Function) ---
+        // --- Helper Functions ---
+
+        // Formats time in seconds to MM:SS format
         function formatTime(seconds) {
             if (isNaN(seconds) || seconds < 0) return "0:00"; // Handle invalid input
             const minutes = Math.floor(seconds / 60);
@@ -283,71 +472,7 @@
             return `${minutes}:${secs < 10 ? '0' : ''}${secs}`;
         }
 
-        // --- Player Event Listeners ---
-        playPauseBtn.addEventListener('click', togglePlayPause);
-        audioPlayer.addEventListener('timeupdate', updateSeekBar);
-        audioPlayer.addEventListener('loadedmetadata', setDuration);
-        audioPlayer.addEventListener('play', () => playPauseIcon.className = 'fa fa-pause fa-lg');
-        audioPlayer.addEventListener('pause', () => playPauseIcon.className = 'fa fa-play fa-lg');
-        audioPlayer.addEventListener('ended', playNext); // Play next song when current ends
-        seekBar.addEventListener('input', seek);
-        volumeBar.addEventListener('input', changeVolume);
-
-        // --- Player Control Functions ---
-        function togglePlayPause() {
-            if (!audioPlayer.src || currentMusicId === null) return; // Do nothing if no song is loaded
-            if (audioPlayer.paused) {
-                audioPlayer.play().catch(e => console.error("Oynatma hatası:", e));
-            } else {
-                audioPlayer.pause();
-            }
-        }
-
-        function updateSeekBar() {
-            if (audioPlayer.duration && isFinite(audioPlayer.duration)) {
-                const percentage = (audioPlayer.currentTime / audioPlayer.duration) * 100;
-                seekBar.value = percentage;
-                // Update CSS variable for progress fill
-                seekBar.style.setProperty('--progress', `${percentage}%`);
-                currentTimeSpan.textContent = formatTime(audioPlayer.currentTime);
-            } else {
-                 seekBar.value = 0;
-                 seekBar.style.setProperty('--progress', `0%`);
-                 currentTimeSpan.textContent = formatTime(0);
-            }
-        }
-
-        function setDuration() {
-             if (audioPlayer.duration && isFinite(audioPlayer.duration)) {
-                totalDurationSpan.textContent = formatTime(audioPlayer.duration);
-                seekBar.value = 0; // Reset seek bar on new song load
-                seekBar.style.setProperty('--progress', `0%`);
-                currentTimeSpan.textContent = formatTime(0);
-            } else {
-                totalDurationSpan.textContent = "0:00";
-                currentTimeSpan.textContent = "0:00";
-                seekBar.value = 0;
-                seekBar.style.setProperty('--progress', `0%`);
-            }
-        }
-
-        function seek() {
-            if (!audioPlayer.src || !audioPlayer.duration || !isFinite(audioPlayer.duration)) return;
-            const time = (seekBar.value / 100) * audioPlayer.duration;
-            audioPlayer.currentTime = time;
-            // Update progress immediately while dragging
-            seekBar.style.setProperty('--progress', `${seekBar.value}%`);
-        }
-
-        function changeVolume() {
-            audioPlayer.volume = volumeBar.value;
-            updateVolumeIcon(audioPlayer.volume);
-             // Store volume if not muted
-            if (audioPlayer.volume > 0) {
-                lastVolume = audioPlayer.volume;
-            }
-        }
-
+        // Updates the volume icon based on the current volume level
         function updateVolumeIcon(volume) {
              if (volume === 0) {
                 volumeIcon.className = 'fa fa-volume-xmark text-gray-600 hover:text-gray-900 cursor-pointer w-5 text-center';
@@ -358,6 +483,112 @@
             }
         }
 
+        // Updates the state of player UI elements (buttons, times, song title)
+         function updatePlayerUIState() {
+            // Enable/disable prev/next buttons based on list size
+            const hasMultipleSongs = musicData.length > 1;
+            prevBtn.disabled = !hasMultipleSongs;
+            nextBtn.disabled = !hasMultipleSongs;
+
+            // Update play/pause icon based on current audio state
+            if (audioPlayer.paused) {
+                playPauseIcon.className = 'fa fa-play fa-lg';
+            } else {
+                playPauseIcon.className = 'fa fa-pause fa-lg';
+            }
+
+             // Reset times and seek bar if no song is loaded
+            if (currentMusicId === null) {
+                currentTimeSpan.textContent = "0:00";
+                totalDurationSpan.textContent = "0:00";
+                seekBar.value = 0;
+                seekBar.style.setProperty('--progress', `0%`);
+                 // Disable seek bar if no music is loaded
+                seekBar.disabled = true;
+                 // Reset song title
+                 if(currentSongTitleElement) currentSongTitleElement.textContent = "Müzik Seçin";
+            } else {
+                 // Enable seek bar if music is loaded
+                 seekBar.disabled = false;
+                 // Update song title (handled in loadAndPlayMusic)
+            }
+        }
+
+
+        // --- Player Event Listeners ---
+        playPauseBtn.addEventListener('click', togglePlayPause);
+        audioPlayer.addEventListener('timeupdate', updateSeekBar); // Update seek bar as music plays
+        audioPlayer.addEventListener('loadedmetadata', setDuration); // Set total duration when metadata is loaded
+        audioPlayer.addEventListener('play', () => updatePlayerUIState()); // Update UI when playback starts
+        audioPlayer.addEventListener('pause', () => updatePlayerUIState()); // Update UI when playback pauses
+        audioPlayer.addEventListener('ended', playNext); // Play next song when current ends
+        seekBar.addEventListener('input', seek); // Seek when the user drags the seek bar
+        volumeBar.addEventListener('input', changeVolume); // Change volume when the user drags the volume bar
+
+        // --- Player Control Functions ---
+
+        // Toggles between play and pause
+        function togglePlayPause() {
+            if (!audioPlayer.src || currentMusicId === null) return; // Do nothing if no song is loaded
+            if (audioPlayer.paused) {
+                audioPlayer.play().catch(e => console.error("Oynatma hatası:", e)); // Handle potential autoplay errors
+            } else {
+                audioPlayer.pause();
+            }
+        }
+
+        // Updates the seek bar position and current time display
+        function updateSeekBar() {
+            if (audioPlayer.duration && isFinite(audioPlayer.duration)) {
+                const percentage = (audioPlayer.currentTime / audioPlayer.duration) * 100;
+                seekBar.value = percentage;
+                // Update CSS variable for progress fill
+                seekBar.style.setProperty('--progress', `${percentage}%`);
+                currentTimeSpan.textContent = formatTime(audioPlayer.currentTime);
+            } else {
+                 // Reset if duration is not available (e.g., before metadata loads)
+                 seekBar.value = 0;
+                 seekBar.style.setProperty('--progress', `0%`);
+                 currentTimeSpan.textContent = formatTime(0);
+            }
+        }
+
+        // Sets the total duration display when music metadata is loaded
+        function setDuration() {
+             if (audioPlayer.duration && isFinite(audioPlayer.duration)) {
+                totalDurationSpan.textContent = formatTime(audioPlayer.duration);
+                seekBar.value = 0; // Reset seek bar on new song load
+                seekBar.style.setProperty('--progress', `0%`);
+                currentTimeSpan.textContent = formatTime(0);
+            } else {
+                // Reset if duration is not valid
+                totalDurationSpan.textContent = "0:00";
+                currentTimeSpan.textContent = "0:00";
+                seekBar.value = 0;
+                seekBar.style.setProperty('--progress', `0%`);
+            }
+        }
+
+        // Seeks to a specific position in the song based on the seek bar value
+        function seek() {
+            if (!audioPlayer.src || !audioPlayer.duration || !isFinite(audioPlayer.duration)) return; // Do nothing if no song or invalid duration
+            const time = (seekBar.value / 100) * audioPlayer.duration;
+            audioPlayer.currentTime = time;
+            // Update progress immediately while dragging
+            seekBar.style.setProperty('--progress', `${seekBar.value}%`);
+        }
+
+        // Changes the volume based on the volume bar value
+        function changeVolume() {
+            audioPlayer.volume = volumeBar.value;
+            updateVolumeIcon(audioPlayer.volume);
+             // Store volume if not muted
+            if (audioPlayer.volume > 0) {
+                lastVolume = audioPlayer.volume;
+            }
+        }
+
+        // Toggles mute/unmute
         function toggleMute() {
             if (audioPlayer.volume > 0) {
                 // Mute: store current volume, set volume to 0
@@ -373,15 +604,17 @@
             }
         }
 
+        // Loads and plays a music item by its index in the current musicData array
         function loadAndPlayMusic(index) {
             if (index < 0 || index >= musicData.length) {
                 console.log("Geçersiz müzik indexi:", index);
                  // Stop player if index is out of bounds
                  audioPlayer.pause();
-                 audioPlayer.src = '';
-                 coverImage.src = defaultCover;
+                 audioPlayer.src = ''; // Clear source
+                 coverImage.src = defaultCover; // Reset cover image
                  currentMusicId = null;
                  currentMusicIndex = -1;
+                 if(currentSongTitleElement) currentSongTitleElement.textContent = "Müzik Seçin"; // Reset song title
                  updatePlayerUIState(); // Reset UI
                 return;
             }
@@ -389,101 +622,134 @@
             const music = musicData[index];
             console.log(`Yükleniyor: ${music.name} (ID: ${music.id}, Index: ${index})`);
 
+            // Set audio source and cover image
             audioPlayer.src = music.audioUrl;
-            coverImage.src = music.imageUrl || defaultCover;
-            currentMusicId = music.id;
-            currentMusicIndex = index;
+            coverImage.src = music.imageUrl || defaultCover; // Use default cover if no image
+            currentMusicId = music.id; // Update current music ID
+            currentMusicIndex = index; // Update current music index
+            if(currentSongTitleElement) currentSongTitleElement.textContent = music.name; // Update song title
 
-            // Update active state styling in the list
-            document.querySelectorAll('.music-item').forEach((item, idx) => {
-                item.classList.toggle('bg-indigo-600', idx === index);
-                item.classList.toggle('bg-gray-800', idx !== index); // Ensure others are default
-                 // Scroll into view if needed
+            // Update active state styling in the music list sidebar (desktop)
+            document.querySelectorAll('#musicListDesktop .music-item').forEach((item, idx) => {
+                item.classList.toggle('bg-indigo-600', idx === index); // Highlight active song
+                item.classList.toggle('bg-gray-800', idx !== index); // Ensure others are default color
                  if (idx === index) {
                     item.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
                  }
             });
 
-            // Reset and play
+             // Update active state styling in the music list modal (mobile)
+             document.querySelectorAll('#musicListMobile .music-item').forEach((item, idx) => {
+                item.classList.toggle('bg-indigo-600', idx === index); // Highlight active song
+                item.classList.toggle('bg-gray-800', idx !== index); // Ensure others are default color
+                 if (idx === index) {
+                    item.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                 }
+            });
+
+
+            // Load and play the new audio source
             audioPlayer.load(); // Important to load the new source
             audioPlayer.play().catch(e => {
                 console.error("Otomatik oynatma engellendi veya hata:", e);
-                playPauseIcon.className = 'fa fa-play fa-lg'; // Show play icon if autoplay fails
+                // If autoplay fails, ensure play icon is shown
+                playPauseIcon.className = 'fa fa-play fa-lg';
             });
-            updatePlayerUIState(); // Update buttons etc.
+
+            updatePlayerUIState(); // Update buttons etc. based on new state
+            // closeMobileMusicList(); // Mobile list is not opened by a button anymore
         }
 
+        // Plays the next song in the list, wrapping around to the beginning
         function playNext() {
-            if (musicData.length === 0) return;
-            let nextIndex = (currentMusicIndex + 1) % musicData.length; // Wrap around
-            loadAndPlayMusic(nextIndex);
+            if (musicData.length === 0) return; // Do nothing if list is empty
+            let nextIndex = (currentMusicIndex + 1) % musicData.length; // Calculate next index (wraps around)
+            loadAndPlayMusic(nextIndex); // Load and play the next song
         }
 
+        // Plays the previous song in the list, wrapping around to the end
         function playPrevious() {
-             if (musicData.length === 0) return;
+             if (musicData.length === 0) return; // Do nothing if list is empty
              // If current time is > 3 seconds, restart current song, otherwise go to previous
              if (audioPlayer.currentTime > 3 && currentMusicIndex !== -1) {
-                 audioPlayer.currentTime = 0;
+                 audioPlayer.currentTime = 0; // Restart current song
                  audioPlayer.play().catch(e => console.error("Oynatma hatası:", e));
              } else {
-                let prevIndex = (currentMusicIndex - 1 + musicData.length) % musicData.length; // Wrap around correctly
-                loadAndPlayMusic(prevIndex);
+                let prevIndex = (currentMusicIndex - 1 + musicData.length) % musicData.length; // Calculate previous index (wraps around)
+                loadAndPlayMusic(prevIndex); // Load and play the previous song
              }
         }
 
-         function updatePlayerUIState() {
-            // Enable/disable prev/next buttons based on list size
-            const hasMultipleSongs = musicData.length > 1;
-            prevBtn.disabled = !hasMultipleSongs;
-            nextBtn.disabled = !hasMultipleSongs;
+        // --- Mobile Music List Modal Control ---
+        // These functions remain but are not triggered by a button in the mobile view anymore
+        function toggleMobileMusicList() {
+             const modal = document.getElementById('mobileMusicListModal'); // Get modal inside the function
+             if (modal) { // Check if modal element exists
+                 modal.classList.toggle('open');
+             } else {
+                 console.error("Mobile music list modal element not found!");
+             }
+        }
 
-            // Update play/pause icon based on current state
-            if (audioPlayer.paused) {
-                playPauseIcon.className = 'fa fa-play fa-lg';
-            } else {
-                playPauseIcon.className = 'fa fa-pause fa-lg';
-            }
+        function openMobileMusicList() {
+             const modal = document.getElementById('mobileMusicListModal'); // Get modal inside the function
+             if (modal) { // Check if modal element exists
+                 modal.classList.add('open');
+             } else {
+                  console.error("Mobile music list modal element not found!");
+             }
+        }
 
-             // Reset times if no song is loaded
-            if (currentMusicId === null) {
-                currentTimeSpan.textContent = "0:00";
-                totalDurationSpan.textContent = "0:00";
-                seekBar.value = 0;
-                seekBar.style.setProperty('--progress', `0%`);
-            }
+        function closeMobileMusicList() {
+             const modal = document.getElementById('mobileMusicListModal'); // Get modal inside the function
+             if (modal) { // Check if modal element exists
+                 modal.classList.remove('open');
+             } else {
+                 console.error("Mobile music list modal element not found!");
+             }
         }
 
 
         // --- Render Music List ---
+
+        // Fetches music data from IndexedDB and renders the list in both desktop sidebar and mobile modal
         function renderMusics() {
             if (!db) {
                 console.error("Veritabanı henüz hazır değil.");
                 return;
             }
             // Clear previous lists
-            musicList.innerHTML = '';
-            deleteSelect.innerHTML = '<option value="" disabled selected>Silmek için seçin...</option>';
+            if (musicListDesktop) musicListDesktop.innerHTML = '';
+            if (musicListMobile) musicListMobile.innerHTML = ''; // Clear mobile list as well
+            if (deleteSelect) deleteSelect.innerHTML = '<option value="" disabled selected>Silmek için seçin...</option>';
             musicData = []; // Clear internal data array
 
             try {
                 const transaction = db.transaction(['musics'], 'readonly');
                 const objectStore = transaction.objectStore('musics');
-                const request = objectStore.getAll();
+                const request = objectStore.getAll(); // Get all music items
 
                 request.onsuccess = function(event) {
                     musicData = event.target.result; // Store fetched data
                     console.log(`Bulunan müzik sayısı: ${musicData.length}`);
 
+                    // Update song count displays (only desktop count remains in the UI)
+                    if(songCountDesktop) songCountDesktop.textContent = `${musicData.length} Şarkı`;
+
+
+                    // If no music is found, display a message and reset player state
                     if (musicData.length === 0) {
-                        musicList.innerHTML = '<p class="text-gray-400 text-center mt-4">Henüz müzik eklenmemiş.</p>';
-                         // Reset player if list becomes empty
-                         if (currentMusicId !== null) {
+                        const noMusicMessage = '<p class="text-gray-400 text-center mt-4">Henüz müzik eklenmemiş.</p>';
+                        if (musicListDesktop) musicListDesktop.innerHTML = noMusicMessage;
+                        if (musicListMobile) musicListMobile.innerHTML = noMusicMessage; // Display message in mobile list
+                         if (currentMusicId !== null) { // Reset player only if a song was playing
                             audioPlayer.pause();
-                            audioPlayer.src = '';
-                            coverImage.src = defaultCover;
+                            audioPlayer.src = ''; // Clear source
+                            coverImage.src = defaultCover; // Reset cover image
                             currentMusicId = null;
-                            currentMusicIndex = -1;
+                            currentMusicIndex = -1; // Reset index
                          }
+                         if(currentSongTitleElement) currentSongTitleElement.textContent = "Müzik Seçin"; // Reset song title
                          updatePlayerUIState(); // Update button states
                         return; // Exit if no music
                     }
@@ -491,35 +757,50 @@
                     // Find the index of the currently playing song in the new list
                     currentMusicIndex = musicData.findIndex(music => music.id === currentMusicId);
 
+                    // Render each music item in both the desktop sidebar and mobile modal
                     musicData.forEach((music, index) => {
-                        // Create sidebar item
-                        const div = document.createElement('div');
-                        // Apply active class if this is the currently loaded song
-                        div.className = `music-item flex items-center gap-3 p-3 rounded-lg cursor-pointer transition-all transform hover:scale-[1.03] ${music.id === currentMusicId ? 'bg-indigo-600' : 'bg-gray-800 hover:bg-indigo-700'}`;
-                        div.dataset.id = music.id; // Store music ID
+                        // Function to create a music list item element
+                        const createMusicItem = (listType) => {
+                            const div = document.createElement('div');
+                            // Apply active class if this is the currently loaded song
+                            div.className = `music-item flex items-center gap-3 p-3 rounded-lg cursor-pointer transition-all transform hover:scale-[1.03] ${music.id === currentMusicId ? 'bg-indigo-600' : 'bg-gray-800 hover:bg-indigo-700'}`;
+                            div.dataset.id = music.id; // Store music ID for easy access
 
-                        const img = document.createElement('img');
-                        img.src = music.imageUrl || 'https://placehold.co/60x60/7f9cf5/ffffff?text=♪'; // Default icon if no image
-                        img.alt = "Kapak";
-                        img.className = "w-12 h-12 rounded-md object-cover flex-shrink-0";
-                        img.onerror = () => img.src = 'https://placehold.co/60x60/7f9cf5/ffffff?text=♪'; // Fallback image
-                        div.appendChild(img);
+                            // Create image element for cover art
+                            const img = document.createElement('img');
+                            img.src = music.imageUrl || 'https://placehold.co/60x60/7f9cf5/ffffff?text=♪'; // Default icon if no image
+                            img.alt = "Kapak";
+                            img.className = "w-12 h-12 rounded-md object-cover flex-shrink-0";
+                            img.onerror = () => img.src = 'https://placehold.co/60x60/7f9cf5/ffffff?text=♪'; // Fallback image on error
+                            div.appendChild(img);
 
-                        const title = document.createElement('span');
-                        title.className = "font-medium truncate flex-grow";
-                        title.innerText = music.name;
-                        div.appendChild(title);
+                            // Create span for music title
+                            const title = document.createElement('span');
+                            title.className = "font-medium truncate flex-grow";
+                            title.innerText = music.name;
+                            div.appendChild(title);
 
-                        div.onclick = () => {
-                             loadAndPlayMusic(index); // Load and play based on index
+                            // Add click event listener to load and play the music
+                            div.onclick = () => {
+                                loadAndPlayMusic(index); // Load and play based on index
+                            };
+                            return div;
                         };
-                        musicList.appendChild(div);
 
-                        // Create delete select option
-                        const option = document.createElement('option');
-                        option.value = music.id;
-                        option.text = music.name;
-                        deleteSelect.appendChild(option);
+                        // Add to desktop list if element exists
+                        if (musicListDesktop) musicListDesktop.appendChild(createMusicItem('desktop'));
+
+                        // Add to mobile list if element exists
+                        if (musicListMobile) musicListMobile.appendChild(createMusicItem('mobile'));
+
+
+                        // Create option element for the delete dropdown if element exists
+                        if (deleteSelect) {
+                            const option = document.createElement('option');
+                            option.value = music.id;
+                            option.text = music.name;
+                            deleteSelect.appendChild(option); // Add to delete dropdown
+                        }
                     });
 
                      updatePlayerUIState(); // Update buttons after rendering
@@ -527,18 +808,22 @@
 
                 request.onerror = function(event) {
                     console.error('Müzikler alınırken hata: ', event.target.error);
-                    musicList.innerHTML = '<p class="text-red-400 text-center mt-4">Müzikler yüklenemedi.</p>';
+                    const errorMessage = '<p class="text-red-400 text-center mt-4">Müzikler yüklenemedi.</p>';
+                    if (musicListDesktop) musicListDesktop.innerHTML = errorMessage;
+                    if (musicListMobile) musicListMobile.innerHTML = errorMessage; // Display error in mobile list
                      updatePlayerUIState(); // Update buttons even on error
                 }
 
             } catch (error) {
                 console.error("RenderMusics içinde hata:", error);
-                alert("Müzikleri listelerken bir sorun oluştu.");
+                alert("Müzik listesini oluştururken bir sorun oluştu.");
                  updatePlayerUIState(); // Update buttons on catch
             }
         }
 
         // --- Add Music ---
+
+        // Handles adding new music via the admin panel form
         function addMusic() {
             const nameInput = document.getElementById('musicName');
             const fileInput = document.getElementById('musicFile');
@@ -553,79 +838,83 @@
                 return;
             }
 
-            // Show loading indicator (optional)
+            // Show loading indicator on the button
             const addButton = adminControlsDiv.querySelector('button[onclick="addMusic()"]');
             const originalButtonText = addButton.innerHTML;
             addButton.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Ekleniyor...';
             addButton.disabled = true;
 
+            // Read the audio file as a Data URL
             const audioReader = new FileReader();
             audioReader.onload = function(e) {
                 const musicObj = {
                     name: name,
-                    audioUrl: e.target.result,
-                    imageUrl: null
+                    audioUrl: e.target.result, // Data URL of the audio file
+                    imageUrl: null // Placeholder for image URL
                 };
 
+                // If an image is provided, read it as a Data URL
                 if (image) {
-                    if (image.size > 5 * 1024 * 1024) { // 5MB limit
+                    if (image.size > 5 * 1024 * 1024) { // 5MB image size limit
                        alert("Resim dosyası çok büyük! (Maksimum 5MB)");
-                       // Restore button
+                       // Restore button state
                        addButton.innerHTML = originalButtonText;
                        addButton.disabled = false;
                        return;
                     }
                     const imageReader = new FileReader();
                     imageReader.onload = function(event) {
-                        musicObj.imageUrl = event.target.result;
-                        saveMusic(musicObj, addButton, originalButtonText); // Pass button state
+                        musicObj.imageUrl = event.target.result; // Data URL of the image file
+                        saveMusic(musicObj, addButton, originalButtonText); // Save music object to DB
                     };
                     imageReader.onerror = function() {
                         console.error("Resim dosyası okunurken hata.");
                         alert("Resim dosyası okunurken bir hata oluştu.");
-                         // Restore button
+                         // Restore button state
                         addButton.innerHTML = originalButtonText;
                         addButton.disabled = false;
                     }
                     imageReader.readAsDataURL(image);
                 } else {
-                    saveMusic(musicObj, addButton, originalButtonText); // Pass button state
+                    // Save music object without an image URL
+                    saveMusic(musicObj, addButton, originalButtonText);
                 }
             };
             audioReader.onerror = function() {
                 console.error("Ses dosyası okunurken hata.");
                 alert("Ses dosyası okunurken bir hata oluştu.");
-                 // Restore button
+                 // Restore button state
                 addButton.innerHTML = originalButtonText;
                 addButton.disabled = false;
             }
-            audioReader.readAsDataURL(file);
+            audioReader.readAsDataURL(file); // Start reading the audio file
         }
 
         // --- Save Music to DB ---
-        function saveMusic(musicObj, buttonElement, originalButtonHTML) { // Receive button state
+
+        // Saves a music object to the IndexedDB
+        function saveMusic(musicObj, buttonElement, originalButtonHTML) { // Receive button state elements
             if (!db) {
                 alert("Veritabanı bağlantısı yok.");
-                 // Restore button
+                 // Restore button state
                 buttonElement.innerHTML = originalButtonHTML;
                 buttonElement.disabled = false;
                 return;
             }
             try {
-                const transaction = db.transaction(['musics'], 'readwrite');
+                const transaction = db.transaction(['musics'], 'readwrite'); // Read/write transaction
                 const objectStore = transaction.objectStore('musics');
-                const request = objectStore.add(musicObj);
+                const request = objectStore.add(musicObj); // Add the music object
 
                 request.onsuccess = function() {
                     console.log("Müzik başarıyla eklendi:", musicObj.name);
-                    renderMusics(); // Refresh lists
+                    renderMusics(); // Refresh lists after adding
                     // Clear form fields
                     document.getElementById('musicName').value = '';
                     document.getElementById('musicFile').value = '';
                     document.getElementById('musicImage').value = '';
                     alert('Müzik başarıyla eklendi!');
-                    // limitMusicCount(50); // Optional: Limit total music count
-                     // Restore button
+                     // Restore button state
                     buttonElement.innerHTML = originalButtonHTML;
                     buttonElement.disabled = false;
                 };
@@ -633,31 +922,30 @@
                 request.onerror = function(event) {
                     console.error('Müzik eklenirken hata oluştu: ', event.target.error);
                     alert(`Müzik eklenemedi: ${event.target.error.message}`);
-                     // Restore button
+                     // Restore button state
                     buttonElement.innerHTML = originalButtonHTML;
                     buttonElement.disabled = false;
                 };
             } catch (error) {
                  console.error("SaveMusic içinde hata:", error);
                  alert("Müzik kaydedilirken bir sorun oluştu.");
-                  // Restore button
+                  // Restore button state
                  buttonElement.innerHTML = originalButtonHTML;
                  buttonElement.disabled = false;
             }
         }
 
-        // --- OPTIONAL: Limit Music Count ---
-        // function limitMusicCount(maxCount) { ... } // Keep the function if needed
-
         // --- Delete Music ---
+
+        // Handles deleting a music item from the IndexedDB
         function deleteMusic() {
-            const musicIdToDelete = parseInt(deleteSelect.value);
+            const musicIdToDelete = parseInt(deleteSelect.value); // Get the selected music ID
             if (isNaN(musicIdToDelete)) {
                 alert('Lütfen silinecek bir müzik seçin.');
                 return;
             }
 
-            const musicNameToDelete = deleteSelect.options[deleteSelect.selectedIndex].text;
+            const musicNameToDelete = deleteSelect.options[deleteSelect.selectedIndex].text; // Get the name for confirmation
             if (!confirm(`"${musicNameToDelete}" adlı müziği silmek istediğinizden emin misiniz?`)) {
                 return; // User cancelled
             }
@@ -668,21 +956,21 @@
             }
 
             try {
-                const transaction = db.transaction(['musics'], 'readwrite');
+                const transaction = db.transaction(['musics'], 'readwrite'); // Read/write transaction
                 const objectStore = transaction.objectStore('musics');
-                const request = objectStore.delete(musicIdToDelete);
+                const request = objectStore.delete(musicIdToDelete); // Delete the music by ID
 
                 request.onsuccess = function() {
                     console.log(`Müzik ID ${musicIdToDelete} silindi.`);
 
-                    // Check if the deleted music was the current one
+                    // Check if the deleted music was the currently playing one
                     const wasCurrentMusicDeleted = (currentMusicId === musicIdToDelete);
 
-                    // Stop player and clear info if current song was deleted
+                    // Stop player and clear info if the current song was deleted
                     if (wasCurrentMusicDeleted) {
                         audioPlayer.pause();
-                        audioPlayer.src = '';
-                        coverImage.src = defaultCover;
+                        audioPlayer.src = ''; // Clear source
+                        coverImage.src = defaultCover; // Reset cover image
                         currentMusicId = null;
                         currentMusicIndex = -1; // Reset index
                     }
@@ -692,15 +980,13 @@
 
                     alert(`"${musicNameToDelete}" başarıyla silindi!`);
 
-                     // If the deleted song was playing, try to play the next available song
+                     // If the deleted song was playing and there are other songs, try to play the first one
                      if (wasCurrentMusicDeleted && musicData.length > 0) {
                          // The renderMusics function will have updated musicData
-                         // We need to determine the correct next index based on the *old* index
-                         // Since renderMusics was called, currentMusicIndex is now -1
-                         // Let's try loading the song at index 0 if available
+                         // Load and play the first song in the updated list
                          loadAndPlayMusic(0);
                      } else if (musicData.length === 0) {
-                         // If list is now empty, ensure player UI is fully reset
+                         // If the list is now empty, ensure player UI is fully reset
                          updatePlayerUIState();
                      }
 
@@ -717,46 +1003,60 @@
         }
 
         // --- Admin Panel Visibility ---
+
+        // Shows the admin panel modal
         function showAdminPanel() {
             adminPanelDiv.classList.remove('hidden');
             adminPanelDiv.classList.add('flex');
-            adminPassInput.focus();
+            adminPassInput.focus(); // Focus the password input
         }
 
+        // Hides the admin panel modal and resets the form
         function closeAdminPanel() {
             adminPanelDiv.classList.add('hidden');
             adminPanelDiv.classList.remove('flex');
             // Hide controls and show login form again
             adminControlsDiv.classList.add('hidden');
+            adminControlsDiv.classList.remove('flex', 'flex-col', 'space-y-4'); // Remove flex classes
             loginForm.classList.remove('hidden'); // Show login form
             loginForm.classList.add('flex'); // Make login form flex
             adminPassInput.value = ''; // Clear password field
+             // Clear add music form fields as well
+            document.getElementById('musicName').value = '';
+            document.getElementById('musicFile').value = '';
+            document.getElementById('musicImage').value = '';
+             // Reset delete select
+            deleteSelect.value = ""; // Select the disabled option
         }
 
         // --- Admin Password Check ---
+
+        // Checks the entered password (client-side check - NOT SECURE for production)
         function checkPassword() {
             const pass = adminPassInput.value;
             // !!! GÜVENLİK UYARISI: Şifre KESİNLİKLE sunucu tarafında kontrol edilmelidir. !!!
             // Bu sadece görsel bir örnektir.
-            if (pass === '1234') { // Örnek şifre
+            if (pass === '1234') { // Example password (replace with secure server-side check)
                 loginForm.classList.add('hidden'); // Hide login form
                 loginForm.classList.remove('flex');
-                adminControlsDiv.classList.remove('hidden');
-                adminControlsDiv.classList.add('flex', 'flex-col', 'space-y-4');
+                adminControlsDiv.classList.remove('hidden'); // Show admin controls
+                adminControlsDiv.classList.add('flex', 'flex-col', 'space-y-4'); // Add flex classes
             } else {
                 alert('Şifre yanlış!');
                 adminPassInput.value = ''; // Clear password field on failure
-                adminPassInput.focus();
+                adminPassInput.focus(); // Refocus the password input
             }
         }
 
         // --- Initial Setup ---
-        coverImage.src = defaultCover;
-        adminControlsDiv.classList.add('hidden');
+
+        // Code to run when the script loads
+        coverImage.src = defaultCover; // Set initial cover image
+        adminControlsDiv.classList.add('hidden'); // Ensure admin controls are hidden initially
         // Set initial volume bar value based on player's default volume
         volumeBar.value = audioPlayer.volume;
-        updateVolumeIcon(audioPlayer.volume); // Update icon initially
-        updatePlayerUIState(); // Set initial button states
+        updateVolumeIcon(audioPlayer.volume); // Update volume icon initially
+        updatePlayerUIState(); // Set initial button states (disabled if no music)
 
     </script>
 
