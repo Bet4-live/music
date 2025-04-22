@@ -32,17 +32,16 @@
         }
         /* Hide default audio player controls */
         audio {
-           /* display: none; */ /* We hide it visually but keep the element */
-           /* Let's keep the default controls for now, and build custom ones below */
            width: 100%;
            max-width: 500px; /* Limit player width */
            margin-top: 1rem; /* Add space above player */
            filter: invert(15%) sepia(5%) saturate(1200%) hue-rotate(190deg) brightness(95%) contrast(90%); /* Subtle color adjustment */
            border-radius: 999px; /* Rounded corners for the player */
-           opacity: 0.5; /* Make default controls less prominent if shown */
+           opacity: 0; /* Hide completely */
            pointer-events: none; /* Disable interaction with default controls */
-           height: 40px; /* Give it some height */
-           visibility: hidden; /* Hide it completely, but keep its space */
+           height: 0px; /* No height */
+           visibility: hidden; /* Hide it completely */
+           position: absolute; /* Remove from layout flow */
         }
         /* Custom progress bar styling */
         input[type="range"] {
@@ -50,11 +49,28 @@
             appearance: none;
             width: 100%;
             height: 6px;
-            background: #ddd; /* Track color */
+            background: #e5e7eb; /* Lighter track color (gray-200) */
             border-radius: 3px;
             cursor: pointer;
             outline: none;
         }
+        /* Progress fill */
+        input[type="range"].seek-bar::-webkit-slider-runnable-track {
+            background: linear-gradient(to right, #4f46e5 var(--progress, 0%), #e5e7eb var(--progress, 0%));
+            height: 6px;
+            border-radius: 3px;
+        }
+        input[type="range"].seek-bar::-moz-range-progress {
+            background-color: #4f46e5;
+            height: 6px;
+             border-radius: 3px;
+        }
+         input[type="range"].seek-bar::-moz-range-track {
+             background-color: #e5e7eb;
+             height: 6px;
+             border-radius: 3px;
+         }
+
         input[type="range"]::-webkit-slider-thumb {
             -webkit-appearance: none;
             appearance: none;
@@ -63,6 +79,7 @@
             background: #4f46e5; /* Indigo thumb color */
             border-radius: 50%;
             cursor: pointer;
+            margin-top: -5px; /* Center thumb vertically */
         }
         input[type="range"]::-moz-range-thumb {
             width: 16px;
@@ -72,24 +89,41 @@
             cursor: pointer;
             border: none; /* Remove default border in Firefox */
         }
-         input[type="range"]::-moz-range-track {
-            background: #ddd;
-             border-radius: 3px;
+
+        /* Volume bar specific thumb */
+        input[type="range"].volume-bar::-webkit-slider-thumb {
+            background: #6b7280; /* Gray thumb for volume */
+             width: 12px;
+            height: 12px;
+            margin-top: -3px; /* Center thumb vertically */
         }
+         input[type="range"].volume-bar::-moz-range-thumb {
+            background: #6b7280; /* Gray thumb for volume */
+            width: 12px;
+            height: 12px;
+        }
+
+
         /* Basic transition for hover effects */
         .transition-all {
             transition: all 0.2s ease-in-out;
         }
         /* Style for the custom player controls container */
         .custom-player-controls {
-            background-color: rgba(255, 255, 255, 0.7); /* Semi-transparent white */
-            backdrop-filter: blur(5px); /* Blur effect */
-            border-radius: 12px;
-            padding: 15px 20px;
+            background-color: rgba(255, 255, 255, 0.8); /* Slightly more opaque white */
+            backdrop-filter: blur(8px); /* Stronger blur effect */
+            border-radius: 16px; /* More rounded */
+            padding: 15px 25px; /* Adjust padding */
             margin-top: 1.5rem; /* Space above controls */
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1); /* Softer shadow */
             width: 100%;
             max-width: 500px; /* Match audio player max-width */
+            border: 1px solid rgba(255, 255, 255, 0.2); /* Subtle border */
+        }
+        /* Styling for disabled buttons */
+        button:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
         }
     </style>
 </head>
@@ -113,28 +147,31 @@
             <audio id="audioPlayer"></audio>
 
             <div class="custom-player-controls">
-                <div class="flex items-center gap-3 mb-2">
-                    <span id="currentTime" class="text-xs font-medium text-gray-600 w-10 text-left">0:00</span>
-                    <input type="range" id="seekBar" value="0" class="flex-grow">
-                    <span id="totalDuration" class="text-xs font-medium text-gray-600 w-10 text-right">0:00</span>
+                <div class="flex items-center gap-3 mb-3">
+                    <span id="currentTime" class="text-xs font-medium text-gray-600 w-10 text-left tabular-nums">0:00</span>
+                    <input type="range" id="seekBar" value="0" class="flex-grow seek-bar">
+                    <span id="totalDuration" class="text-xs font-medium text-gray-600 w-10 text-right tabular-nums">0:00</span>
                 </div>
 
                 <div class="flex items-center justify-between">
-                     <button class="text-gray-500 hover:text-gray-800 transition-colors w-8 h-8" disabled aria-label="Önceki Şarkı">
-                          <i class="fa fa-backward-step"></i>
-                     </button>
+                     <div class="w-1/4 flex justify-start">
+                        </div>
 
-                    <button id="playPauseBtn" class="bg-indigo-600 hover:bg-indigo-700 text-white rounded-full w-12 h-12 flex items-center justify-center text-xl shadow-md transition-all mx-4">
-                        <i class="fa fa-play"></i>
-                    </button>
+                    <div class="flex items-center justify-center gap-4 flex-grow">
+                        <button id="prevBtn" class="text-gray-600 hover:text-gray-900 transition-colors w-8 h-8" aria-label="Önceki Şarkı" onclick="playPrevious()" disabled>
+                             <i class="fa fa-backward-step fa-lg"></i>
+                        </button>
+                        <button id="playPauseBtn" class="bg-indigo-600 hover:bg-indigo-700 text-white rounded-full w-12 h-12 flex items-center justify-center text-xl shadow-md transition-all transform hover:scale-105">
+                            <i class="fa fa-play fa-lg"></i>
+                        </button>
+                        <button id="nextBtn" class="text-gray-600 hover:text-gray-900 transition-colors w-8 h-8" aria-label="Sonraki Şarkı" onclick="playNext()" disabled>
+                             <i class="fa fa-forward-step fa-lg"></i>
+                        </button>
+                    </div>
 
-                     <button class="text-gray-500 hover:text-gray-800 transition-colors w-8 h-8" disabled aria-label="Sonraki Şarkı">
-                          <i class="fa fa-forward-step"></i>
-                     </button>
-
-                    <div class="flex items-center gap-2 w-28 ml-auto">
-                        <i id="volumeIcon" class="fa fa-volume-high text-gray-600"></i>
-                        <input type="range" id="volumeBar" min="0" max="1" step="0.01" value="1" class="w-full h-1.5 bg-gray-300 rounded-full appearance-none cursor-pointer accent-indigo-500">
+                    <div class="flex items-center justify-end gap-2 w-1/4">
+                        <i id="volumeIcon" class="fa fa-volume-high text-gray-600 hover:text-gray-900 cursor-pointer w-5 text-center" onclick="toggleMute()"></i>
+                        <input type="range" id="volumeBar" min="0" max="1" step="0.01" value="1" class="w-20 h-1.5 bg-gray-300 rounded-full appearance-none cursor-pointer volume-bar accent-indigo-500">
                     </div>
                 </div>
             </div>
@@ -183,6 +220,7 @@
 
     <script>
         let db;
+        // DOM Elements
         const musicList = document.getElementById('musicList');
         const audioPlayer = document.getElementById('audioPlayer');
         const coverImage = document.getElementById('coverImage');
@@ -197,14 +235,20 @@
         // Custom Player Elements
         const playPauseBtn = document.getElementById('playPauseBtn');
         const playPauseIcon = playPauseBtn.querySelector('i');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
         const seekBar = document.getElementById('seekBar');
         const currentTimeSpan = document.getElementById('currentTime');
         const totalDurationSpan = document.getElementById('totalDuration');
         const volumeBar = document.getElementById('volumeBar');
         const volumeIcon = document.getElementById('volumeIcon');
 
+        // State Variables
         const defaultCover = 'https://placehold.co/300x300/e2e8f0/94a3b8?text=Müzik+Seçin';
-        let currentMusicId = null; // Track the ID of the currently loaded music
+        let currentMusicId = null; // ID of the currently loaded music
+        let currentMusicIndex = -1; // Index in the currently rendered list
+        let musicData = []; // Array to hold the current list of music objects
+        let lastVolume = 1; // Store volume before mute
 
         // --- IndexedDB Setup ---
         const dbRequest = indexedDB.open('musicDatabase', 1);
@@ -212,7 +256,7 @@
         dbRequest.onsuccess = function(event) {
             db = event.target.result;
             console.log("Veritabanı başarıyla açıldı.");
-            renderMusics();
+            renderMusics(); // Initial render
         };
 
         dbRequest.onerror = function(event) {
@@ -232,6 +276,7 @@
 
         // --- Format Time (Helper Function) ---
         function formatTime(seconds) {
+            if (isNaN(seconds) || seconds < 0) return "0:00"; // Handle invalid input
             const minutes = Math.floor(seconds / 60);
             const secs = Math.floor(seconds % 60);
             return `${minutes}:${secs < 10 ? '0' : ''}${secs}`;
@@ -241,32 +286,33 @@
         playPauseBtn.addEventListener('click', togglePlayPause);
         audioPlayer.addEventListener('timeupdate', updateSeekBar);
         audioPlayer.addEventListener('loadedmetadata', setDuration);
-        audioPlayer.addEventListener('play', () => playPauseIcon.className = 'fa fa-pause');
-        audioPlayer.addEventListener('pause', () => playPauseIcon.className = 'fa fa-play');
-        audioPlayer.addEventListener('ended', () => {
-            playPauseIcon.className = 'fa fa-play'; // Reset icon
-            seekBar.value = 0; // Reset seek bar
-            currentTimeSpan.textContent = formatTime(0);
-            // Optionally: Play next song here
-        });
+        audioPlayer.addEventListener('play', () => playPauseIcon.className = 'fa fa-pause fa-lg');
+        audioPlayer.addEventListener('pause', () => playPauseIcon.className = 'fa fa-play fa-lg');
+        audioPlayer.addEventListener('ended', playNext); // Play next song when current ends
         seekBar.addEventListener('input', seek);
         volumeBar.addEventListener('input', changeVolume);
 
         // --- Player Control Functions ---
         function togglePlayPause() {
-            if (!audioPlayer.src) return; // Do nothing if no song is loaded
+            if (!audioPlayer.src || currentMusicId === null) return; // Do nothing if no song is loaded
             if (audioPlayer.paused) {
-                audioPlayer.play();
+                audioPlayer.play().catch(e => console.error("Oynatma hatası:", e));
             } else {
                 audioPlayer.pause();
             }
         }
 
         function updateSeekBar() {
-            if (audioPlayer.duration) {
+            if (audioPlayer.duration && isFinite(audioPlayer.duration)) {
                 const percentage = (audioPlayer.currentTime / audioPlayer.duration) * 100;
                 seekBar.value = percentage;
+                // Update CSS variable for progress fill
+                seekBar.style.setProperty('--progress', `${percentage}%`);
                 currentTimeSpan.textContent = formatTime(audioPlayer.currentTime);
+            } else {
+                 seekBar.value = 0;
+                 seekBar.style.setProperty('--progress', `0%`);
+                 currentTimeSpan.textContent = formatTime(0);
             }
         }
 
@@ -274,12 +320,13 @@
              if (audioPlayer.duration && isFinite(audioPlayer.duration)) {
                 totalDurationSpan.textContent = formatTime(audioPlayer.duration);
                 seekBar.value = 0; // Reset seek bar on new song load
+                seekBar.style.setProperty('--progress', `0%`);
                 currentTimeSpan.textContent = formatTime(0);
             } else {
-                // Handle cases where duration might be infinite (live streams) or NaN
                 totalDurationSpan.textContent = "0:00";
                 currentTimeSpan.textContent = "0:00";
                 seekBar.value = 0;
+                seekBar.style.setProperty('--progress', `0%`);
             }
         }
 
@@ -287,19 +334,124 @@
             if (!audioPlayer.src || !audioPlayer.duration || !isFinite(audioPlayer.duration)) return;
             const time = (seekBar.value / 100) * audioPlayer.duration;
             audioPlayer.currentTime = time;
+            // Update progress immediately while dragging
+            seekBar.style.setProperty('--progress', `${seekBar.value}%`);
         }
 
         function changeVolume() {
             audioPlayer.volume = volumeBar.value;
-            // Update volume icon based on volume level
-            if (audioPlayer.volume === 0) {
-                volumeIcon.className = 'fa fa-volume-xmark text-gray-600';
-            } else if (audioPlayer.volume < 0.5) {
-                volumeIcon.className = 'fa fa-volume-low text-gray-600';
-            } else {
-                volumeIcon.className = 'fa fa-volume-high text-gray-600';
+            updateVolumeIcon(audioPlayer.volume);
+             // Store volume if not muted
+            if (audioPlayer.volume > 0) {
+                lastVolume = audioPlayer.volume;
             }
         }
+
+        function updateVolumeIcon(volume) {
+             if (volume === 0) {
+                volumeIcon.className = 'fa fa-volume-xmark text-gray-600 hover:text-gray-900 cursor-pointer w-5 text-center';
+            } else if (volume < 0.5) {
+                volumeIcon.className = 'fa fa-volume-low text-gray-600 hover:text-gray-900 cursor-pointer w-5 text-center';
+            } else {
+                volumeIcon.className = 'fa fa-volume-high text-gray-600 hover:text-gray-900 cursor-pointer w-5 text-center';
+            }
+        }
+
+        function toggleMute() {
+            if (audioPlayer.volume > 0) {
+                // Mute: store current volume, set volume to 0
+                lastVolume = audioPlayer.volume; // Store before muting
+                audioPlayer.volume = 0;
+                volumeBar.value = 0;
+                updateVolumeIcon(0);
+            } else {
+                // Unmute: restore last volume
+                audioPlayer.volume = lastVolume;
+                volumeBar.value = lastVolume;
+                updateVolumeIcon(lastVolume);
+            }
+        }
+
+        function loadAndPlayMusic(index) {
+            if (index < 0 || index >= musicData.length) {
+                console.log("Geçersiz müzik indexi:", index);
+                 // Stop player if index is out of bounds
+                 audioPlayer.pause();
+                 audioPlayer.src = '';
+                 coverImage.src = defaultCover;
+                 currentMusicId = null;
+                 currentMusicIndex = -1;
+                 updatePlayerUIState(); // Reset UI
+                return;
+            }
+
+            const music = musicData[index];
+            console.log(`Yükleniyor: ${music.name} (ID: ${music.id}, Index: ${index})`);
+
+            audioPlayer.src = music.audioUrl;
+            coverImage.src = music.imageUrl || defaultCover;
+            currentMusicId = music.id;
+            currentMusicIndex = index;
+
+            // Update active state styling in the list
+            document.querySelectorAll('.music-item').forEach((item, idx) => {
+                item.classList.toggle('bg-indigo-600', idx === index);
+                item.classList.toggle('bg-gray-800', idx !== index); // Ensure others are default
+                 // Scroll into view if needed
+                 if (idx === index) {
+                    item.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                 }
+            });
+
+            // Reset and play
+            audioPlayer.load(); // Important to load the new source
+            audioPlayer.play().catch(e => {
+                console.error("Otomatik oynatma engellendi veya hata:", e);
+                playPauseIcon.className = 'fa fa-play fa-lg'; // Show play icon if autoplay fails
+            });
+            updatePlayerUIState(); // Update buttons etc.
+        }
+
+        function playNext() {
+            if (musicData.length === 0) return;
+            let nextIndex = (currentMusicIndex + 1) % musicData.length; // Wrap around
+            loadAndPlayMusic(nextIndex);
+        }
+
+        function playPrevious() {
+             if (musicData.length === 0) return;
+             // If current time is > 3 seconds, restart current song, otherwise go to previous
+             if (audioPlayer.currentTime > 3 && currentMusicIndex !== -1) {
+                 audioPlayer.currentTime = 0;
+                 audioPlayer.play().catch(e => console.error("Oynatma hatası:", e));
+             } else {
+                let prevIndex = (currentMusicIndex - 1 + musicData.length) % musicData.length; // Wrap around correctly
+                loadAndPlayMusic(prevIndex);
+             }
+        }
+
+         function updatePlayerUIState() {
+            // Enable/disable prev/next buttons based on list size
+            const hasMultipleSongs = musicData.length > 1;
+            prevBtn.disabled = !hasMultipleSongs;
+            nextBtn.disabled = !hasMultipleSongs;
+
+            // Update play/pause icon based on current state
+            if (audioPlayer.paused) {
+                playPauseIcon.className = 'fa fa-play fa-lg';
+            } else {
+                playPauseIcon.className = 'fa fa-pause fa-lg';
+            }
+
+             // Reset times if no song is loaded
+            if (currentMusicId === null) {
+                currentTimeSpan.textContent = "0:00";
+                totalDurationSpan.textContent = "0:00";
+                seekBar.value = 0;
+                seekBar.style.setProperty('--progress', `0%`);
+            }
+        }
+
 
         // --- Render Music List ---
         function renderMusics() {
@@ -307,8 +459,10 @@
                 console.error("Veritabanı henüz hazır değil.");
                 return;
             }
+            // Clear previous lists
             musicList.innerHTML = '';
             deleteSelect.innerHTML = '<option value="" disabled selected>Silmek için seçin...</option>';
+            musicData = []; // Clear internal data array
 
             try {
                 const transaction = db.transaction(['musics'], 'readonly');
@@ -316,22 +470,38 @@
                 const request = objectStore.getAll();
 
                 request.onsuccess = function(event) {
-                    const musics = event.target.result;
-                    console.log(`Bulunan müzik sayısı: ${musics.length}`);
+                    musicData = event.target.result; // Store fetched data
+                    console.log(`Bulunan müzik sayısı: ${musicData.length}`);
 
-                    if (musics.length === 0) {
+                    if (musicData.length === 0) {
                         musicList.innerHTML = '<p class="text-gray-400 text-center mt-4">Henüz müzik eklenmemiş.</p>';
+                         // Reset player if list becomes empty
+                         if (currentMusicId !== null) {
+                            audioPlayer.pause();
+                            audioPlayer.src = '';
+                            coverImage.src = defaultCover;
+                            currentMusicId = null;
+                            currentMusicIndex = -1;
+                         }
+                         updatePlayerUIState(); // Update button states
+                        return; // Exit if no music
                     }
 
-                    musics.forEach(music => {
+                    // Find the index of the currently playing song in the new list
+                    currentMusicIndex = musicData.findIndex(music => music.id === currentMusicId);
+
+                    musicData.forEach((music, index) => {
+                        // Create sidebar item
                         const div = document.createElement('div');
-                        div.className = `music-item flex items-center gap-3 p-3 rounded-lg bg-gray-800 hover:bg-indigo-700 cursor-pointer transition-all transform hover:scale-[1.03] ${music.id === currentMusicId ? 'bg-indigo-600' : ''}`; // Highlight current song
-                        div.dataset.id = music.id;
+                        // Apply active class if this is the currently loaded song
+                        div.className = `music-item flex items-center gap-3 p-3 rounded-lg cursor-pointer transition-all transform hover:scale-[1.03] ${music.id === currentMusicId ? 'bg-indigo-600' : 'bg-gray-800 hover:bg-indigo-700'}`;
+                        div.dataset.id = music.id; // Store music ID
 
                         const img = document.createElement('img');
-                        img.src = music.imageUrl || 'https://placehold.co/60x60/7f9cf5/ffffff?text=♪';
+                        img.src = music.imageUrl || 'https://placehold.co/60x60/7f9cf5/ffffff?text=♪'; // Default icon if no image
                         img.alt = "Kapak";
                         img.className = "w-12 h-12 rounded-md object-cover flex-shrink-0";
+                        img.onerror = () => img.src = 'https://placehold.co/60x60/7f9cf5/ffffff?text=♪'; // Fallback image
                         div.appendChild(img);
 
                         const title = document.createElement('span');
@@ -340,42 +510,30 @@
                         div.appendChild(title);
 
                         div.onclick = () => {
-                            // Only load if it's a different song or no song is loaded
-                            if (currentMusicId !== music.id) {
-                                audioPlayer.src = music.audioUrl;
-                                coverImage.src = music.imageUrl || defaultCover;
-                                currentMusicId = music.id; // Update current music ID
-
-                                // Update active state styling
-                                document.querySelectorAll('.music-item').forEach(item => item.classList.remove('bg-indigo-600'));
-                                div.classList.add('bg-indigo-600');
-
-                                // Reset and play
-                                audioPlayer.load(); // Important to load the new source
-                                audioPlayer.play().catch(e => console.error("Oynatma hatası:", e)); // Autoplay might be blocked
-                                playPauseIcon.className = 'fa fa-pause'; // Assume play starts
-                            } else {
-                                // If clicking the same song, just toggle play/pause
-                                togglePlayPause();
-                            }
+                             loadAndPlayMusic(index); // Load and play based on index
                         };
                         musicList.appendChild(div);
 
+                        // Create delete select option
                         const option = document.createElement('option');
                         option.value = music.id;
                         option.text = music.name;
                         deleteSelect.appendChild(option);
                     });
+
+                     updatePlayerUIState(); // Update buttons after rendering
                 };
 
                 request.onerror = function(event) {
                     console.error('Müzikler alınırken hata: ', event.target.error);
                     musicList.innerHTML = '<p class="text-red-400 text-center mt-4">Müzikler yüklenemedi.</p>';
+                     updatePlayerUIState(); // Update buttons even on error
                 }
 
             } catch (error) {
                 console.error("RenderMusics içinde hata:", error);
                 alert("Müzikleri listelerken bir sorun oluştu.");
+                 updatePlayerUIState(); // Update buttons on catch
             }
         }
 
@@ -394,6 +552,12 @@
                 return;
             }
 
+            // Show loading indicator (optional)
+            const addButton = adminControlsDiv.querySelector('button[onclick="addMusic()"]');
+            const originalButtonText = addButton.innerHTML;
+            addButton.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Ekleniyor...';
+            addButton.disabled = true;
+
             const audioReader = new FileReader();
             audioReader.onload = function(e) {
                 const musicObj = {
@@ -403,35 +567,47 @@
                 };
 
                 if (image) {
-                    if (image.size > 5 * 1024 * 1024) {
+                    if (image.size > 5 * 1024 * 1024) { // 5MB limit
                        alert("Resim dosyası çok büyük! (Maksimum 5MB)");
+                       // Restore button
+                       addButton.innerHTML = originalButtonText;
+                       addButton.disabled = false;
                        return;
                     }
                     const imageReader = new FileReader();
                     imageReader.onload = function(event) {
                         musicObj.imageUrl = event.target.result;
-                        saveMusic(musicObj);
+                        saveMusic(musicObj, addButton, originalButtonText); // Pass button state
                     };
                     imageReader.onerror = function() {
                         console.error("Resim dosyası okunurken hata.");
                         alert("Resim dosyası okunurken bir hata oluştu.");
+                         // Restore button
+                        addButton.innerHTML = originalButtonText;
+                        addButton.disabled = false;
                     }
                     imageReader.readAsDataURL(image);
                 } else {
-                    saveMusic(musicObj);
+                    saveMusic(musicObj, addButton, originalButtonText); // Pass button state
                 }
             };
             audioReader.onerror = function() {
                 console.error("Ses dosyası okunurken hata.");
                 alert("Ses dosyası okunurken bir hata oluştu.");
+                 // Restore button
+                addButton.innerHTML = originalButtonText;
+                addButton.disabled = false;
             }
             audioReader.readAsDataURL(file);
         }
 
         // --- Save Music to DB ---
-        function saveMusic(musicObj) {
+        function saveMusic(musicObj, buttonElement, originalButtonHTML) { // Receive button state
             if (!db) {
                 alert("Veritabanı bağlantısı yok.");
+                 // Restore button
+                buttonElement.innerHTML = originalButtonHTML;
+                buttonElement.disabled = false;
                 return;
             }
             try {
@@ -441,21 +617,31 @@
 
                 request.onsuccess = function() {
                     console.log("Müzik başarıyla eklendi:", musicObj.name);
-                    renderMusics();
+                    renderMusics(); // Refresh lists
+                    // Clear form fields
                     document.getElementById('musicName').value = '';
                     document.getElementById('musicFile').value = '';
                     document.getElementById('musicImage').value = '';
                     alert('Müzik başarıyla eklendi!');
-                    // limitMusicCount(50); // Optional
+                    // limitMusicCount(50); // Optional: Limit total music count
+                     // Restore button
+                    buttonElement.innerHTML = originalButtonHTML;
+                    buttonElement.disabled = false;
                 };
 
                 request.onerror = function(event) {
                     console.error('Müzik eklenirken hata oluştu: ', event.target.error);
                     alert(`Müzik eklenemedi: ${event.target.error.message}`);
+                     // Restore button
+                    buttonElement.innerHTML = originalButtonHTML;
+                    buttonElement.disabled = false;
                 };
             } catch (error) {
                  console.error("SaveMusic içinde hata:", error);
                  alert("Müzik kaydedilirken bir sorun oluştu.");
+                  // Restore button
+                 buttonElement.innerHTML = originalButtonHTML;
+                 buttonElement.disabled = false;
             }
         }
 
@@ -470,8 +656,9 @@
                 return;
             }
 
-            if (!confirm(`"${deleteSelect.options[deleteSelect.selectedIndex].text}" adlı müziği silmek istediğinizden emin misiniz?`)) {
-                return;
+            const musicNameToDelete = deleteSelect.options[deleteSelect.selectedIndex].text;
+            if (!confirm(`"${musicNameToDelete}" adlı müziği silmek istediğinizden emin misiniz?`)) {
+                return; // User cancelled
             }
 
             if (!db) {
@@ -486,19 +673,36 @@
 
                 request.onsuccess = function() {
                     console.log(`Müzik ID ${musicIdToDelete} silindi.`);
-                    // Reset player if the deleted music was playing
-                    if (currentMusicId === musicIdToDelete) {
+
+                    // Check if the deleted music was the current one
+                    const wasCurrentMusicDeleted = (currentMusicId === musicIdToDelete);
+
+                    // Stop player and clear info if current song was deleted
+                    if (wasCurrentMusicDeleted) {
                         audioPlayer.pause();
                         audioPlayer.src = '';
                         coverImage.src = defaultCover;
-                        totalDurationSpan.textContent = "0:00";
-                        currentTimeSpan.textContent = "0:00";
-                        seekBar.value = 0;
-                        playPauseIcon.className = 'fa fa-play';
-                        currentMusicId = null; // Clear current ID
+                        currentMusicId = null;
+                        currentMusicIndex = -1; // Reset index
                     }
-                    renderMusics(); // Refresh lists AFTER potentially resetting player
-                    alert('Müzik başarıyla silindi!');
+
+                    // Re-render the music list *after* handling the player state
+                    renderMusics();
+
+                    alert(`"${musicNameToDelete}" başarıyla silindi!`);
+
+                     // If the deleted song was playing, try to play the next available song
+                     if (wasCurrentMusicDeleted && musicData.length > 0) {
+                         // The renderMusics function will have updated musicData
+                         // We need to determine the correct next index based on the *old* index
+                         // Since renderMusics was called, currentMusicIndex is now -1
+                         // Let's try loading the song at index 0 if available
+                         loadAndPlayMusic(0);
+                     } else if (musicData.length === 0) {
+                         // If list is now empty, ensure player UI is fully reset
+                         updatePlayerUIState();
+                     }
+
                 };
 
                 request.onerror = function(event) {
@@ -521,24 +725,26 @@
         function closeAdminPanel() {
             adminPanelDiv.classList.add('hidden');
             adminPanelDiv.classList.remove('flex');
+            // Hide controls and show login form again
             adminControlsDiv.classList.add('hidden');
-            loginForm.classList.remove('hidden');
-            loginForm.classList.add('flex');
-            adminPassInput.value = '';
+            loginForm.classList.remove('hidden'); // Show login form
+            loginForm.classList.add('flex'); // Make login form flex
+            adminPassInput.value = ''; // Clear password field
         }
 
         // --- Admin Password Check ---
         function checkPassword() {
             const pass = adminPassInput.value;
             // !!! GÜVENLİK UYARISI: Şifre KESİNLİKLE sunucu tarafında kontrol edilmelidir. !!!
+            // Bu sadece görsel bir örnektir.
             if (pass === '1234') { // Örnek şifre
-                loginForm.classList.add('hidden');
+                loginForm.classList.add('hidden'); // Hide login form
                 loginForm.classList.remove('flex');
                 adminControlsDiv.classList.remove('hidden');
                 adminControlsDiv.classList.add('flex', 'flex-col', 'space-y-4');
             } else {
                 alert('Şifre yanlış!');
-                adminPassInput.value = '';
+                adminPassInput.value = ''; // Clear password field on failure
                 adminPassInput.focus();
             }
         }
@@ -548,7 +754,8 @@
         adminControlsDiv.classList.add('hidden');
         // Set initial volume bar value based on player's default volume
         volumeBar.value = audioPlayer.volume;
-        changeVolume(); // Update icon initially
+        updateVolumeIcon(audioPlayer.volume); // Update icon initially
+        updatePlayerUIState(); // Set initial button states
 
     </script>
 
