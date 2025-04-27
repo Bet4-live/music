@@ -16,8 +16,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         // window.supabase varlığını kontrol edelim
         if (typeof window.supabase === 'undefined') {
             console.error("Hata: window.supabase tanımlanmamış. Supabase kütüphanesi yüklenemedi veya çalışmadı.");
-            alert("Supabase kütüphanesi yüklenirken bir sorun oluştu. Konsolu kontrol edin.");
-            return; // Eğer global Supabase objesi yoksa daha fazla ilerlememek en iyisi
+            alert("Supabase kütüphanesi yüklenirken bir sorun oluştu.");
+            return; // Eğer global Supabase objesi yoksa daha fazla ilerleme
         }
 
         // Supabase istemcisini DOĞRUDAN window.supabase objesinden oluşturuyoruz
@@ -66,7 +66,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 
         // --- Helper Functions ---
-        // Bu fonksiyonlar DOMContentLoaded içinde tanımlanacak ve supabase yerine supabaseClient kullanacaklar
         function formatTime(seconds) {
             if (isNaN(seconds) || seconds < 0 || !isFinite(seconds)) return "0:00";
             const minutes = Math.floor(seconds / 60);
@@ -114,10 +113,14 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
         }
 
+        // --- Buraya console.log ekledik ---
         function updateSeekBar() {
+            console.log('timeupdate olayı tetiklendi. currentTime:', audioPlayer.currentTime, 'duration:', audioPlayer.duration); // <-- Bu satır eklendi
+
             if (audioPlayer.duration && isFinite(audioPlayer.duration)) {
                 const percentage = (audioPlayer.currentTime / audioPlayer.duration) * 100;
                 seekBar.value = percentage;
+                // Update CSS variable for progress fill
                 seekBar.style.setProperty('--progress', `${percentage}%`);
                 currentTimeSpan.textContent = formatTime(audioPlayer.currentTime);
             } else {
@@ -241,7 +244,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         // --- Render Music List (Fetch from Supabase) ---
         async function renderMusics() {
-            // supabase yerine supabaseClient kullanıyoruz
             if (!supabaseClient) {
                 console.error("Supabase istemcisi henüz hazır değil (renderMusics içinde).");
                  const errorMessage = '<p class="text-red-400 text-center mt-4">Supabase bağlantısı kurulamadı.</p>';
@@ -258,7 +260,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             musicData = [];
 
             try {
-                const { data, error } = await supabaseClient // supabase yerine supabaseClient
+                const { data, error } = await supabaseClient
                     .from('musics')
                     .select('id, name, audio_url, image_url')
                     .order('created_at', { ascending: false });
@@ -362,8 +364,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         // --- Add Music (Upload to Storage & Insert to DB) ---
         async function addMusic() {
-             // supabase yerine supabaseClient kullanıyoruz
-            const user = await supabaseClient.auth.getUser();
+             const user = await supabaseClient.auth.getUser();
             if (user.error || !user.data.user) {
                  alert('Müzik eklemek için giriş yapmalısınız.');
                  return;
@@ -397,7 +398,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                  const audioFilePath = `public/${audioFileName}`;
                  filesToRemoveOnError.push(audioFilePath);
 
-                 const { data: audioUploadData, error: audioUploadError } = await supabaseClient.storage // supabase yerine supabaseClient
+                 const { data: audioUploadData, error: audioUploadError } = await supabaseClient.storage
                      .from('music-files')
                      .upload(audioFilePath, audioFile);
 
@@ -405,7 +406,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                      throw new Error(`Ses dosyası yükleme hatası: ${audioUploadError.message}`);
                  }
 
-                 const { data: publicAudioUrlData } = supabaseClient.storage // supabase yerine supabaseClient
+                 const { data: publicAudioUrlData } = supabaseClient.storage
                      .from('music-files')
                      .getPublicUrl(audioFilePath);
                  audioUrl = publicAudioUrlData.publicUrl;
@@ -418,20 +419,20 @@ document.addEventListener('DOMContentLoaded', async () => {
                      const imageFilePath = `public/${imageFileName}`;
                      filesToRemoveOnError.push(imageFilePath);
 
-                     const { data: imageUploadData, error: imageUploadError } = await supabaseClient.storage // supabase yerine supabaseClient
+                     const { data: imageUploadData, error: imageUploadError } = await supabaseClient.storage
                          .from('music-files')
                          .upload(imageFilePath, imageFile);
 
                      if (imageUploadError) {
                           throw new Error(`Resim dosyası yükleme hatası: ${imageUploadError.message}`);
                      }
-                     const { data: publicImageUrlData } = supabaseClient.storage // supabase yerine supabaseClient
+                     const { data: publicImageUrlData } = supabaseClient.storage
                          .from('music-files')
                          .getPublicUrl(imageFilePath);
                      imageUrl = publicImageUrlData.publicUrl;
                  }
 
-                 const { data: musicInsertData, error: musicInsertError } = await supabaseClient // supabase yerine supabaseClient
+                 const { data: musicInsertData, error: musicInsertError } = await supabaseClient
                      .from('musics')
                      .insert([{
                          name: name,
@@ -458,7 +459,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
                   if (filesToRemoveOnError.length > 0) {
                       console.log("Hata oluştu, yüklenen dosyalar siliniyor:", filesToRemoveOnError);
-                       const { error: cleanupError } = await supabaseClient.storage // supabase yerine supabaseClient
+                       const { error: cleanupError } = await supabaseClient.storage
                           .from('music-files')
                           .remove(filesToRemoveOnError);
                        if (cleanupError) {
@@ -476,8 +477,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         // --- Delete Music (Delete from DB & Remove from Storage) ---
         async function deleteMusic() {
-             // supabase yerine supabaseClient kullanıyoruz
-            const user = await supabaseClient.auth.getUser();
+             const user = await supabaseClient.auth.getUser();
              if (user.error || !user.data.user) {
                   alert('Müzik silmek için giriş yapmalısınız.');
                   return;
@@ -501,7 +501,7 @@ document.addEventListener('DOMContentLoaded', async () => {
               deleteButton.disabled = true;
 
              try {
-                 const { data: musicToDelete, error: fetchError } = await supabaseClient // supabase yerine supabaseClient
+                 const { data: musicToDelete, error: fetchError } = await supabaseClient
                      .from('musics')
                      .select('id, audio_url, image_url, user_id')
                      .eq('id', musicIdToDelete)
@@ -512,7 +512,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                       throw new Error(`Silinecek müzik bulunamadı veya erişim reddedildi: ${fetchError?.message}`);
                  }
 
-                  const user = await supabaseClient.auth.getUser(); // supabase yerine supabaseClient
+                  const user = await supabaseClient.auth.getUser();
                   if (musicToDelete.user_id && user.data?.user?.id && musicToDelete.user_id !== user.data.user.id) {
                        alert("Sadece kendi eklediğiniz müzikleri silebilirsiniz.");
                         deleteButton.innerHTML = originalDeleteButtonText;
@@ -533,7 +533,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                       if(imageFilePath) filesToRemove.push(imageFilePath);
                  }
 
-                 const { error: dbDeleteError } = await supabaseClient // supabase yerine supabaseClient
+                 const { error: dbDeleteError } = await supabaseClient
                      .from('musics')
                      .delete()
                      .eq('id', musicIdToDelete);
@@ -545,7 +545,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                  console.log(`Müzik ID ${musicIdToDelete} veritabanından silindi.`);
 
                   if (filesToRemove.length > 0) {
-                      const { error: storageDeleteError } = await supabaseClient.storage // supabase yerine supabaseClient
+                      const { error: storageDeleteError } = await supabaseClient.storage
                           .from('music-files')
                           .remove(filesToRemove);
 
@@ -605,9 +605,7 @@ document.addEventListener('DOMContentLoaded', async () => {
               if(authPassInput) authPassInput.value = '';
         }
 
-        // Supabase Auth State Listener: supabase yerine supabaseClient kullanın
-        // Auth listener'ı da DOMContentLoaded içinde olmalı
-        supabaseClient.auth.onAuthStateChange((event, session) => { // supabase yerine supabaseClient
+        supabaseClient.auth.onAuthStateChange((event, session) => {
             console.log("Auth state changed:", event, session);
             if (session) {
                 loginForm.classList.add('hidden'); loginForm.classList.remove('flex', 'space-y-4');
@@ -630,7 +628,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         // --- Supabase Authentication Functions ---
 
         async function signIn() {
-            // supabase yerine supabaseClient kullanıyoruz
             const email = authEmailInput.value.trim();
             const password = authPassInput.value.trim();
 
@@ -642,7 +639,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             signInBtn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Giriş Yapılıyor...';
             signInBtn.disabled = true;
 
-            const { data, error } = await supabaseClient.auth.signInWithPassword({ // supabase yerine supabaseClient
+            const { data, error } = await supabaseClient.auth.signInWithPassword({
                 email: email,
                 password: password,
             });
@@ -661,11 +658,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
 
         async function signOut() {
-            // supabase yerine supabaseClient kullanıyoruz
              signOutBtn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Çıkılıyor...';
              signOutBtn.disabled = true;
 
-            const { error } = await supabaseClient.auth.signOut(); // supabase yerine supabaseClient
+            const { error } = await supabaseClient.auth.signOut();
 
              signOutBtn.innerHTML = '<i class="fa fa-sign-out-alt"></i> Çıkış Yap';
              signOutBtn.disabled = false;
@@ -679,42 +675,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
         }
 
-        // Optional: Handles user sign-up (needs signUpBtn in HTML)
-        /*
-        async function signUp() {
-             const email = authEmailInput.value.trim();
-             const password = authPassInput.value.trim();
-
-             if (!email || !password) {
-                 alert("Lütfen email ve şifreyi girin.");
-                 return;
-             }
-
-             const signUpBtn = document.getElementById('signUpBtn');
-             const originalSignUpBtnText = signUpBtn.innerHTML;
-             signUpBtn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Kayıt Olunuyor...';
-             signUpBtn.disabled = true;
-
-             const { data, error } = await supabaseClient.auth.signUp({ // supabase yerine supabaseClient
-                 email: email,
-                 password: password,
-             });
-
-             signUpBtn.innerHTML = originalSignUpBtnText;
-             signUpBtn.disabled = false;
-
-             if (error) {
-                 console.error("Kayıt hatası:", error.message);
-                 alert(`Kayıt başarısız: ${error.message}`);
-             } else {
-                 console.log("Kayıt başarılı!", data.user);
-                 alert('Kayıt başarılı! Lütfen email adresinizi kontrol ederek hesabınızı aktifleştirin.');
-                 authEmailInput.value = '';
-                 authPassInput.value = '';
-             }
-        }
-        */
-
 
         // --- Event Listeners for Auth Buttons and Admin Button ---
 
@@ -722,7 +682,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         if(signInBtn) signInBtn.addEventListener('click', signIn);
         if(signOutBtn) signOutBtn.addEventListener('click', signOut);
 
-        // Player control listeners (already correct)
+        // Player control listeners
         if(playPauseBtn) playPauseBtn.addEventListener('click', togglePlayPause);
         if(prevBtn) prevBtn.addEventListener('click', playPrevious);
         if(nextBtn) nextBtn.addEventListener('click', playNext);
@@ -730,13 +690,14 @@ document.addEventListener('DOMContentLoaded', async () => {
         if(volumeIcon) volumeIcon.addEventListener('click', toggleMute);
         if(seekBar) { seekBar.addEventListener('input', seek); }
 
-        // Modal close listeners (already correct)
+
+        // Modal close listeners
         const closeMobileListBtn = document.getElementById('closeMobileListBtn');
         if(closeMobileListBtn) closeMobileListBtn.addEventListener('click', closeMobileMusicList);
         const closeAdminPanelBtn = document.getElementById('closeAdminPanelBtn');
         if(closeAdminPanelBtn) closeAdminPanelBtn.addEventListener('click', closeAdminPanel);
 
-        // Add/Delete button listeners (supabase yerine supabaseClient kullanıyoruz)
+        // Add/Delete button listeners
          const addMusicBtn = document.getElementById('addMusicBtn');
          if(addMusicBtn) addMusicBtn.addEventListener('click', addMusic);
 
@@ -756,14 +717,11 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     } catch (error) {
         console.error("DOMContentLoaded içinde yakalanan genel hata:", error);
-        // Eğer window.supabase.createClient(...) hatası burada olursa yakalanır
         alert("Uygulama başlatılırken beklenmeyen bir hata oluştu. Konsolu kontrol edin.");
     }
-}); // DOMContentLoaded sonu
+});
 
 // Mobile menu button listener (HTML'de varsa ve DOMContentLoaded dışında tanımlanmalı)
-// DOMContentLoaded listener'ı içine element erişimi ve event listener atamaları doğru yerdir
-// HTML'de mobileMenuButton varsa, DOMContentLoaded içinde event listener atamasını yapın
 // const mobileMenuButton = document.getElementById('mobileMenuButton');
 // if (mobileMenuButton) {
 //     mobileMenuButton.addEventListener('click', openMobileMusicList);
