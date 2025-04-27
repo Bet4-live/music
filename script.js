@@ -1,7 +1,7 @@
 // --- Supabase Setup ---
 // !! Buraya kendi Supabase Proje URL ve Public Anon Key bilgilerini GİRİN !!
-const SUPABASE_URL = 'YOUR_SUPABASE_URL'; // <-- KENDİ URL'NİZİ GİRİN
-const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY'; // <-- KENDİ ANON KEY'İNİZİ GİRİN
+const SUPABASE_URL = 'https://skhbykqwdbwjcvqmwvft.supabase.co'; // <-- KENDİ URL'NİZİ GİRİN
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNraGJ5a3F3ZGJ3amN2cW13dmZ0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDU3Nzg0NDYsImV4cCI6MjA2MTM1NDQ0Nn0.e8pbfF7O_rTtSKxtFzzc_zZTsegsxsNaluHNFBbWbMs'; // <-- KENDİ ANON KEY'İNİZİ GİRİN
 // !! Supabase bilgilerini GİRDİĞİNİZDEN EMİN OLUN !!
 
 const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
