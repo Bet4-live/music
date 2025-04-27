@@ -1,14 +1,43 @@
-/* Temel Sıfırlamalar ve Genel Stiller */
+/* Keyframes for the light show effect */
+@keyframes pulse-border {
+    0% {
+        box-shadow: 0 0 10px rgba(0, 255, 255, 0.4), 0 0 20px rgba(0, 255, 255, 0.2), 0 0 30px rgba(0, 255, 255, 0.1);
+        border-color: rgba(0, 255, 255, 0.5);
+    }
+    50% {
+        box-shadow: 0 0 20px rgba(0, 255, 255, 0.8), 0 0 40px rgba(0, 255, 255, 0.4), 0 0 60px rgba(0, 255, 255, 0.3);
+         border-color: rgba(0, 255, 255, 1);
+    }
+    100% {
+        box-shadow: 0 0 10px rgba(0, 255, 255, 0.4), 0 0 20px rgba(0, 255, 255, 0.2), 0 0 30px rgba(0, 255, 255, 0.1);
+         border-color: rgba(0, 255, 255, 0.5);
+    }
+}
+
+@keyframes neon-glow {
+    0% { text-shadow: 0 0 5px #00bfff, 0 0 10px #00bfff; }
+    50% { text-shadow: 0 0 10px #00bfff, 0 0 20px #00bfff, 0 0 30px #00bfff; }
+    100% { text-shadow: 0 0 5px #00bfff, 0 0 10px #00bfff; }
+}
+
+@keyframes gradient-shift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+
+/* Temel Sıfırlamalar ve Genel Stilleri */
 body {
     margin: 0;
     padding: 0;
-    font-family: 'Roboto', sans-serif; /* Varsayılan metin fontu */
-    background-color: #111; /* Çok Koyu Arka Plan */
-    color: #eee; /* Açık Yazı Rengi */
+    font-family: 'Rajdhani', sans-serif; /* Varsayılan metin fontu */
+    background-color: #000; /* Tam Siyah Arka Plan */
+    color: #08f; /* Neon Mavi Yazı Rengi */
     height: 100vh;
     overflow: hidden;
     display: flex;
-    background: linear-gradient(to bottom right, #111, #000); /* Çok Hafif Gradyan */
+    background: #000; /* Düz Siyah */
 }
 
 /* Kaydırma Çubuğu Stilleri */
@@ -16,53 +45,55 @@ body {
     width: 8px;
 }
 ::-webkit-scrollbar-track {
-    background: #222;
+    background: #111;
 }
 ::-webkit-scrollbar-thumb {
-    background: #555;
+    background: #333;
     border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
-    background: #777;
+    background: #555;
 }
 
 /* Kenar Çubuğu Stilleri */
 .sidebar {
-    width: 300px; /* Daha Geniş Kenar Çubuğu */
-    background-color: #181818; /* Koyu Kenar Çubuğu Arka Planı */
+    width: 300px;
+    background-color: #0d0d0d; /* Çok Koyu */
     padding: 25px;
     display: flex;
     flex-direction: column;
-    box-shadow: 5px 0 20px rgba(0, 0, 0, 0.4); /* Belirgin Gölge */
+    box-shadow: 5px 0 20px rgba(0, 255, 255, 0.1); /* Mavi Gölge */
     overflow-y: auto;
     flex-shrink: 0;
-    border-right: 1px solid #333; /* Sağ Kenarlık */
+    border-right: 1px solid #08f; /* Neon Mavi Kenarlık */
 }
 
 .sidebar-title {
-    font-family: 'Roboto Condensed', sans-serif; /* Başlık Fontu */
-    font-size: 2.5rem; /* Çok Büyük Başlık */
+    font-family: 'Share Tech Mono', monospace; /* Başlık Fontu */
+    font-size: 2rem;
     font-weight: 700;
-    color: #00bfff; /* Elektrik Mavisi Vurgu */
-    border-bottom: 3px solid #333; /* Daha Kalın Alt Çizgi */
+    color: #08f; /* Neon Mavi */
+    border-bottom: 2px dashed #08f; /* Kesikli Alt Çizgi */
     padding-bottom: 15px;
     margin-bottom: 25px;
     display: flex;
     align-items: center;
     gap: 15px;
     text-transform: uppercase;
+    animation: neon-glow 1.5s ease-in-out infinite alternate; /* Neon Parlama Animasyonu */
 }
 
 .sidebar-icon {
-    color: #00bfff; /* Elektrik Mavisi İkon */
-    font-size: 2rem; /* İkon Boyutu */
+    color: #08f; /* Neon Mavi İkon */
+    font-size: 1.8rem;
 }
 
 .song-count-desktop {
-    font-size: 1.1rem;
-    color: #aaa;
-    font-weight: 500;
+    font-size: 1rem;
+    color: #555;
+    font-weight: 400;
     margin-left: auto;
+    font-family: 'Share Tech Mono', monospace;
 }
 
 .music-list-desktop {
@@ -71,72 +102,72 @@ body {
     padding-right: 10px;
     display: flex;
     flex-direction: column;
-    gap: 10px; /* Şarkı öğeleri arasına boşluk */
+    gap: 8px; /* Daha Sıkı Liste */
 }
 
 /* Müzik Öğesi Stilleri */
 .music-item {
     display: flex;
     align-items: center;
-    gap: 15px;
-    padding: 10px 12px;
-    border-radius: 6px;
-    background-color: #222; /* Varsayılan Arka Plan */
+    gap: 12px;
+    padding: 10px;
+    border-radius: 4px; /* Köşeli */
+    background-color: #1a1a1a; /* Koyu Arka Plan */
     cursor: pointer;
     transition: all 0.2s ease-in-out;
-    border: 1px solid transparent;
+    border: 1px solid #333;
 }
 
 .music-item:hover {
-    background-color: #333;
-    border-color: #00bfff; /* Elektrik Mavisi Kenarlık */
-    transform: translateX(5px); /* Sağa Kaydırma Efekti */
+    background-color: #222;
+    border-color: #08f; /* Neon Mavi Kenarlık */
+    transform: scale(1.02); /* Hafif Büyüme */
 }
 
 .music-item.active {
-    background-color: #00bfff; /* Aktif Arka Plan - Mavi */
-    color: #111; /* Koyu Yazı Rengi */
-    border-color: #fff; /* Aktif Kenarlık */
-    box-shadow: 0 0 12px rgba(0, 191, 255, 0.6); /* Parlak Gölge */
+    background-color: #08f; /* Aktif Arka Plan - Neon Mavi */
+    color: #000; /* Siyah Yazı */
+    border-color: #fff;
+    box-shadow: 0 0 10px rgba(0, 255, 255, 0.6); /* Parlak Gölge */
 }
 
 .music-item.active img {
-     border-color: #fff; /* Aktif Durumda Resim Kenarlığı */
+     border-color: #000; /* Aktif Durumda Resim Kenarlığı */
 }
 
 .music-item img {
-    width: 45px; /* Biraz Daha Küçük Resim */
-    height: 45px;
-    border-radius: 4px; /* Köşeli Resim */
+    width: 40px;
+    height: 40px;
+    border-radius: 2px; /* Çok Köşeli Resim */
     object-fit: cover;
     flex-shrink: 0;
-    border: 2px solid #444;
+    border: 2px solid #555;
     transition: border-color 0.2s ease-in-out;
 }
 
 .music-item .song-title {
-    font-weight: 500; /* Biraz Daha İnce Font */
-    color: #eee;
+    font-weight: 600;
+    color: #eee; /* Varsayılan Başlık Rengi */
     flex-grow: 1;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    font-family: 'Roboto Condensed', sans-serif; /* Şarkı Başlığı Fontu */
+    font-family: 'Rajdhani', sans-serif;
     text-transform: uppercase;
-    font-size: 1.1rem;
+    font-size: 1rem;
 }
 
 .music-item.active .song-title {
-    color: #111;
+    color: #000;
 }
 
 .music-item .artist-name {
-     font-size: 0.85rem;
+     font-size: 0.8rem;
      color: #bbb;
      white-space: nowrap;
      overflow: hidden;
      text-overflow: ellipsis;
-     font-family: 'Roboto', sans-serif;
+     font-family: 'Rajdhani', sans-serif;
 }
 
 .music-item.active .artist-name {
@@ -145,9 +176,10 @@ body {
 
 .loading-message {
     text-align: center;
-    color: #888;
+    color: #555;
     margin-top: 20px;
     font-style: italic;
+    font-family: 'Share Tech Mono', monospace;
 }
 
 
@@ -157,36 +189,53 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
+    justify-content: center; /* İçeriği Dikey ve Yatayda Ortala */
     padding: 30px 20px;
     overflow-y: auto;
     position: relative;
 }
 
+/* Işık Şöleni Konteyneri - Oynatıcıyı Çevreler */
+.light-show-container {
+     position: relative;
+     padding: 30px;
+     border-radius: 15px;
+     background: linear-gradient(45deg, #08f, #f08, #08f); /* Dinamik Gradyan */
+     background-size: 400% 400%;
+     animation: gradient-shift 15s ease infinite; /* Gradyan Animasyonu */
+     box-shadow: 0 0 30px rgba(0, 255, 255, 0.5);
+     display: flex; /* İçindeki player-container'ı ortalamak için */
+     justify-content: center;
+     align-items: center;
+}
+
 /* Admin Butonu */
 .admin-button {
     position: absolute;
-    top: 20px;
-    right: 20px;
-    background-color: #222;
-    color: #00bfff; /* Elektrik Mavisi */
+    top: -15px; /* Light show container'ın dışına taşıdım */
+    right: -15px; /* Light show container'ın dışına taşıdım */
+    background-color: #0d0d0d; /* Koyu Arka Plan */
+    color: #08f; /* Neon Mavi */
     font-weight: 500;
-    padding: 8px 12px;
-    border-radius: 6px; /* Daha Köşeli */
-    border: 1px solid #444; /* Hafif Kenarlık */
+    padding: 10px 15px;
+    border-radius: 8px;
+    border: 1px solid #08f; /* Neon Mavi Kenarlık */
     cursor: pointer;
     transition: all 0.2s ease-in-out;
     display: flex;
     align-items: center;
     gap: 6px;
-    z-index: 10;
+    z-index: 100; /* En üstte dursun */
+    font-family: 'Share Tech Mono', monospace;
+    text-transform: uppercase;
 }
 
 .admin-button:hover {
-    background-color: #00bfff;
-    color: #111;
+    background-color: #08f;
+    color: #000;
     border-color: #fff;
     transform: scale(1.05);
+    box-shadow: 0 0 10px rgba(0, 255, 255, 0.8);
 }
 
 .admin-button i {
@@ -194,7 +243,7 @@ body {
 }
 
 .admin-button.danger {
-    background-color: #c0392b; /* Kırmızı */
+    background-color: #c0392b;
     color: #eee;
     border-color: #e74c3c;
 }
@@ -204,8 +253,8 @@ body {
 }
 
 .admin-button.small {
-    padding: 5px 8px;
-    font-size: 0.85rem;
+    padding: 6px 10px;
+    font-size: 0.9rem;
 }
 
 
@@ -216,72 +265,74 @@ body {
     flex-direction: column;
     align-items: center;
     width: 100%;
-    max-width: 550px; /* Daha Geniş Oynatıcı */
-    padding: 30px;
-    background-color: #181818;
-    border-radius: 8px; /* Köşeli */
-    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5);
-    border: 1px solid #333; /* Hafif Kenarlık */
+    max-width: 550px;
+    padding: 25px;
+    background-color: #111; /* Çok Koyu */
+    border-radius: 10px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    border: 2px solid #333; /* Hafif Kenarlık */
 }
 
 .cover-image {
-    width: 380px; /* Daha Büyük Kapak Resmi */
-    height: 380px;
-    border-radius: 6px; /* Köşeli */
+    width: 350px;
+    height: 350px;
+    border-radius: 8px;
     object-fit: cover;
-    margin-bottom: 30px;
-    border: 4px solid #2a2a2a; /* Kapak Resmi Kenarlığı */
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+    margin-bottom: 25px;
+    border: 3px solid #222;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
 }
 
 .track-info {
-    margin-bottom: 25px;
+    margin-bottom: 20px;
     width: 100%;
     text-align: center;
 }
 
 .current-song-title {
-    font-family: 'Roboto Condensed', sans-serif;
-    font-size: 2.8rem; /* Çok Büyük Başlık */
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 2.5rem;
     font-weight: 700;
-    color: #00bfff; /* Elektrik Mavisi */
-    margin-bottom: 8px;
+    color: #08f;
+    margin-bottom: 5px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
     width: 100%;
     text-transform: uppercase;
-     line-height: 1.1; /* Satır Aralığı */
+     line-height: 1.1;
+     animation: neon-glow 1.5s ease-in-out infinite alternate; /* Neon Parlama Animasyonu */
 }
 
 .current-artist {
-    font-size: 1.3rem;
+    font-size: 1.2rem;
     color: #aaa;
     margin-bottom: 0;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
     width: 100%;
-    font-family: 'Roboto', sans-serif;
+    font-family: 'Rajdhani', sans-serif;
 }
 
 
 /* Özel Oynatıcı Kontrol Çubuğu */
 .custom-player-controls {
     width: 100%;
-    background-color: #222;
-    padding: 15px 25px;
+    background-color: #1a1a1a; /* Koyu */
+    padding: 15px 20px;
     border-radius: 6px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    border: 1px solid #333;
 }
 
 .time-info {
     display: flex;
     justify-content: space-between;
-    font-size: 1rem;
+    font-size: 0.9rem;
     color: #bbb;
     margin-bottom: 8px;
-    font-family: monospace; /* Daha teknik font */
+    font-family: 'Share Tech Mono', monospace; /* Daha teknik font */
 }
 
 .current-time, .total-duration {
@@ -290,55 +341,60 @@ body {
 }
 
 /* Seek Bar Stilleri */
-.seek-bar {
+input[type="range"] { /* Temel stil sıfırlama */
     -webkit-appearance: none;
     appearance: none;
     width: 100%;
-    height: 10px; /* Daha Kalın Çubuk */
-    background: #333;
-    border-radius: 5px;
+    height: 8px; /* Kalın Çubuk */
+    background: #333; /* Çubuk Arka Planı */
+    border-radius: 4px;
     cursor: pointer;
     outline: none;
+    margin: 0; /* Varsayılan margin'i kaldır */
+}
+
+.seek-bar {
     margin-bottom: 15px;
 }
 
+
 .seek-bar::-webkit-slider-runnable-track {
-    background: linear-gradient(to right, #00bfff var(--progress, 0%), #333 var(--progress, 0%)); /* Elektrik Mavisi İlerleme */
-    height: 10px;
-    border-radius: 5px;
+    background: linear-gradient(to right, #08f var(--progress, 0%), #333 var(--progress, 0%)); /* Neon Mavi İlerleme */
+    height: 8px;
+    border-radius: 4px;
 }
 .seek-bar::-moz-range-progress {
-    background-color: #00bfff; /* Elektrik Mavisi İlerleme */
-    height: 10px;
-     border-radius: 5px;
+    background-color: #08f; /* Neon Mavi İ ilerleme */
+    height: 8px;
+     border-radius: 4px;
 }
 .seek-bar::-moz-range-track {
      background-color: #333;
-     height: 10px;
-     border-radius: 5px;
+     height: 8px;
+     border-radius: 4px;
  }
 
 
 .seek-bar::-webkit-slider-thumb {
     -webkit-appearance: none;
     appearance: none;
-    width: 20px; /* Daha Büyük Tutamaç */
-    height: 20px;
-    background: #00bfff; /* Elektrik Mavisi Tutamaç */
+    width: 18px;
+    height: 18px;
+    background: #08f; /* Neon Mavi Tutamaç */
     border-radius: 50%;
     cursor: pointer;
     margin-top: -5px;
-    box-shadow: 0 0 10px rgba(0, 191, 255, 0.8); /* Parlak Gölge */
+    box-shadow: 0 0 10px rgba(0, 255, 255, 0.8);
     transition: background-color 0.2s ease-in-out;
 }
 .seek-bar::-moz-range-thumb {
-    width: 20px;
-    height: 20px;
-    background: #00bfff; /* Elektrik Mavisi Tutamaç */
+    width: 18px;
+    height: 18px;
+    background: #08f; /* Neon Mavi Tutamaç */
     border-radius: 50%;
     cursor: pointer;
     border: none;
-     box-shadow: 0 0 10px rgba(0, 191, 255, 0.8); /* Parlak Gölge */
+     box-shadow: 0 0 10px rgba(0, 255, 255, 0.8);
      transition: background-color 0.2s ease-in-out;
 }
 
@@ -348,47 +404,47 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 30px; /* Daha Geniş Aralık */
-    margin-bottom: 20px;
+    gap: 25px;
+    margin-bottom: 15px;
 }
 
 .player-button {
     background: none;
     border: none;
-    color: #777; /* Pasif Renk */
-    font-size: 1.8rem; /* Daha Büyük İkonlar */
+    color: #555; /* Pasif Renk */
+    font-size: 1.6rem;
     cursor: pointer;
     transition: color 0.2s ease-in-out, transform 0.1s ease-in-out;
 }
 
 .player-button:hover {
-    color: #eee; /* Hover Renk */
+    color: #eee;
     transform: scale(1.1);
 }
 
 .player-button:disabled {
-    color: #444; /* Disabled Renk */
+    color: #333;
     cursor: not-allowed;
 }
 
 .play-pause-button {
-    background-color: #00bfff; /* Elektrik Mavisi */
-    color: #111; /* Koyu Yazı */
+    background-color: #08f; /* Neon Mavi */
+    color: #000; /* Siyah */
     border: none;
     border-radius: 50%;
-    width: 70px; /* Daha Büyük Düğme */
-    height: 70px;
+    width: 65px;
+    height: 65px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 2.5rem; /* Daha Büyük İkon */
+    font-size: 2.2rem;
     cursor: pointer;
-    box-shadow: 0 8px 20px rgba(0, 191, 255, 0.6); /* Parlak Gölge */
+    box-shadow: 0 8px 20px rgba(0, 191, 255, 0.6);
     transition: background-color 0.2s ease-in-out, transform 0.1s ease-in-out, box-shadow 0.2s ease-in-out;
 }
 
 .play-pause-button:hover {
-    background-color: #40dfff; /* Daha Açık Mavi */
+    background-color: #40dfff;
     transform: scale(1.1);
     box-shadow: 0 8px 25px rgba(0, 191, 255, 0.9);
 }
@@ -419,7 +475,7 @@ body {
 
 .volume-bar {
     width: 80px;
-    height: 5px; /* Daha İnce */
+    height: 5px;
     background: #333;
     border-radius: 2.5px;
 }
@@ -433,7 +489,7 @@ body {
 
 
 .volume-bar::-webkit-slider-thumb {
-    background: #aaa; /* Gri Tutamaç */
+    background: #aaa;
     width: 12px; height: 12px;
     margin-top: -3.5px;
     box-shadow: 0 1px 3px rgba(0,0,0,0.2);
@@ -451,8 +507,8 @@ body {
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: rgba(0, 0, 0, 0.9); /* Çok Koyu Arka Plan */
-    backdrop-filter: blur(10px);
+    background-color: rgba(0, 0, 0, 0.95); /* Çok Koyu */
+    backdrop-filter: blur(12px);
     z-index: 1000;
     display: flex;
     align-items: center;
@@ -470,22 +526,22 @@ body {
 .modal-content {
     background-color: #1c1c1c;
     color: #eee;
-    padding: 35px;
+    padding: 30px;
     border-radius: 8px;
     max-width: 90%;
-    width: 450px; /* Modal Genişliği */
+    width: 400px;
     max-height: 90vh;
     overflow-y: auto;
     position: relative;
-    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7);
     display: flex;
     flex-direction: column;
-    gap: 20px; /* İç elemanlar arasına boşluk */
+    gap: 15px;
     border: 1px solid #333;
 }
 
 .admin-modal-content {
-     width: 500px; /* Admin modalı daha geniş */
+     width: 450px;
 }
 
 
@@ -506,49 +562,54 @@ body {
 }
 
 .modal-title {
-     font-family: 'Roboto Condensed', sans-serif;
-     font-size: 2rem;
+     font-family: 'Share Tech Mono', monospace;
+     font-size: 1.8rem;
      font-weight: 700;
-     color: #00bfff;
-     border-bottom: 2px solid #333;
+     color: #08f;
+     border-bottom: 2px dashed #08f;
      padding-bottom: 10px;
-     margin-bottom: 20px;
+     margin-bottom: 15px;
      display: flex;
      align-items: center;
      gap: 10px;
      text-transform: uppercase;
+     animation: neon-glow 1.5s ease-in-out infinite alternate; /* Neon Parlama Animasyonu */
+     animation-delay: 0.5s; /* Sidebar başlığından sonra başlasın */
 }
 
 .section-title {
-     font-family: 'Roboto Condensed', sans-serif;
-     font-size: 1.6rem;
+     font-family: 'Share Tech Mono', monospace;
+     font-size: 1.4rem;
      font-weight: 700;
-     color: #00bfff;
-     border-bottom: 1px solid #333;
+     color: #08f;
+     border-bottom: 1px dashed #08f;
      padding-bottom: 8px;
      margin-bottom: 15px;
      text-transform: uppercase;
+     animation: neon-glow 1.5s ease-in-out infinite alternate; /* Neon Parlama Animasyonu */
+      animation-delay: 1s; /* Farklı bir gecikme */
 }
 
 
 /* Form Elementleri */
 .form-label {
-    font-size: 1.1rem;
+    font-size: 1rem;
     font-weight: 500;
     color: #bbb;
     margin-bottom: 5px;
+    font-family: 'Rajdhani', sans-serif;
 }
 
 .text-input, .select-input {
     width: 100%;
     padding: 12px;
-    border-radius: 4px; /* Köşeli */
+    border-radius: 4px;
     border: 1px solid #3a3a3a;
     background-color: #2a2a2a;
     color: #eee;
     font-size: 1rem;
     transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
-    font-family: 'Roboto', sans-serif;
+    font-family: 'Rajdhani', sans-serif;
 }
 
 .text-input::placeholder {
@@ -557,7 +618,7 @@ body {
 
 .text-input:focus, .select-input:focus {
     outline: none;
-    border-color: #00bfff;
+    border-color: #08f;
     box-shadow: 0 0 8px rgba(0, 191, 255, 0.5);
 }
 
@@ -567,11 +628,12 @@ body {
 
 
 .file-input-label {
-     font-size: 1.1rem;
+     font-size: 1rem;
      font-weight: 500;
      color: #bbb;
      margin-bottom: 5px;
      display: block;
+      font-family: 'Rajdhani', sans-serif;
 }
 
 .file-input {
@@ -580,7 +642,7 @@ body {
      margin-bottom: 15px;
      font-size: 0.9rem;
      color: #bbb;
-     font-family: 'Roboto', sans-serif;
+     font-family: 'Rajdhani', sans-serif;
 }
 
 .file-input::file-selector-button {
@@ -588,15 +650,16 @@ body {
     padding: 8px 12px;
     border-radius: 4px;
     border: none;
-    background-color: #00bfff; /* Elektrik Mavisi */
-    color: #111;
-    font-weight: 500;
+    background-color: #08f;
+    color: #000;
+    font-weight: 600;
     cursor: pointer;
     transition: background-color 0.2s ease-in-out;
+    font-family: 'Share Tech Mono', monospace;
 }
 
 .file-input::file-selector-button:hover {
-    background-color: #40dfff; /* Hover Mavi */
+    background-color: #40dfff;
 }
 
 
@@ -614,7 +677,7 @@ body {
     border-radius: 4px;
     border: none;
     font-size: 1rem;
-    font-weight: 500;
+    font-weight: 600;
     cursor: pointer;
     transition: all 0.2s ease-in-out;
     display: flex;
@@ -622,12 +685,12 @@ body {
     justify-content: center;
     gap: 8px;
     text-transform: uppercase;
-    font-family: 'Roboto Condensed', sans-serif; /* Düğme Fontu */
+     font-family: 'Share Tech Mono', monospace;
 }
 
 .auth-button.primary {
-    background-color: #00bfff;
-    color: #111;
+    background-color: #08f;
+    color: #000;
 }
 
 .auth-button.primary:hover {
@@ -666,6 +729,7 @@ body {
     color: #bbb;
     text-align: center;
     margin-bottom: 10px;
+    font-family: 'Rajdhani', sans-serif;
 }
 
 .modal-divider {
@@ -688,32 +752,40 @@ body {
         height: auto;
         padding: 15px;
         box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-        display: none; /* Mobil görünümde varsayılan olarak gizli */
-        border-right: none; /* Kenarlığı kaldır */
-         border-bottom: 1px solid #333; /* Alt kenarlık ekle */
+        display: none;
+        border-right: none;
+         border-bottom: 1px solid #08f;
     }
 
     .main-content {
         width: 100%;
         height: auto;
         padding: 20px;
-        padding-bottom: 80px; /* Çakışmayı önlemek için alttan boşluk */
+        padding-bottom: 80px;
          overflow-y: visible;
     }
 
+    .light-show-container {
+         padding: 20px; /* Mobil görünümde daha az padding */
+         border-radius: 10px;
+    }
+
      .admin-button {
-         position: static;
-         margin-bottom: 20px;
-         width: 100%;
-         justify-content: center;
+         position: static; /* Mobil görünümde static */
+         margin-bottom: 20px; /* Altına boşluk ekle */
+         width: 100%; /* Mobil görünümde tam genişlik */
+         justify-content: center; /* Ortala */
+         top: auto; /* Konumlandırmayı sıfırla */
+         right: auto;
      }
 
     .player-container {
         padding: 15px;
+        max-width: 300px; /* Mobil görünümde daha dar */
     }
 
     .cover-image {
-        width: 200px; /* Mobil görünümde daha küçük kapak */
+        width: 200px;
         height: 200px;
         margin-bottom: 15px;
     }
@@ -723,12 +795,12 @@ body {
     }
 
     .current-song-title {
-        font-size: 2rem;
+        font-size: 1.8rem;
          margin-bottom: 5px;
     }
 
     .current-artist {
-        font-size: 1.1rem;
+        font-size: 1rem;
     }
 
     .custom-player-controls {
@@ -741,15 +813,16 @@ body {
     }
 
     .seek-bar {
-        height: 8px;
+        height: 6px;
         margin-bottom: 10px;
     }
 
     .seek-bar::-webkit-slider-thumb, .seek-bar::-moz-range-thumb {
         width: 16px;
         height: 16px;
-        margin-top: -4px;
+        margin-top: -5px;
     }
+
 
     .player-buttons {
         gap: 20px;
@@ -757,13 +830,13 @@ body {
     }
 
     .player-button {
-        font-size: 1.6rem;
+        font-size: 1.4rem;
     }
 
     .play-pause-button {
-        width: 60px;
-        height: 60px;
-        font-size: 2.2rem;
+        width: 55px;
+        height: 55px;
+        font-size: 2rem;
     }
 
     .volume-controls {
@@ -795,7 +868,7 @@ body {
      }
 
      .modal-title {
-         font-size: 1.8rem;
+         font-size: 1.6rem;
          gap: 8px;
          margin-bottom: 15px;
      }
@@ -817,7 +890,6 @@ body {
       .file-input {
           margin-bottom: 10px;
       }
-
 
     .file-input::file-selector-button {
          padding: 6px 10px;
