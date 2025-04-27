@@ -409,8 +409,8 @@
     <script>
         // --- Supabase Setup ---
         // !! Buraya kendi Supabase Proje URL ve Public Anon Key bilgilerini GİRİN !!
-        const SUPABASE_URL = 'https://skhbykqwdbwjcvqmwvft.supabase.co';
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNraGJ5a3F3ZGJ3amN2cW13dmZ0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDU3Nzg0NDYsImV4cCI6MjA2MTM1NDQ0Nn0.e8pbfF7O_rTtSKxtFzzc_zZTsegsxsNaluHNFBbWbMs';
+        const SUPABASE_URL = 'YOUR_SUPABASE_URL';
+        const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';
         // !! Supabase bilgilerini GİRDİĞİNİZDEN EMİN OLUN !!
 
         const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
@@ -422,8 +422,8 @@
         const audioPlayer = document.getElementById('audioPlayer');
         const coverImage = document.getElementById('coverImage');
         const deleteSelect = document.getElementById('deleteSelect');
-        const adminButton = document.getElementById('adminButton');
-        const adminPanelDiv = document.getElementById('adminPanel');
+        const adminButton = document.getElementById('adminButton'); // Admin button referansı
+        const adminPanelDiv = document.getElementById('adminPanel'); // Admin panel modalı
         const adminControlsDiv = document.getElementById('adminControls'); // Admin controls div
         const loginForm = document.getElementById('loginForm'); // Login form div
         const songCountDesktop = document.getElementById('songCountDesktop'); // Desktop song count element
@@ -1015,16 +1015,23 @@
                      throw new Error(`Silinecek müzik bulunamadı veya erişim reddedildi: ${fetchError?.message}`);
                 }
 
-                 // Optional but recommended check: Ensure the logged-in user is the owner (if user_id column exists)
+                 // Optional but recommended client-side check: Ensure the logged-in user is the owner (if user_id column exists)
                  // This is better enforced by RLS, but a client-side check adds user experience
-                 if (musicToDelete.user_id && musicToDelete.user_id !== user.data.user.id) {
-                     alert("Sadece kendi eklediğiniz müzikleri silebilirsiniz."); // User-friendly message
-                      throw new Error("Unauthorized delete attempt."); // Log more specific error internally
+                 // This relies on your RLS policy allowing users to SELECT rows where user_id = auth.uid()
+                 // If your RLS for DELETE is TRUE for authenticated, this check is just for UX
+                 const user = await supabase.auth.getUser(); // Get user again to be safe, though it should be in session
+                 if (musicToDelete.user_id && user.data?.user?.id && musicToDelete.user_id !== user.data.user.id) {
+                      alert("Sadece kendi eklediğiniz müzikleri silebilirsiniz."); // User-friendly message
+                       // Restore button state
+                       deleteButton.innerHTML = originalDeleteButtonText;
+                       deleteButton.disabled = false;
+                       // Don't proceed with delete
+                       return;
                  }
 
 
                 const filesToRemove = [];
-                // Extract file paths from URLs. Assumes 'public' bucket and potential user ID folder.
+                // Extract file paths from URLs. Assumes 'public' bucket. Adjust if needed.
                 const baseUrl = `${SUPABASE_URL}/storage/v1/object/public/music-files/`;
 
                 if (musicToDelete?.audio_url && musicToDelete.audio_url.startsWith(baseUrl)) {
@@ -1139,14 +1146,17 @@
             if (session) {
                 // User is logged in (session exists)
                 loginForm.classList.add('hidden'); // Hide login form
-                loginForm.classList.remove('flex', 'space-y-4');
+                loginForm.classList.remove('flex', 'space-y-4'); // Remove flex and space-y for clean hide
 
                 adminControlsDiv.classList.remove('hidden'); // Show admin controls
-                adminControlsDiv.classList.add('flex', 'flex-col', 'space-y-4');
+                adminControlsDiv.classList.add('flex', 'flex-col', 'space-y-4'); // Ensure flex properties for layout
 
                  if(loggedInUserEmailSpan && session.user && session.user.email) {
                      loggedInUserEmailSpan.textContent = `Giriş Yapıldı: ${session.user.email}`;
+                 } else if (loggedInUserEmailSpan) {
+                     loggedInUserEmailSpan.textContent = 'Giriş Yapıldı (Email Yok)'; // Fallback if email is missing
                  }
+
 
                  // Optional: Re-render music list if it depends on user authentication (e.g. showing only user's music)
                  // renderMusics(); // Uncomment if needed
@@ -1156,7 +1166,8 @@
                 loginForm.classList.add('flex', 'flex-col', 'space-y-4'); // Ensure flex properties for layout
 
                 adminControlsDiv.classList.add('hidden'); // Hide admin controls
-                adminControlsDiv.classList.remove('flex', 'flex-col', 'space-y-4');
+                adminControlsDiv.classList.remove('flex', 'flex-col', 'space-y-4'); // Remove flex and space-y for clean hide
+
 
                 if(loggedInUserEmailSpan) {
                     loggedInUserEmailSpan.textContent = ''; // Clear user email display
@@ -1209,14 +1220,14 @@
              // Show loading state on button
              signOutBtn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Çıkılıyor...';
              signOutBtn.disabled = true;
-             adminButton.disabled = true; // Disable admin button too during sign out process
+             // adminButton.disabled = true; // Disable admin button too during sign out process (Optional)
 
             const { error } = await supabase.auth.signOut();
 
              // Restore button states regardless of outcome
              signOutBtn.innerHTML = '<i class="fa fa-sign-out-alt"></i> Çıkış Yap';
              signOutBtn.disabled = false;
-             adminButton.disabled = false;
+             // adminButton.disabled = false; // Re-enable admin button (Optional)
 
 
             if (error) {
@@ -1273,14 +1284,23 @@
         */
 
 
-        // --- Event Listeners for Auth Buttons ---
+        // --- Event Listeners for Auth Buttons and Admin Button ---
+
+        // Add event listener for the admin button AFTER the script and DOM elements are ready
+        // Removed onclick="showAdminPanel()" from HTML
+        if (adminButton) { // Make sure the element exists
+            adminButton.addEventListener('click', showAdminPanel);
+        } else {
+            console.error("Admin button element not found!");
+        }
+
         if(signInBtn) signInBtn.addEventListener('click', signIn);
         // If you added a signUpBtn, uncomment and add listener:
         // const signUpBtn = document.getElementById('signUpBtn');
         // if(signUpBtn) signUpBtn.addEventListener('click', signUp);
         if(signOutBtn) signOutBtn.addEventListener('click', signOut);
 
-        // Make sure Add/Delete buttons trigger functions (already done with onclick, but adding event listeners is often better practice)
+        // Make sure Add/Delete buttons trigger functions (using event listeners now)
          const addMusicBtn = document.getElementById('addMusicBtn');
          if(addMusicBtn) addMusicBtn.addEventListener('click', addMusic);
 
