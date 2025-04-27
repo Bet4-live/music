@@ -27,9 +27,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         // --- DOM Elements ---
         // DOM elementlerine burada erişiyoruz çünkü DOMContentLoaded tetiklendi
         const musicListDesktop = document.getElementById('musicListDesktop');
-        const musicListMobile = document.getElementById('musicListMobile');
-        const mobileMusicListModal = document.getElementById('mobileMusicListModal');
-        const audioPlayer = document.getElementById('audioPlayer');
+        const musicListMobile = document.getElementById('mobileMusicListModal'); // Modal elementini doğru alalım
+        const audioPlayer = document.getElementById('audioPlayer'); // <-- audioPlayer elementi burada alınıyor
+        console.log("audioPlayer elementi bulundu:", audioPlayer); // <-- Bu log eklendi
+
         const coverImage = document.getElementById('coverImage');
         const deleteSelect = document.getElementById('deleteSelect');
         const adminButton = document.getElementById('adminButton');
@@ -113,18 +114,17 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
         }
 
-        // --- Buraya console.log ekledik ---
+        // --- updateSeekBar fonksiyonu ve içindeki log ---
         function updateSeekBar() {
-            console.log('timeupdate olayı tetiklendi. currentTime:', audioPlayer.currentTime, 'duration:', audioPlayer.duration); // <-- Bu satır eklendi
-
+            console.log('timeupdate olayı tetiklendi. currentTime:', audioPlayer.currentTime, 'duration:', audioPlayer.duration);
             if (audioPlayer.duration && isFinite(audioPlayer.duration)) {
                 const percentage = (audioPlayer.currentTime / audioPlayer.duration) * 100;
                 seekBar.value = percentage;
-                // Update CSS variable for progress fill
                 seekBar.style.setProperty('--progress', `${percentage}%`);
                 currentTimeSpan.textContent = formatTime(audioPlayer.currentTime);
             } else {
-                 seekBar.value = 0; seekBar.style.setProperty('--progress', `0%`);
+                 seekBar.value = 0;
+                 seekBar.style.setProperty('--progress', `0%`);
                  currentTimeSpan.textContent = formatTime(0);
             }
         }
@@ -132,11 +132,13 @@ document.addEventListener('DOMContentLoaded', async () => {
         function setDuration() {
              if (audioPlayer.duration && isFinite(audioPlayer.duration)) {
                 totalDurationSpan.textContent = formatTime(audioPlayer.duration);
-                seekBar.value = 0; seekBar.style.setProperty('--progress', `0%`);
+                seekBar.value = 0;
+                seekBar.style.setProperty('--progress', `0%`);
                 currentTimeSpan.textContent = formatTime(0);
             } else {
                 totalDurationSpan.textContent = "0:00"; currentTimeSpan.textContent = "0:00";
-                seekBar.value = 0; seekBar.style.setProperty('--progress', `0%`);
+                seekBar.value = 0;
+                seekBar.style.setProperty('--progress', `0%`);
             }
         }
 
@@ -248,14 +250,18 @@ document.addEventListener('DOMContentLoaded', async () => {
                 console.error("Supabase istemcisi henüz hazır değil (renderMusics içinde).");
                  const errorMessage = '<p class="text-red-400 text-center mt-4">Supabase bağlantısı kurulamadı.</p>';
                  if (musicListDesktop) musicListDesktop.innerHTML = errorMessage;
-                 if (musicListMobile) musicListMobile.innerHTML = errorMessage;
+                 if (musicListMobile) { // Mobile list elementini doğru kullanalım
+                    const mobileListContent = document.getElementById('mobileMusicListContent');
+                     if(mobileListContent) mobileListContent.innerHTML = errorMessage;
+                 }
                  updatePlayerUIState();
                  return;
             }
              console.log("renderMusics çalışıyor...");
 
             if (musicListDesktop) musicListDesktop.innerHTML = '';
-            if (musicListMobile) musicListMobile.innerHTML = '';
+            const mobileListContent = document.getElementById('mobileMusicListContent');
+            if (mobileListContent) mobileListContent.innerHTML = ''; // Clear mobile list content
             if (deleteSelect) deleteSelect.innerHTML = '<option value="" disabled selected>Silmek için seçin...</option>';
             musicData = [];
 
@@ -269,7 +275,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     console.error('Supabase fetch error:', error);
                     const errorMessage = '<p class="text-red-400 text-center mt-4">Müzikler yüklenemedi: ' + error.message + '</p>';
                     if (musicListDesktop) musicListDesktop.innerHTML = errorMessage;
-                    if (musicListMobile) musicListMobile.innerHTML = errorMessage;
+                    if (mobileListContent) mobileListContent.innerHTML = errorMessage; // Use mobile list content
                     updatePlayerUIState();
                     return;
                 }
@@ -282,7 +288,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 if (musicData.length === 0) {
                     const noMusicMessage = '<p class="text-gray-400 text-center mt-4">Henüz müzik eklenmemiş.</p>';
                     if (musicListDesktop) musicListDesktop.innerHTML = noMusicMessage;
-                    if (musicListMobile) musicListMobile.innerHTML = noMusicMessage;
+                    if (mobileListContent) mobileListContent.innerHTML = noMusicMessage; // Use mobile list content
                     if (currentMusicId !== null) {
                         audioPlayer.pause(); audioPlayer.src = ''; coverImage.src = defaultCover;
                         currentMusicId = null; currentMusicIndex = -1;
@@ -333,7 +339,9 @@ document.addEventListener('DOMContentLoaded', async () => {
                     };
 
                     if (musicListDesktop) musicListDesktop.appendChild(createMusicItem());
-                    if (musicListMobile) musicListMobile.appendChild(createMusicItem());
+                    // Add to the mobile list content element
+                    const mobileMusicListElement = document.getElementById('musicListMobile');
+                    if (mobileMusicListElement) mobileMusicListElement.appendChild(createMusicItem());
                     if (deleteSelect) {
                         const option = document.createElement('option');
                         option.value = music.id;
@@ -356,7 +364,8 @@ document.addEventListener('DOMContentLoaded', async () => {
                 console.error("renderMusics içinde hata:", error);
                  const errorMessage = '<p class="text-red-400 text-center mt-4">Müzik listesini yüklerken bir sorun oluştu.</p>';
                 if (musicListDesktop) musicListDesktop.innerHTML = errorMessage;
-                if (musicListMobile) musicListMobile.innerHTML = errorMessage;
+                const mobileListContent = document.getElementById('mobileMusicListContent');
+                if (mobileListContent) mobileListContent.innerHTML = errorMessage; // Use mobile list content
                 updatePlayerUIState();
             }
         }
@@ -526,7 +535,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                  if (musicToDelete?.audio_url && musicToDelete.audio_url.startsWith(baseUrl)) {
                       const audioFilePath = musicToDelete.audio_url.substring(baseUrl.length);
                       if(audioFilePath) filesToRemove.push(audioFilePath);
-                  }
+                 }
 
                  if (musicToDelete?.image_url && musicToDelete.image_url.startsWith(baseUrl)) {
                       const imageFilePath = musicToDelete.image_url.substring(baseUrl.length);
@@ -684,11 +693,22 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         // Player control listeners
         if(playPauseBtn) playPauseBtn.addEventListener('click', togglePlayPause);
-        if(prevBtn) prevBtn.addEventListener('click', playPrevious);
-        if(nextBtn) nextBtn.addEventListener('click', playNext);
+        // timeupdate listener buraya ekleniyor
+        if(audioPlayer) {
+            audioPlayer.addEventListener('timeupdate', updateSeekBar);
+            console.log("timeupdate listener audioPlayer elementine eklendi.");
+        } else {
+             console.error("audioPlayer elementi bulunamadı, timeupdate listener eklenemedi.");
+        }
+        if(audioPlayer) audioPlayer.addEventListener('loadedmetadata', setDuration);
+        if(audioPlayer) audioPlayer.addEventListener('play', () => updatePlayerUIState());
+        if(audioPlayer) audioPlayer.addEventListener('pause', () => updatePlayerUIState());
+        if(audioPlayer) audioPlayer.addEventListener('ended', playNext);
+        if(seekBar) seekBar.addEventListener('input', seek);
         if(volumeBar) volumeBar.addEventListener('input', changeVolume);
         if(volumeIcon) volumeIcon.addEventListener('click', toggleMute);
-        if(seekBar) { seekBar.addEventListener('input', seek); }
+        if(prevBtn) prevBtn.addEventListener('click', playPrevious);
+        if(nextBtn) nextBtn.addEventListener('click', playNext);
 
 
         // Modal close listeners
@@ -711,7 +731,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         updateVolumeIcon(audioPlayer.volume);
         updatePlayerUIState();
 
-        // Initial fetch and render of music list from Supabase (DOMContentLoaded içinde)
         renderMusics();
 
 
@@ -720,9 +739,3 @@ document.addEventListener('DOMContentLoaded', async () => {
         alert("Uygulama başlatılırken beklenmeyen bir hata oluştu. Konsolu kontrol edin.");
     }
 });
-
-// Mobile menu button listener (HTML'de varsa ve DOMContentLoaded dışında tanımlanmalı)
-// const mobileMenuButton = document.getElementById('mobileMenuButton');
-// if (mobileMenuButton) {
-//     mobileMenuButton.addEventListener('click', openMobileMusicList);
-// }
