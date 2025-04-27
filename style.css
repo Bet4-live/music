@@ -197,17 +197,76 @@ body {
 
 /* Işık Şöleni Konteyneri - Oynatıcıyı Çevreler */
 .light-show-container {
-     position: relative;
-     padding: 30px;
+     position: relative; /* İçindeki elemanları konumlandırmak için */
+     padding: 30px; /* Parlama için ekstra boşluk */
      border-radius: 15px;
      background: linear-gradient(45deg, #08f, #f08, #08f); /* Dinamik Gradyan */
      background-size: 400% 400%;
      animation: gradient-shift 15s ease infinite; /* Gradyan Animasyonu */
-     box-shadow: 0 0 30px rgba(0, 255, 255, 0.5);
-     display: flex; /* İçindeki player-container'ı ortalamak için */
+     box-shadow: 0 0 30px rgba(0, 255, 255, 0.5); /* Başlangıç Gölgesi */
+     display: flex;
      justify-content: center;
      align-items: center;
 }
+
+/* Efekt Katmanları - Işık Şölenini Oluşturur */
+.light-show-container::before,
+.light-show-container::after,
+.effect-layer {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 15px;
+    pointer-events: none; /* Tıklamayı engellemesinler */
+}
+
+.light-show-container::before {
+    background: radial-gradient(circle at center, rgba(0, 255, 255, 0.3) 0%, rgba(0, 255, 255, 0) 70%);
+    opacity: 0.6;
+    animation: pulse-border 3s ease-in-out infinite;
+}
+
+.light-show-container::after {
+    background: radial-gradient(circle at center, rgba(255, 0, 255, 0.3) 0%, rgba(255, 0, 255, 0) 70%);
+    opacity: 0.6;
+    animation: pulse-border 3.5s ease-in-out infinite reverse; /* Tersine Animasyon */
+}
+
+.effect-layer-1 {
+    background: linear-gradient(0deg, transparent, rgba(0, 255, 255, 0.2), transparent);
+    width: 100%;
+    height: 10px; /* İnce çizgi */
+    top: 0;
+    left: 0;
+    animation: scan-line 5s linear infinite;
+}
+
+.effect-layer-2 {
+    background: linear-gradient(90deg, transparent, rgba(255, 0, 255, 0.2), transparent);
+    width: 10px; /* İnce çizgi */
+    height: 100%;
+    top: 0;
+    left: 0;
+     animation: scan-line-vertical 5s linear infinite reverse;
+}
+
+/* Ek efekt katmanları veya farklı animasyonlar eklenebilir */
+
+
+/* Keyframes for effect layers */
+@keyframes scan-line {
+    0% { transform: translateY(0%); }
+    100% { transform: translateY(1000%); } /* Dikey hareket */
+}
+@keyframes scan-line-vertical {
+    0% { transform: translateX(0%); }
+    100% { transform: translateX(1000%); } /* Yatay hareket */
+}
+
+
 
 /* Admin Butonu */
 .admin-button {
@@ -238,10 +297,6 @@ body {
     box-shadow: 0 0 10px rgba(0, 255, 255, 0.8);
 }
 
-.admin-button i {
-    margin: 0;
-}
-
 .admin-button.danger {
     background-color: #c0392b;
     color: #eee;
@@ -260,6 +315,8 @@ body {
 
 /* Oynatıcı Alanı Stilleri */
 .player-container {
+    position: relative; /* Efekt katmanlarının altında kalması için */
+    z-index: 10; /* Efekt katmanlarından daha yüksek z-index */
     text-align: center;
     display: flex;
     flex-direction: column;
@@ -267,10 +324,10 @@ body {
     width: 100%;
     max-width: 550px;
     padding: 25px;
-    background-color: #111; /* Çok Koyu */
+    background-color: #111;
     border-radius: 10px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-    border: 2px solid #333; /* Hafif Kenarlık */
+    border: 2px solid #333;
 }
 
 .cover-image {
@@ -301,7 +358,7 @@ body {
     width: 100%;
     text-transform: uppercase;
      line-height: 1.1;
-     animation: neon-glow 1.5s ease-in-out infinite alternate; /* Neon Parlama Animasyonu */
+     animation: neon-glow 1.5s ease-in-out infinite alternate;
 }
 
 .current-artist {
@@ -319,7 +376,7 @@ body {
 /* Özel Oynatıcı Kontrol Çubuğu */
 .custom-player-controls {
     width: 100%;
-    background-color: #1a1a1a; /* Koyu */
+    background-color: #1a1a1a;
     padding: 15px 20px;
     border-radius: 6px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
@@ -332,7 +389,7 @@ body {
     font-size: 0.9rem;
     color: #bbb;
     margin-bottom: 8px;
-    font-family: 'Share Tech Mono', monospace; /* Daha teknik font */
+    font-family: 'Share Tech Mono', monospace;
 }
 
 .current-time, .total-duration {
@@ -345,12 +402,12 @@ input[type="range"] { /* Temel stil sıfırlama */
     -webkit-appearance: none;
     appearance: none;
     width: 100%;
-    height: 8px; /* Kalın Çubuk */
-    background: #333; /* Çubuk Arka Planı */
+    height: 8px;
+    background: #333;
     border-radius: 4px;
     cursor: pointer;
     outline: none;
-    margin: 0; /* Varsayılan margin'i kaldır */
+    margin: 0;
 }
 
 .seek-bar {
@@ -359,12 +416,12 @@ input[type="range"] { /* Temel stil sıfırlama */
 
 
 .seek-bar::-webkit-slider-runnable-track {
-    background: linear-gradient(to right, #08f var(--progress, 0%), #333 var(--progress, 0%)); /* Neon Mavi İlerleme */
+    background: linear-gradient(to right, #08f var(--progress, 0%), #333 var(--progress, 0%));
     height: 8px;
     border-radius: 4px;
 }
 .seek-bar::-moz-range-progress {
-    background-color: #08f; /* Neon Mavi İ ilerleme */
+    background-color: #08f;
     height: 8px;
      border-radius: 4px;
 }
@@ -380,7 +437,7 @@ input[type="range"] { /* Temel stil sıfırlama */
     appearance: none;
     width: 18px;
     height: 18px;
-    background: #08f; /* Neon Mavi Tutamaç */
+    background: #08f;
     border-radius: 50%;
     cursor: pointer;
     margin-top: -5px;
@@ -390,7 +447,7 @@ input[type="range"] { /* Temel stil sıfırlama */
 .seek-bar::-moz-range-thumb {
     width: 18px;
     height: 18px;
-    background: #08f; /* Neon Mavi Tutamaç */
+    background: #08f;
     border-radius: 50%;
     cursor: pointer;
     border: none;
@@ -411,7 +468,7 @@ input[type="range"] { /* Temel stil sıfırlama */
 .player-button {
     background: none;
     border: none;
-    color: #555; /* Pasif Renk */
+    color: #555;
     font-size: 1.6rem;
     cursor: pointer;
     transition: color 0.2s ease-in-out, transform 0.1s ease-in-out;
@@ -428,8 +485,8 @@ input[type="range"] { /* Temel stil sıfırlama */
 }
 
 .play-pause-button {
-    background-color: #08f; /* Neon Mavi */
-    color: #000; /* Siyah */
+    background-color: #08f;
+    color: #000;
     border: none;
     border-radius: 50%;
     width: 65px;
@@ -482,430 +539,4 @@ input[type="range"] { /* Temel stil sıfırlama */
 
 .volume-bar::-webkit-slider-runnable-track {
     background: linear-gradient(to right, #888 var(--progress, 0%), #333 var(--progress, 0%));
-}
-.volume-bar::-moz-range-progress {
-     background-color: #888;
-}
-
-
-.volume-bar::-webkit-slider-thumb {
-    background: #aaa;
-    width: 12px; height: 12px;
-    margin-top: -3.5px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
-}
-.volume-bar::-moz-range-thumb {
-    background: #aaa;
-    width: 12px; height: 12px;
-     box-shadow: 0 1px 3px rgba(0,0,0,0.2);
-}
-
-/* Modal Stilleri */
-.modal {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba(0, 0, 0, 0.95); /* Çok Koyu */
-    backdrop-filter: blur(12px);
-    z-index: 1000;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    opacity: 0;
-    visibility: hidden;
-    transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
-}
-
-.modal.open {
-    opacity: 1;
-    visibility: visible;
-}
-
-.modal-content {
-    background-color: #1c1c1c;
-    color: #eee;
-    padding: 30px;
-    border-radius: 8px;
-    max-width: 90%;
-    width: 400px;
-    max-height: 90vh;
-    overflow-y: auto;
-    position: relative;
-    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7);
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-    border: 1px solid #333;
-}
-
-.admin-modal-content {
-     width: 450px;
-}
-
-
-.modal-close-button {
-    position: absolute;
-    top: 15px;
-    right: 15px;
-    background: none;
-    border: none;
-    font-size: 2rem;
-    color: #888;
-    cursor: pointer;
-    transition: color 0.2s ease-in-out;
-}
-
-.modal-close-button:hover {
-    color: #eee;
-}
-
-.modal-title {
-     font-family: 'Share Tech Mono', monospace;
-     font-size: 1.8rem;
-     font-weight: 700;
-     color: #08f;
-     border-bottom: 2px dashed #08f;
-     padding-bottom: 10px;
-     margin-bottom: 15px;
-     display: flex;
-     align-items: center;
-     gap: 10px;
-     text-transform: uppercase;
-     animation: neon-glow 1.5s ease-in-out infinite alternate; /* Neon Parlama Animasyonu */
-     animation-delay: 0.5s; /* Sidebar başlığından sonra başlasın */
-}
-
-.section-title {
-     font-family: 'Share Tech Mono', monospace;
-     font-size: 1.4rem;
-     font-weight: 700;
-     color: #08f;
-     border-bottom: 1px dashed #08f;
-     padding-bottom: 8px;
-     margin-bottom: 15px;
-     text-transform: uppercase;
-     animation: neon-glow 1.5s ease-in-out infinite alternate; /* Neon Parlama Animasyonu */
-      animation-delay: 1s; /* Farklı bir gecikme */
-}
-
-
-/* Form Elementleri */
-.form-label {
-    font-size: 1rem;
-    font-weight: 500;
-    color: #bbb;
-    margin-bottom: 5px;
-    font-family: 'Rajdhani', sans-serif;
-}
-
-.text-input, .select-input {
-    width: 100%;
-    padding: 12px;
-    border-radius: 4px;
-    border: 1px solid #3a3a3a;
-    background-color: #2a2a2a;
-    color: #eee;
-    font-size: 1rem;
-    transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
-    font-family: 'Rajdhani', sans-serif;
-}
-
-.text-input::placeholder {
-    color: #888;
-}
-
-.text-input:focus, .select-input:focus {
-    outline: none;
-    border-color: #08f;
-    box-shadow: 0 0 8px rgba(0, 191, 255, 0.5);
-}
-
-.select-input {
-    cursor: pointer;
-}
-
-
-.file-input-label {
-     font-size: 1rem;
-     font-weight: 500;
-     color: #bbb;
-     margin-bottom: 5px;
-     display: block;
-      font-family: 'Rajdhani', sans-serif;
-}
-
-.file-input {
-     display: block;
-     width: 100%;
-     margin-bottom: 15px;
-     font-size: 0.9rem;
-     color: #bbb;
-     font-family: 'Rajdhani', sans-serif;
-}
-
-.file-input::file-selector-button {
-    margin-right: 10px;
-    padding: 8px 12px;
-    border-radius: 4px;
-    border: none;
-    background-color: #08f;
-    color: #000;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background-color 0.2s ease-in-out;
-    font-family: 'Share Tech Mono', monospace;
-}
-
-.file-input::file-selector-button:hover {
-    background-color: #40dfff;
-}
-
-
-/* Auth ve Admin Kontrol Düğmeleri */
-.auth-form, .admin-controls {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-}
-
-
-.auth-button {
-    width: 100%;
-    padding: 12px;
-    border-radius: 4px;
-    border: none;
-    font-size: 1rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s ease-in-out;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    text-transform: uppercase;
-     font-family: 'Share Tech Mono', monospace;
-}
-
-.auth-button.primary {
-    background-color: #08f;
-    color: #000;
-}
-
-.auth-button.primary:hover {
-    background-color: #40dfff;
-    transform: translateY(-2px);
-}
-
-.auth-button.secondary {
-    background-color: #555;
-    color: #eee;
-}
-.auth-button.secondary:hover {
-     background-color: #666;
-     transform: translateY(-2px);
-}
-
-.auth-button.danger {
-    background-color: #c0392b;
-    color: #eee;
-}
-.auth-button.danger:hover {
-    background-color: #e74c3c;
-    transform: translateY(-2px);
-}
-
-.auth-button.small {
-    padding: 8px 12px;
-    font-size: 0.9rem;
-    width: auto;
-    align-self: center;
-}
-
-
-.logged-in-user {
-    font-size: 1rem;
-    color: #bbb;
-    text-align: center;
-    margin-bottom: 10px;
-    font-family: 'Rajdhani', sans-serif;
-}
-
-.modal-divider {
-    border: none;
-    height: 1px;
-    background-color: #3a3a3a;
-    margin: 20px 0;
-}
-
-
-/* Responsive Düzenlemeler */
-@media (max-width: 768px) {
-    body {
-        flex-direction: column;
-        overflow-y: auto;
-    }
-
-    .sidebar {
-        width: 100%;
-        height: auto;
-        padding: 15px;
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-        display: none;
-        border-right: none;
-         border-bottom: 1px solid #08f;
-    }
-
-    .main-content {
-        width: 100%;
-        height: auto;
-        padding: 20px;
-        padding-bottom: 80px;
-         overflow-y: visible;
-    }
-
-    .light-show-container {
-         padding: 20px; /* Mobil görünümde daha az padding */
-         border-radius: 10px;
-    }
-
-     .admin-button {
-         position: static; /* Mobil görünümde static */
-         margin-bottom: 20px; /* Altına boşluk ekle */
-         width: 100%; /* Mobil görünümde tam genişlik */
-         justify-content: center; /* Ortala */
-         top: auto; /* Konumlandırmayı sıfırla */
-         right: auto;
-     }
-
-    .player-container {
-        padding: 15px;
-        max-width: 300px; /* Mobil görünümde daha dar */
-    }
-
-    .cover-image {
-        width: 200px;
-        height: 200px;
-        margin-bottom: 15px;
-    }
-
-    .track-info {
-         margin-bottom: 15px;
-    }
-
-    .current-song-title {
-        font-size: 1.8rem;
-         margin-bottom: 5px;
-    }
-
-    .current-artist {
-        font-size: 1rem;
-    }
-
-    .custom-player-controls {
-        padding: 10px 15px;
-    }
-
-    .time-info {
-         font-size: 0.85rem;
-         margin-bottom: 5px;
-    }
-
-    .seek-bar {
-        height: 6px;
-        margin-bottom: 10px;
-    }
-
-    .seek-bar::-webkit-slider-thumb, .seek-bar::-moz-range-thumb {
-        width: 16px;
-        height: 16px;
-        margin-top: -5px;
-    }
-
-
-    .player-buttons {
-        gap: 20px;
-        margin-bottom: 10px;
-    }
-
-    .player-button {
-        font-size: 1.4rem;
-    }
-
-    .play-pause-button {
-        width: 55px;
-        height: 55px;
-        font-size: 2rem;
-    }
-
-    .volume-controls {
-        justify-content: center;
-        margin-top: 10px;
-        width: 100%;
-    }
-
-    .volume-bar {
-         width: 70px;
-         height: 4px;
-    }
-     .volume-bar::-webkit-slider-thumb, .volume-bar::-moz-range-thumb {
-        width: 10px; height: 10px;
-        margin-top: -3px;
-    }
-
-
-    /* Mobil Müzik Listesi Modalı */
-    .modal-content {
-        padding: 20px;
-        width: 95%;
-        gap: 15px;
-    }
-
-     .admin-modal-content {
-         width: 95%;
-         padding: 20px;
-     }
-
-     .modal-title {
-         font-size: 1.6rem;
-         gap: 8px;
-         margin-bottom: 15px;
-     }
-
-     .section-title {
-         font-size: 1.4rem;
-         margin-bottom: 10px;
-     }
-
-     .form-label {
-         font-size: 1rem;
-     }
-
-     .text-input, .select-input, .auth-button {
-         padding: 10px;
-         font-size: 0.9rem;
-     }
-
-      .file-input {
-          margin-bottom: 10px;
-      }
-
-    .file-input::file-selector-button {
-         padding: 6px 10px;
-         font-size: 0.8rem;
-    }
-
-    .auth-button.small {
-        padding: 6px 10px;
-        font-size: 0.8rem;
-    }
-
-    .logged-in-user {
-         font-size: 0.9rem;
-    }
-
-    .modal-divider {
-         margin: 15px 0;
-    }
 }
