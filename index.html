@@ -3,38 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Synthwave Sessions</title> <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <title>Beat Canvas</title> <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
-    <link rel="shortcut icon" href="music.png" /> </head>
+    <link rel="shortcut icon" href="music.png" />
+</head>
 <body>
 
     <aside class="sidebar">
         <h2 class="sidebar-title">
-            <i class="fa fa-code sidebar-icon"></i> // TRACKS
-             <span id="songCountDesktop" class="song-count-desktop">0 // SONGS</span>
+            <i class="fa fa-list"></i> Tracks
         </h2>
         <div id="musicListDesktop" class="music-list-desktop">
-            <p class="loading-message">// Loading tracks...</p> </div>
+            </div>
     </aside>
 
     <main class="main-content">
+        <div class="player-effect-container">
+             <div class="effect-layer effect-layer-1"></div>
+             <div class="effect-layer effect-layer-2"></div>
+             <div class="effect-layer effect-layer-3"></div>
 
-         <div class="light-show-container">
-             <button id="adminButton" class="admin-button">
-                <i class="fa fa-fingerprint"></i> // ADMIN
-            </button>
 
             <div id="player" class="player-container">
-                <img id="coverImage" src="https://placehold.co/400x400/000/08f?text=SYNC" alt="Albüm Kapağı" class="cover-image"/>
+                <img id="coverImage" src="https://placehold.co/400x400/111/777?text=SELECT+TRACK" alt="Albüm Kapağı" class="cover-image"/>
                 <div class="track-info">
-                    <h3 id="currentSongTitle" class="current-song-title">// SELECT A TRACK</h3>
+                    <h3 id="currentSongTitle" class="current-song-title">SELECT TRACK</h3>
                     <p id="currentArtist" class="current-artist"></p>
                 </div>
-
 
                 <audio id="audioPlayer"></audio>
 
@@ -43,16 +39,18 @@
                         <span id="currentTime" class="current-time">0:00</span>
                         <span id="totalDuration" class="total-duration">0:00</span>
                     </div>
-                     <input type="range" id="seekBar" value="0" class="seek-bar">
+                    <input type="range" id="seekBar" value="0" class="seek-bar">
 
                     <div class="player-buttons">
                         <button id="prevBtn" class="player-button" aria-label="Previous Track" disabled>
-                            <i class="fa fa-backward"></i> </button>
+                            <i class="fa fa-backward-step"></i>
+                        </button>
                         <button id="playPauseBtn" class="play-pause-button">
                             <i class="fa fa-play"></i>
                         </button>
                         <button id="nextBtn" class="player-button" aria-label="Next Track" disabled>
-                            <i class="fa fa-forward"></i> </button>
+                            <i class="fa fa-forward-step"></i>
+                        </button>
                     </div>
 
                     <div class="volume-controls">
@@ -61,62 +59,34 @@
                     </div>
                 </div>
             </div>
-         </div>
+        </div>
 
+        <button id="adminButton" class="admin-button">
+             <i class="fa fa-cog"></i> Admin
+        </button>
 
     </main>
 
     <div id="mobileMusicListModal" class="modal">
-        <div id="mobileMusicListContent" class="modal-content">
-            <button id="closeMobileListBtn" class="modal-close-button">
-                <i class="fa fa-times"></i>
-            </button>
-             <h2 class="modal-title"><i class="fa fa-code sidebar-icon"></i> // TRACKS</h2>
+         <div id="mobileMusicListContent" class="modal-content">
+             <button id="closeMobileListBtn" class="modal-close-button"><i class="fa fa-times"></i></button>
+              <h2 class="modal-title">Tracks</h2>
              <div id="musicListMobile" class="music-list-mobile">
-                 <p class="loading-message">// Loading tracks...</p> </div>
-        </div>
-    </div>
-
-
-    <div id="adminPanel" class="modal">
-        <div class="modal-content admin-modal-content">
-            <button id="closeAdminPanelBtn" class="modal-close-button">
-                <i class="fa fa-times"></i>
-            </button>
-
-            <h2 class="modal-title"><i class="fa fa-user-lock sidebar-icon"></i> // ACCESS</h2> <div id="loginForm" class="auth-form">
-                 <p class="form-label">// SIGN IN</p> <input type="email" id="authEmail" placeholder="Email" class="text-input">
-                 <input type="password" id="authPass" placeholder="Password" class="text-input">
-                 <button id="signInBtn" class="auth-button primary">
-                     <i class="fa fa-sign-in-alt"></i> // SIGN IN </button>
                  </div>
-
-            <div id="adminControls" class="admin-controls">
-                <p id="loggedInUserEmail" class="logged-in-user"></p>
-                 <button id="signOutBtn" class="auth-button danger small">
-                     <i class="fa fa-sign-out-alt"></i> // SIGN OUT </button>
-
-                <hr class="modal-divider">
-
-                <h3 class="section-title">// ADD TRACK</h3> <input type="text" id="musicName" placeholder="Track Title" class="text-input">
-                 <input type="text" id="artistName" placeholder="Artist Name (Optional)" class="text-input">
-
-                <label class="file-input-label">// AUDIO FILE (MP3, WAV...):</label> <input type="file" id="musicFile" accept="audio/*" class="file-input">
-
-                <label class="file-input-label">// COVER IMAGE (Optional):</label> <input type="file" id="musicImage" accept="image/*" class="file-input">
-
-                <button id="addMusicBtn" class="admin-button primary">
-                    <i class="fa fa-plus"></i> // ADD TRACK </button>
-
-                <hr class="modal-divider">
-
-                <h3 class="section-title">// DELETE TRACK</h3> <label for="deleteSelect" class="form-label">// SELECT TRACK TO DELETE:</label> <select id="deleteSelect" class="select-input">
-                    <option value="" disabled selected>// Select to delete...</option> </select>
-                <button id="deleteMusicBtn" class="admin-button danger">
-                    <i class="fa fa-trash"></i> // DELETE SELECTED </button>
-            </div>
-        </div>
+         </div>
     </div>
+
+     <div id="adminPanel" class="modal">
+         <div class="modal-content admin-modal-content">
+             <button id="closeAdminPanelBtn" class="modal-close-button"><i class="fa fa-times"></i></button>
+              <h2 class="modal-title">Admin Panel</h2>
+
+              <div id="loginForm" class="auth-form">...</div>
+
+             <div id="adminControls" class="admin-controls">...</div>
+         </div>
+     </div>
+
 
     <script src="script.js"></script>
 
