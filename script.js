@@ -1,45 +1,43 @@
 // --- Supabase Setup ---
 // !! Buraya kendi Supabase Proje URL ve Public Anon Key bilgilerini GİRİN !!
-const SUPABASE_URL = 'YOUR_SUPABASE_URL'; // <-- KENDİ URL'NİZİ GİRİN
-const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY'; // <-- KENDİ ANON KEY'İNİZİ GİRİN
+const SUPABASE_URL = 'https://skhbykqwdbwjcvqmwvft.supabase.co'; // <-- KENDİ URL'NİZİ GİRİN
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNraGJ5a3F3ZGJ3amN2cW13dmZ0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDU3Nzg0NDYsImV4cCI6MjA2MTM1NDQ0Nn0.e8pbfF7O_rTtSKxtFzzc_zZTsegsxsNaluHNFBbWbMs'; // <-- KENDİ ANON KEY'İNİZİ GİRİN
 // !! Supabase bilgilerini GİRDİĞİNİZDEN EMİN OLUN !!
 
-// Supabase istemcisini burada tanımlıyoruz
-let supabaseClient; // İsim çakışmasını önlemek için farklı bir isim kullanalım
+// Supabase istemcisini tutacak değişkeni tanımlıyoruz
+let supabaseClient;
 
 // Tüm kodumuzu DOMContentLoaded olay dinleyicisi içine alıyoruz
 document.addEventListener('DOMContentLoaded', async () => {
     console.log("DOMContentLoaded olayı tetiklendi. Script çalışıyor...");
 
-    // Supabase istemcisini burada oluşturuyoruz, DOĞRUDAN window.supabase kullanarak
+    // Supabase kütüphanesinin global olarak tanımladığı 'supabase' objesine erişmeye çalışıyoruz
     try {
-        // Supabase kütüphanesinin global olarak tanımladığı 'supabase' objesini kullanıyoruz
+        // window.supabase varlığını kontrol edelim
         if (typeof window.supabase === 'undefined') {
             console.error("Hata: window.supabase tanımlanmamış. Supabase kütüphanesi yüklenemedi veya çalışmadı.");
-            alert("Supabase kütüphanesi yüklenirken bir sorun oluştu.");
-            return; // Eğer supabase objesi yoksa daha fazla ilerleme
+            alert("Supabase kütüphanesi yüklenirken bir sorun oluştu. Konsolu kontrol edin.");
+            return; // Eğer global Supabase objesi yoksa daha fazla ilerlememek en iyisi
         }
+
+        // Supabase istemcisini DOĞRUDAN window.supabase objesinden oluşturuyoruz
         supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
         console.log("Supabase istemcisi başarıyla oluşturuldu.");
 
-        // Şimdi kodun geri kalanını DOMContentLoaded listener'ının içine taşıyoruz
-        // Tüm fonksiyon tanımları (renderMusics, addMusic, deleteMusic, signIn, signOut, showAdminPanel, closeAdminPanel vb.)
-        // ve event listener atamaları buraya gelecek.
-        // Önceki script.js dosyasının içindeki TÜM kod bu listener'ın içine girmeli.
-
         // --- DOM Elements ---
+        // DOM elementlerine burada erişiyoruz çünkü DOMContentLoaded tetiklendi
         const musicListDesktop = document.getElementById('musicListDesktop');
         const musicListMobile = document.getElementById('musicListMobile');
         const mobileMusicListModal = document.getElementById('mobileMusicListModal');
         const audioPlayer = document.getElementById('audioPlayer');
         const coverImage = document.getElementById('coverImage');
         const deleteSelect = document.getElementById('deleteSelect');
-        const adminButton = document.getElementById('adminButton'); // Admin button referansı
-        const adminPanelDiv = document.getElementById('adminPanel'); // Admin panel modalı
-        const adminControlsDiv = document.getElementById('adminControls'); // Admin controls div
-        const loginForm = document.getElementById('loginForm'); // Login form div
-        const songCountDesktop = document.getElementById('songCountDesktop'); // Desktop song count element
-        const currentSongTitleElement = document.getElementById('currentSongTitle'); // Current song title element
+        const adminButton = document.getElementById('adminButton');
+        const adminPanelDiv = document.getElementById('adminPanel');
+        const adminControlsDiv = document.getElementById('adminControls');
+        const loginForm = document.getElementById('loginForm');
+        const songCountDesktop = document.getElementById('songCountDesktop');
+        const currentSongTitleElement = document.getElementById('currentSongTitle');
 
         // Auth related elements
         const authEmailInput = document.getElementById('authEmail');
@@ -68,31 +66,185 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 
         // --- Helper Functions ---
-        // Bu fonksiyonlar da DOMContentLoaded içinde tanımlanacak
-        function formatTime(seconds) { /* ... kod ... */ }
-        function updateVolumeIcon(volume) { /* ... kod ... */ }
-        function updatePlayerUIState() { /* ... kod ... */ }
-        function togglePlayPause() { /* ... kod ... */ }
-        function updateSeekBar() { /* ... kod ... */ }
-        function setDuration() { /* ... kod ... */ }
-        function seek() { /* ... kod ... */ }
-        function changeVolume() { /* ... kod ... */ }
-        function toggleMute() { /* ... kod ... */ }
-        function loadAndPlayMusic(index) { /* ... kod ... */ }
-        function playNext() { /* ... kod ... */ }
-        function playPrevious() { /* ... kod ... */ }
+        // Bu fonksiyonlar DOMContentLoaded içinde tanımlanacak ve supabase yerine supabaseClient kullanacaklar
+        function formatTime(seconds) {
+            if (isNaN(seconds) || seconds < 0 || !isFinite(seconds)) return "0:00";
+            const minutes = Math.floor(seconds / 60);
+            const secs = Math.floor(seconds % 60);
+            return `${minutes}:${secs < 10 ? '0' : ''}${secs}`;
+        }
+
+        function updateVolumeIcon(volume) {
+             if (volume === 0) {
+                volumeIcon.className = 'fa fa-volume-xmark text-gray-600 hover:text-gray-900 cursor-pointer w-5 text-center';
+            } else if (volume < 0.5) {
+                volumeIcon.className = 'fa fa-volume-low text-gray-600 hover:text-gray-900 cursor-pointer w-5 text-center';
+            } else {
+                volumeIcon.className = 'fa fa-volume-high text-gray-600 hover:text-gray-900 cursor-pointer w-5 text-center';
+            }
+        }
+
+        function updatePlayerUIState() {
+            const hasMultipleSongs = musicData.length > 1;
+            prevBtn.disabled = !hasMultipleSongs;
+            nextBtn.disabled = !hasMultipleSongs;
+
+            if (audioPlayer.paused) {
+                playPauseIcon.className = 'fa fa-play fa-lg';
+            } else {
+                playPauseIcon.className = 'fa fa-pause fa-lg';
+            }
+
+            if (currentMusicId === null) {
+                currentTimeSpan.textContent = "0:00"; totalDurationSpan.textContent = "0:00";
+                seekBar.value = 0; seekBar.style.setProperty('--progress', `0%`);
+                seekBar.disabled = true;
+                if(currentSongTitleElement) currentSongTitleElement.textContent = "Müzik Seçin";
+            } else {
+                seekBar.disabled = false;
+            }
+        }
+
+        function togglePlayPause() {
+            if (!audioPlayer.src || currentMusicId === null) return;
+            if (audioPlayer.paused) {
+                audioPlayer.play().catch(e => console.error("Oynatma hatası:", e));
+            } else {
+                audioPlayer.pause();
+            }
+        }
+
+        function updateSeekBar() {
+            if (audioPlayer.duration && isFinite(audioPlayer.duration)) {
+                const percentage = (audioPlayer.currentTime / audioPlayer.duration) * 100;
+                seekBar.value = percentage;
+                seekBar.style.setProperty('--progress', `${percentage}%`);
+                currentTimeSpan.textContent = formatTime(audioPlayer.currentTime);
+            } else {
+                 seekBar.value = 0; seekBar.style.setProperty('--progress', `0%`);
+                 currentTimeSpan.textContent = formatTime(0);
+            }
+        }
+
+        function setDuration() {
+             if (audioPlayer.duration && isFinite(audioPlayer.duration)) {
+                totalDurationSpan.textContent = formatTime(audioPlayer.duration);
+                seekBar.value = 0; seekBar.style.setProperty('--progress', `0%`);
+                currentTimeSpan.textContent = formatTime(0);
+            } else {
+                totalDurationSpan.textContent = "0:00"; currentTimeSpan.textContent = "0:00";
+                seekBar.value = 0; seekBar.style.setProperty('--progress', `0%`);
+            }
+        }
+
+        function seek() {
+            if (!audioPlayer.src || !audioPlayer.duration || !isFinite(audioPlayer.duration)) return;
+            const time = (seekBar.value / 100) * audioPlayer.duration;
+            audioPlayer.currentTime = time;
+            seekBar.style.setProperty('--progress', `${seekBar.value}%`);
+        }
+
+        function changeVolume() {
+            audioPlayer.volume = volumeBar.value;
+            updateVolumeIcon(audioPlayer.volume);
+            if (audioPlayer.volume > 0) {
+                lastVolume = audioPlayer.volume;
+            }
+        }
+
+        function toggleMute() {
+            if (audioPlayer.volume > 0) {
+                lastVolume = audioPlayer.volume;
+                audioPlayer.volume = 0; volumeBar.value = 0;
+                updateVolumeIcon(0);
+            } else {
+                audioPlayer.volume = lastVolume;
+                volumeBar.value = lastVolume;
+                updateVolumeIcon(lastVolume);
+            }
+        }
+
+        function loadAndPlayMusic(index) {
+            if (index < 0 || index >= musicData.length) {
+                console.log("Geçersiz müzik indexi:", index);
+                 audioPlayer.pause(); audioPlayer.src = ''; coverImage.src = defaultCover;
+                 currentMusicId = null; currentMusicIndex = -1;
+                 if(currentSongTitleElement) currentSongTitleElement.textContent = "Müzik Seçin";
+                 updatePlayerUIState();
+                return;
+            }
+
+            const music = musicData[index];
+            console.log(`Yükleniyor: ${music.name} (ID: ${music.id}, Index: ${index})`);
+
+            audioPlayer.src = music.audio_url;
+            coverImage.src = music.image_url || defaultCover;
+
+            currentMusicId = music.id;
+            currentMusicIndex = index;
+            if(currentSongTitleElement) currentSongTitleElement.textContent = music.name;
+
+            document.querySelectorAll('#musicListDesktop .music-item').forEach((item, idx) => {
+                item.classList.toggle('bg-indigo-600', item.dataset.id === currentMusicId.toString());
+                item.classList.toggle('bg-gray-800', item.dataset.id !== currentMusicId.toString());
+                if (item.dataset.id === currentMusicId.toString()) {
+                    item.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                }
+            });
+             document.querySelectorAll('#musicListMobile .music-item').forEach((item, idx) => {
+                item.classList.toggle('bg-indigo-600', item.dataset.id === currentMusicId.toString());
+                item.classList.toggle('bg-gray-800', item.dataset.id !== currentMusicId.toString());
+                 if (item.dataset.id === currentMusicId.toString()) {
+                    item.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                 }
+            });
+
+            audioPlayer.load();
+            audioPlayer.play().catch(e => {
+                console.error("Otomatik oynatma engellendi veya hata:", e);
+                playPauseIcon.className = 'fa fa-play fa-lg';
+            });
+            updatePlayerUIState();
+        }
+
+        function playNext() {
+            if (musicData.length === 0) return;
+            let nextIndex = (currentMusicIndex + 1) % musicData.length;
+            loadAndPlayMusic(nextIndex);
+        }
+
+        function playPrevious() {
+             if (musicData.length === 0) return;
+             if (audioPlayer.currentTime > 3 && currentMusicIndex !== -1) {
+                 audioPlayer.currentTime = 0;
+                 audioPlayer.play().catch(e => console.error("Oynatma hatası:", e));
+             } else {
+                let prevIndex = (currentMusicIndex - 1 + musicData.length) % musicData.length;
+                loadAndPlayMusic(prevIndex);
+             }
+        }
 
         // --- Mobile Music List Modal Control ---
-        function toggleMobileMusicList() { /* ... kod ... */ }
-        function openMobileMusicList() { /* ... kod ... */ }
-        function closeMobileMusicList() { /* ... kod ... */ }
+        function toggleMobileMusicList() {
+             const modal = document.getElementById('mobileMusicListModal');
+             if (modal) { modal.classList.toggle('open'); } else { console.error("Mobile music list modal element not found!"); }
+        }
+        function openMobileMusicList() {
+             const modal = document.getElementById('mobileMusicListModal');
+             if (modal) { modal.classList.add('open'); } else { console.error("Mobile music list modal element not found!"); }
+        }
+        function closeMobileMusicList() {
+             const modal = document.getElementById('mobileMusicListModal');
+             if (modal) { modal.classList.remove('open'); } else { console.error("Mobile music list modal element not found!"); }
+        }
+
 
         // --- Render Music List (Fetch from Supabase) ---
         async function renderMusics() {
-            // Supabase istemcisine supabaseClient değişkeni ile erişin
+            // supabase yerine supabaseClient kullanıyoruz
             if (!supabaseClient) {
-                 console.error("Supabase istemcisi henüz hazır değil (renderMusics içinde).");
-                  const errorMessage = '<p class="text-red-400 text-center mt-4">Supabase bağlantısı kurulamadı.</p>';
+                console.error("Supabase istemcisi henüz hazır değil (renderMusics içinde).");
+                 const errorMessage = '<p class="text-red-400 text-center mt-4">Supabase bağlantısı kurulamadı.</p>';
                  if (musicListDesktop) musicListDesktop.innerHTML = errorMessage;
                  if (musicListMobile) musicListMobile.innerHTML = errorMessage;
                  updatePlayerUIState();
@@ -100,37 +252,32 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
              console.log("renderMusics çalışıyor...");
 
-
-            // Clear previous lists and data
             if (musicListDesktop) musicListDesktop.innerHTML = '';
             if (musicListMobile) musicListMobile.innerHTML = '';
             if (deleteSelect) deleteSelect.innerHTML = '<option value="" disabled selected>Silmek için seçin...</option>';
             musicData = [];
 
             try {
-                // Fetch data from the 'musics' table using supabaseClient
-                const { data, error } = await supabaseClient
+                const { data, error } = await supabaseClient // supabase yerine supabaseClient
                     .from('musics')
                     .select('id, name, audio_url, image_url')
                     .order('created_at', { ascending: false });
 
-                if (error) { /* ... hata yönetimi ... */
-                     console.error('Supabase fetch error:', error);
+                if (error) {
+                    console.error('Supabase fetch error:', error);
                     const errorMessage = '<p class="text-red-400 text-center mt-4">Müzikler yüklenemedi: ' + error.message + '</p>';
                     if (musicListDesktop) musicListDesktop.innerHTML = errorMessage;
                     if (musicListMobile) musicListMobile.innerHTML = errorMessage;
                     updatePlayerUIState();
                     return;
-                 }
+                }
 
                 musicData = data || [];
                 console.log(`Bulunan müzik sayısı: ${musicData.length}`);
 
-                // Update song count
-                 if (songCountDesktop) songCountDesktop.textContent = `${musicData.length} Şarkı`;
+                if (songCountDesktop) songCountDesktop.textContent = `${musicData.length} Şarkı`;
 
-
-                if (musicData.length === 0) { /* ... müzik yok durumu ... */
+                if (musicData.length === 0) {
                     const noMusicMessage = '<p class="text-gray-400 text-center mt-4">Henüz müzik eklenmemiş.</p>';
                     if (musicListDesktop) musicListDesktop.innerHTML = noMusicMessage;
                     if (musicListMobile) musicListMobile.innerHTML = noMusicMessage;
@@ -141,10 +288,9 @@ document.addEventListener('DOMContentLoaded', async () => {
                     if(currentSongTitleElement) currentSongTitleElement.textContent = "Müzik Seçin";
                     updatePlayerUIState();
                     return;
-                 }
+                }
 
-                // Find current music index
-                 const currentSongIndexInNewList = musicData.findIndex(music => music.id === currentMusicId);
+                const currentSongIndexInNewList = musicData.findIndex(music => music.id === currentMusicId);
                 if(currentSongIndexInNewList !== -1) {
                     currentMusicIndex = currentSongIndexInNewList;
                 } else {
@@ -155,10 +301,8 @@ document.addEventListener('DOMContentLoaded', async () => {
                      }
                 }
 
-
-                // Render music items
                 musicData.forEach((music, index) => {
-                    const createMusicItem = () => { /* ... element oluşturma kodu ... */
+                    const createMusicItem = () => {
                          const div = document.createElement('div');
                          div.className = `music-item flex items-center gap-3 p-3 rounded-lg cursor-pointer transition-all transform hover:scale-[1.03] ${music.id === currentMusicId ? 'bg-indigo-600' : 'bg-gray-800 hover:bg-indigo-700'}`;
                          div.dataset.id = music.id;
@@ -196,7 +340,6 @@ document.addEventListener('DOMContentLoaded', async () => {
                     }
                 });
 
-                 // Re-highlight active song and update player state
                  if (currentMusicId !== null && currentMusicIndex !== -1) {
                      document.querySelectorAll('.music-item').forEach(item => {
                          item.classList.toggle('bg-indigo-600', item.dataset.id === currentMusicId.toString());
@@ -218,15 +361,13 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 
         // --- Add Music (Upload to Storage & Insert to DB) ---
-
         async function addMusic() {
-             // Check if user is logged in using supabaseClient
+             // supabase yerine supabaseClient kullanıyoruz
             const user = await supabaseClient.auth.getUser();
             if (user.error || !user.data.user) {
                  alert('Müzik eklemek için giriş yapmalısınız.');
                  return;
             }
-            // ... (Kalan addMusic fonksiyon kodu aynı kalacak, supabase yerine supabaseClient kullanın)
 
              const nameInput = document.getElementById('musicName');
              const fileInput = document.getElementById('musicFile');
@@ -256,7 +397,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                  const audioFilePath = `public/${audioFileName}`;
                  filesToRemoveOnError.push(audioFilePath);
 
-                 const { data: audioUploadData, error: audioUploadError } = await supabaseClient.storage
+                 const { data: audioUploadData, error: audioUploadError } = await supabaseClient.storage // supabase yerine supabaseClient
                      .from('music-files')
                      .upload(audioFilePath, audioFile);
 
@@ -264,7 +405,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                      throw new Error(`Ses dosyası yükleme hatası: ${audioUploadError.message}`);
                  }
 
-                 const { data: publicAudioUrlData } = supabaseClient.storage
+                 const { data: publicAudioUrlData } = supabaseClient.storage // supabase yerine supabaseClient
                      .from('music-files')
                      .getPublicUrl(audioFilePath);
                  audioUrl = publicAudioUrlData.publicUrl;
@@ -277,20 +418,20 @@ document.addEventListener('DOMContentLoaded', async () => {
                      const imageFilePath = `public/${imageFileName}`;
                      filesToRemoveOnError.push(imageFilePath);
 
-                     const { data: imageUploadData, error: imageUploadError } = await supabaseClient.storage
+                     const { data: imageUploadData, error: imageUploadError } = await supabaseClient.storage // supabase yerine supabaseClient
                          .from('music-files')
                          .upload(imageFilePath, imageFile);
 
                      if (imageUploadError) {
                           throw new Error(`Resim dosyası yükleme hatası: ${imageUploadError.message}`);
                      }
-                     const { data: publicImageUrlData } = supabaseClient.storage
+                     const { data: publicImageUrlData } = supabaseClient.storage // supabase yerine supabaseClient
                          .from('music-files')
                          .getPublicUrl(imageFilePath);
                      imageUrl = publicImageUrlData.publicUrl;
                  }
 
-                 const { data: musicInsertData, error: musicInsertError } = await supabaseClient
+                 const { data: musicInsertData, error: musicInsertError } = await supabaseClient // supabase yerine supabaseClient
                      .from('musics')
                      .insert([{
                          name: name,
@@ -317,7 +458,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
                   if (filesToRemoveOnError.length > 0) {
                       console.log("Hata oluştu, yüklenen dosyalar siliniyor:", filesToRemoveOnError);
-                       const { error: cleanupError } = await supabaseClient.storage
+                       const { error: cleanupError } = await supabaseClient.storage // supabase yerine supabaseClient
                           .from('music-files')
                           .remove(filesToRemoveOnError);
                        if (cleanupError) {
@@ -327,7 +468,6 @@ document.addEventListener('DOMContentLoaded', async () => {
                        }
                   }
 
-
              } finally {
                  addButton.innerHTML = originalButtonText;
                  addButton.disabled = false;
@@ -335,15 +475,14 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
 
         // --- Delete Music (Delete from DB & Remove from Storage) ---
-
         async function deleteMusic() {
-             // Check if user is logged in using supabaseClient
+             // supabase yerine supabaseClient kullanıyoruz
             const user = await supabaseClient.auth.getUser();
              if (user.error || !user.data.user) {
                   alert('Müzik silmek için giriş yapmalısınız.');
                   return;
              }
-            // ... (Kalan deleteMusic fonksiyon kodu aynı kalacak, supabase yerine supabaseClient kullanın)
+
              const musicIdToDelete = deleteSelect.value;
 
              if (!musicIdToDelete) {
@@ -361,9 +500,8 @@ document.addEventListener('DOMContentLoaded', async () => {
               deleteButton.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Siliniyor...';
               deleteButton.disabled = true;
 
-
              try {
-                 const { data: musicToDelete, error: fetchError } = await supabaseClient
+                 const { data: musicToDelete, error: fetchError } = await supabaseClient // supabase yerine supabaseClient
                      .from('musics')
                      .select('id, audio_url, image_url, user_id')
                      .eq('id', musicIdToDelete)
@@ -374,14 +512,13 @@ document.addEventListener('DOMContentLoaded', async () => {
                       throw new Error(`Silinecek müzik bulunamadı veya erişim reddedildi: ${fetchError?.message}`);
                  }
 
-                  const user = await supabaseClient.auth.getUser();
+                  const user = await supabaseClient.auth.getUser(); // supabase yerine supabaseClient
                   if (musicToDelete.user_id && user.data?.user?.id && musicToDelete.user_id !== user.data.user.id) {
                        alert("Sadece kendi eklediğiniz müzikleri silebilirsiniz.");
                         deleteButton.innerHTML = originalDeleteButtonText;
                         deleteButton.disabled = false;
                         return;
                   }
-
 
                  const filesToRemove = [];
                  const baseUrl = `${SUPABASE_URL}/storage/v1/object/public/music-files/`;
@@ -396,8 +533,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                       if(imageFilePath) filesToRemove.push(imageFilePath);
                  }
 
-
-                 const { error: dbDeleteError } = await supabaseClient
+                 const { error: dbDeleteError } = await supabaseClient // supabase yerine supabaseClient
                      .from('musics')
                      .delete()
                      .eq('id', musicIdToDelete);
@@ -409,7 +545,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                  console.log(`Müzik ID ${musicIdToDelete} veritabanından silindi.`);
 
                   if (filesToRemove.length > 0) {
-                      const { error: storageDeleteError } = await supabaseClient.storage
+                      const { error: storageDeleteError } = await supabaseClient.storage // supabase yerine supabaseClient
                           .from('music-files')
                           .remove(filesToRemove);
 
@@ -419,7 +555,6 @@ document.addEventListener('DOMContentLoaded', async () => {
                            console.log(`Dosyalar başarıyla silindi: ${filesToRemove.join(', ')}`);
                        }
                   }
-
 
                  const wasCurrentMusicDeleted = (currentMusicId === musicIdToDelete);
 
@@ -451,7 +586,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         // --- Admin Panel Visibility & Auth State Handling ---
 
-        function showAdminPanel() { /* ... kod ... */
+        function showAdminPanel() {
              adminPanelDiv.classList.remove('hidden');
              adminPanelDiv.classList.add('flex');
               if (!loginForm.classList.contains('hidden') && authEmailInput) {
@@ -459,7 +594,7 @@ document.addEventListener('DOMContentLoaded', async () => {
               }
         }
 
-        function closeAdminPanel() { /* ... kod ... */
+        function closeAdminPanel() {
              adminPanelDiv.classList.add('hidden');
              adminPanelDiv.classList.remove('flex');
              document.getElementById('musicName').value = '';
@@ -471,7 +606,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
 
         // Supabase Auth State Listener: supabase yerine supabaseClient kullanın
-        supabaseClient.auth.onAuthStateChange((event, session) => {
+        // Auth listener'ı da DOMContentLoaded içinde olmalı
+        supabaseClient.auth.onAuthStateChange((event, session) => { // supabase yerine supabaseClient
             console.log("Auth state changed:", event, session);
             if (session) {
                 loginForm.classList.add('hidden'); loginForm.classList.remove('flex', 'space-y-4');
@@ -494,7 +630,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         // --- Supabase Authentication Functions ---
 
         async function signIn() {
-            // supabase yerine supabaseClient kullanın
+            // supabase yerine supabaseClient kullanıyoruz
             const email = authEmailInput.value.trim();
             const password = authPassInput.value.trim();
 
@@ -506,7 +642,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             signInBtn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Giriş Yapılıyor...';
             signInBtn.disabled = true;
 
-            const { data, error } = await supabaseClient.auth.signInWithPassword({
+            const { data, error } = await supabaseClient.auth.signInWithPassword({ // supabase yerine supabaseClient
                 email: email,
                 password: password,
             });
@@ -525,11 +661,11 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
 
         async function signOut() {
-            // supabase yerine supabaseClient kullanın
+            // supabase yerine supabaseClient kullanıyoruz
              signOutBtn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Çıkılıyor...';
              signOutBtn.disabled = true;
 
-            const { error } = await supabaseClient.auth.signOut();
+            const { error } = await supabaseClient.auth.signOut(); // supabase yerine supabaseClient
 
              signOutBtn.innerHTML = '<i class="fa fa-sign-out-alt"></i> Çıkış Yap';
              signOutBtn.disabled = false;
@@ -542,6 +678,42 @@ document.addEventListener('DOMContentLoaded', async () => {
                 console.log("Başarıyla çıkış yapıldı.");
             }
         }
+
+        // Optional: Handles user sign-up (needs signUpBtn in HTML)
+        /*
+        async function signUp() {
+             const email = authEmailInput.value.trim();
+             const password = authPassInput.value.trim();
+
+             if (!email || !password) {
+                 alert("Lütfen email ve şifreyi girin.");
+                 return;
+             }
+
+             const signUpBtn = document.getElementById('signUpBtn');
+             const originalSignUpBtnText = signUpBtn.innerHTML;
+             signUpBtn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Kayıt Olunuyor...';
+             signUpBtn.disabled = true;
+
+             const { data, error } = await supabaseClient.auth.signUp({ // supabase yerine supabaseClient
+                 email: email,
+                 password: password,
+             });
+
+             signUpBtn.innerHTML = originalSignUpBtnText;
+             signUpBtn.disabled = false;
+
+             if (error) {
+                 console.error("Kayıt hatası:", error.message);
+                 alert(`Kayıt başarısız: ${error.message}`);
+             } else {
+                 console.log("Kayıt başarılı!", data.user);
+                 alert('Kayıt başarılı! Lütfen email adresinizi kontrol ederek hesabınızı aktifleştirin.');
+                 authEmailInput.value = '';
+                 authPassInput.value = '';
+             }
+        }
+        */
 
 
         // --- Event Listeners for Auth Buttons and Admin Button ---
@@ -564,7 +736,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         const closeAdminPanelBtn = document.getElementById('closeAdminPanelBtn');
         if(closeAdminPanelBtn) closeAdminPanelBtn.addEventListener('click', closeAdminPanel);
 
-        // Add/Delete button listeners (supabase yerine supabaseClient kullanın)
+        // Add/Delete button listeners (supabase yerine supabaseClient kullanıyoruz)
          const addMusicBtn = document.getElementById('addMusicBtn');
          if(addMusicBtn) addMusicBtn.addEventListener('click', addMusic);
 
@@ -584,13 +756,14 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     } catch (error) {
         console.error("DOMContentLoaded içinde yakalanan genel hata:", error);
-        // Eğer supabase = window.supabase.createClient(...) hatası burada olursa yakalanır
+        // Eğer window.supabase.createClient(...) hatası burada olursa yakalanır
         alert("Uygulama başlatılırken beklenmeyen bir hata oluştu. Konsolu kontrol edin.");
     }
 }); // DOMContentLoaded sonu
 
-
 // Mobile menu button listener (HTML'de varsa ve DOMContentLoaded dışında tanımlanmalı)
+// DOMContentLoaded listener'ı içine element erişimi ve event listener atamaları doğru yerdir
+// HTML'de mobileMenuButton varsa, DOMContentLoaded içinde event listener atamasını yapın
 // const mobileMenuButton = document.getElementById('mobileMenuButton');
 // if (mobileMenuButton) {
 //     mobileMenuButton.addEventListener('click', openMobileMusicList);
