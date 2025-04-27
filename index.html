@@ -3,15 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Müzik Çalar</title>
+    <title>Müzik Çalar (Supabase Auth Entegre)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="shortcut icon" href="music.png" />
-
-    <style>
+    <link rel="shortcut icon" href="music.png" /> <style>
         /* Custom scrollbar styles for better look */
         ::-webkit-scrollbar {
             width: 8px;
@@ -104,7 +102,7 @@
         input[type="range"].volume-bar::-webkit-slider-thumb {
             background: #6b7280; /* Gray thumb for volume */
              width: 12px;
-            height: 12px;
+             height: 12px;
             margin-top: -3px; /* Center thumb vertically */
              box-shadow: 0 1px 3px rgba(0,0,0,0.2); /* Add a subtle shadow */
         }
@@ -306,7 +304,8 @@
     <main class="flex-1 bg-gradient-to-br from-gray-100 to-gray-200 flex flex-col items-center justify-center p-5 md:p-10 relative overflow-y-auto">
 
         <button id="adminButton" onclick="showAdminPanel()" class="bg-slate-800 hover:bg-indigo-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition-all flex items-center justify-center z-10">
-            <i class="fa fa-lock"></i> </button>
+            <i class="fa fa-lock"></i>
+        </button>
 
         <div id="player" class="text-center flex flex-col items-center w-full px-4">
             <img id="coverImage" src="https://placehold.co/300x300/e2e8f0/94a3b8?text=Müzik+Seçin" alt="Albüm Kapağı" width="300" height="300" class="rounded-xl shadow-xl mb-6 object-cover border-4 border-white"/>
@@ -322,17 +321,15 @@
                 </div>
 
                 <div class="flex items-center justify-between">
-                     <div class="w-1/4 flex justify-start"></div>
-
-                    <div class="flex items-center justify-center gap-4 flex-grow">
+                    <div class="w-1/4 flex justify-start"></div> <div class="flex items-center justify-center gap-4 flex-grow">
                         <button id="prevBtn" class="text-gray-600 hover:text-gray-900 transition-colors w-8 h-8" aria-label="Önceki Şarkı" onclick="playPrevious()" disabled>
-                             <i class="fa fa-backward-step fa-lg"></i>
+                            <i class="fa fa-backward-step fa-lg"></i>
                         </button>
                         <button id="playPauseBtn" class="bg-indigo-600 hover:bg-indigo-700 text-white rounded-full w-12 h-12 flex items-center justify-center text-xl shadow-md transition-all transform hover:scale-105">
                             <i class="fa fa-play fa-lg"></i>
                         </button>
                         <button id="nextBtn" class="text-gray-600 hover:text-gray-900 transition-colors w-8 h-8" aria-label="Sonraki Şarkı" onclick="playNext()" disabled>
-                             <i class="fa fa-forward-step fa-lg"></i>
+                            <i class="fa fa-forward-step fa-lg"></i>
                         </button>
                     </div>
 
@@ -351,7 +348,7 @@
                 <i class="fa fa-times"></i>
             </button>
              <h2><i class="fa fa-music text-indigo-400"></i> Müzikler</h2>
-            <div id="musicListMobile" class="space-y-3 pr-2">
+             <div id="musicListMobile" class="space-y-3 pr-2">
                  </div>
         </div>
     </div>
@@ -365,14 +362,23 @@
 
             <h2 class="text-2xl font-semibold mb-6 text-center flex items-center justify-center gap-3"><i class="fa fa-user-shield text-indigo-400"></i> Admin Paneli</h2>
 
-            <div id="loginForm" class="flex flex-col items-center">
-                 <input type="password" id="adminPass" placeholder="Şifre" class="w-full p-3 mb-4 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-white placeholder-gray-400">
-                 <button id="loginBtn" onclick="checkPassword()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded-lg transition-all flex items-center justify-center gap-2">
+             <div id="loginForm" class="flex flex-col items-center space-y-4">
+                 <p class="text-gray-400 text-center">Giriş Yapın</p>
+                 <input type="email" id="authEmail" placeholder="Email" class="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-white placeholder-gray-400">
+                 <input type="password" id="authPass" placeholder="Şifre" class="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-white placeholder-gray-400">
+                 <button id="signInBtn" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded-lg transition-all flex items-center justify-center gap-2">
                      <i class="fa fa-sign-in-alt"></i> Giriş Yap
                  </button>
-            </div>
+                 </div>
 
-            <div id="adminControls" class="hidden flex-col space-y-4 mt-6">
+            <div id="adminControls" class="hidden flex-col space-y-4">
+                <p id="loggedInUserEmail" class="text-gray-300 text-center font-medium"></p> <button id="signOutBtn" class="w-max mx-auto bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg transition-all flex items-center justify-center gap-2 text-sm">
+                     <i class="fa fa-sign-out-alt"></i> Çıkış Yap
+                 </button>
+
+                <hr class="border-gray-600 my-4">
+
+                <h3 class="text-xl font-semibold text-gray-200 border-b border-gray-700 pb-2">Müzik Ekle</h3>
                 <input type="text" id="musicName" placeholder="Müzik Adı" class="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-white placeholder-gray-400">
 
                 <label class="block text-sm font-medium text-gray-300">Müzik Dosyası (MP3, WAV...):</label>
@@ -381,29 +387,35 @@
                 <label class="block text-sm font-medium text-gray-300">Kapak Resmi (İsteğe Bağlı):</label>
                 <input type="file" id="musicImage" accept="image/*" class="w-full text-sm text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-indigo-100 file:text-indigo-700 hover:file:bg-indigo-200 cursor-pointer">
 
-                <button onclick="addMusic()" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded-lg transition-all flex items-center justify-center gap-2">
+                <button id="addMusicBtn" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded-lg transition-all flex items-center justify-center gap-2">
                     <i class="fa fa-plus"></i> Müziği Ekle
                 </button>
 
                 <hr class="border-gray-600 my-4">
 
+                <h3 class="text-xl font-semibold text-gray-200 border-b border-gray-700 pb-2">Müzik Sil</h3>
                 <label for="deleteSelect" class="block text-sm font-medium text-gray-300">Silinecek Müziği Seç:</label>
                 <select id="deleteSelect" class="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-white">
                     <option value="" disabled selected>Silmek için seçin...</option>
-                    </select>
-                <button onclick="deleteMusic()" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-4 rounded-lg transition-all flex items-center justify-center gap-2">
+                     </select>
+                <button id="deleteMusicBtn" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-4 rounded-lg transition-all flex items-center justify-center gap-2">
                     <i class="fa fa-trash"></i> Seçilen Müziği Sil
                 </button>
             </div>
         </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
-        // --- IndexedDB Setup and Variables ---
-        let db;
-        const dbRequest = indexedDB.open('musicDatabase', 1);
+        // --- Supabase Setup ---
+        // !! Buraya kendi Supabase Proje URL ve Public Anon Key bilgilerini GİRİN !!
+        const SUPABASE_URL = 'YOUR_SUPABASE_URL';
+        const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';
+        // !! Supabase bilgilerini GİRDİĞİNİZDEN EMİN OLUN !!
 
-        // DOM Elements
+        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        // --- DOM Elements ---
         const musicListDesktop = document.getElementById('musicListDesktop'); // Desktop list
         const musicListMobile = document.getElementById('musicListMobile'); // Mobile list
         const mobileMusicListModal = document.getElementById('mobileMusicListModal'); // Mobile modal
@@ -412,14 +424,17 @@
         const deleteSelect = document.getElementById('deleteSelect');
         const adminButton = document.getElementById('adminButton');
         const adminPanelDiv = document.getElementById('adminPanel');
-        const adminControlsDiv = document.getElementById('adminControls');
-        const adminPassInput = document.getElementById('adminPass');
-        const loginButton = document.getElementById('loginBtn');
-        const loginForm = document.getElementById('loginForm');
-        const body = document.body; // Get the body element
+        const adminControlsDiv = document.getElementById('adminControls'); // Admin controls div
+        const loginForm = document.getElementById('loginForm'); // Login form div
         const songCountDesktop = document.getElementById('songCountDesktop'); // Desktop song count element
         const currentSongTitleElement = document.getElementById('currentSongTitle'); // Current song title element
 
+        // Auth related elements
+        const authEmailInput = document.getElementById('authEmail');
+        const authPassInput = document.getElementById('authPass');
+        const signInBtn = document.getElementById('signInBtn');
+        const signOutBtn = document.getElementById('signOutBtn');
+        const loggedInUserEmailSpan = document.getElementById('loggedInUserEmail');
 
         // Custom Player Elements
         const playPauseBtn = document.getElementById('playPauseBtn');
@@ -434,39 +449,16 @@
 
         // State Variables
         const defaultCover = 'https://placehold.co/300x300/e2e8f0/94a3b8?text=Müzik+Seçin';
-        let currentMusicId = null; // ID of the currently loaded music
-        let currentMusicIndex = -1; // Index in the currently rendered list
-        let musicData = []; // Array to hold the current list of music objects
+        let currentMusicId = null; // ID of the currently loaded music (Supabase ID)
+        let currentMusicIndex = -1; // Index in the currently rendered musicData array
+        let musicData = []; // Array to hold the current list of music objects from Supabase
         let lastVolume = 1; // Store volume before mute
-
-        // --- IndexedDB Event Handlers ---
-        dbRequest.onsuccess = function(event) {
-            db = event.target.result;
-            console.log("Veritabanı başarıyla açıldı.");
-            renderMusics(); // Initial render of the music list
-        };
-
-        dbRequest.onerror = function(event) {
-            console.error('Veritabanı açılırken hata oluştu: ', event.target.error);
-            alert('Veritabanı hatası. Lütfen konsolu kontrol edin.');
-        };
-
-        dbRequest.onupgradeneeded = function(event) {
-            console.log("Veritabanı yükseltiliyor...");
-            const db = event.target.result;
-            // Create object store if it doesn't exist
-            if (!db.objectStoreNames.contains('musics')) {
-                const objectStore = db.createObjectStore('musics', { keyPath: 'id', autoIncrement: true });
-                objectStore.createIndex('name', 'name', { unique: false });
-                console.log("Müzikler object store oluşturuldu.");
-            }
-        };
 
         // --- Helper Functions ---
 
         // Formats time in seconds to MM:SS format
         function formatTime(seconds) {
-            if (isNaN(seconds) || seconds < 0) return "0:00"; // Handle invalid input
+            if (isNaN(seconds) || seconds < 0 || !isFinite(seconds)) return "0:00";
             const minutes = Math.floor(seconds / 60);
             const secs = Math.floor(seconds % 60);
             return `${minutes}:${secs < 10 ? '0' : ''}${secs}`;
@@ -505,12 +497,11 @@
                 seekBar.style.setProperty('--progress', `0%`);
                  // Disable seek bar if no music is loaded
                 seekBar.disabled = true;
-                 // Reset song title
-                 if(currentSongTitleElement) currentSongTitleElement.textContent = "Müzik Seçin";
+                 if(currentSongTitleElement) currentSongTitleElement.textContent = "Müzik Seçin"; // Reset song title
             } else {
                  // Enable seek bar if music is loaded
                  seekBar.disabled = false;
-                 // Update song title (handled in loadAndPlayMusic)
+                 // Song title is updated in loadAndPlayMusic
             }
         }
 
@@ -613,40 +604,41 @@
                  audioPlayer.src = ''; // Clear source
                  coverImage.src = defaultCover; // Reset cover image
                  currentMusicId = null;
-                 currentMusicIndex = -1;
+                 currentMusicIndex = -1; // Reset index
                  if(currentSongTitleElement) currentSongTitleElement.textContent = "Müzik Seçin"; // Reset song title
                  updatePlayerUIState(); // Reset UI
                 return;
             }
 
-            const music = musicData[index];
+            const music = musicData[index]; // music object now comes from Supabase data
             console.log(`Yükleniyor: ${music.name} (ID: ${music.id}, Index: ${index})`);
 
-            // Set audio source and cover image
-            audioPlayer.src = music.audioUrl;
-            coverImage.src = music.imageUrl || defaultCover; // Use default cover if no image
-            currentMusicId = music.id; // Update current music ID
+            // Set audio source and cover image using URLs from Supabase data
+            audioPlayer.src = music.audio_url; // Use the Supabase Storage URL
+            coverImage.src = music.image_url || defaultCover; // Use URL from Supabase or default
+
+            currentMusicId = music.id; // Update current music ID using Supabase ID
             currentMusicIndex = index; // Update current music index
             if(currentSongTitleElement) currentSongTitleElement.textContent = music.name; // Update song title
 
             // Update active state styling in the music list sidebar (desktop)
             document.querySelectorAll('#musicListDesktop .music-item').forEach((item, idx) => {
-                item.classList.toggle('bg-indigo-600', idx === index); // Highlight active song
-                item.classList.toggle('bg-gray-800', idx !== index); // Ensure others are default color
-                 if (idx === index) {
+                // Compare using the dataset.id which holds the Supabase ID
+                item.classList.toggle('bg-indigo-600', item.dataset.id === currentMusicId.toString());
+                item.classList.toggle('bg-gray-800', item.dataset.id !== currentMusicId.toString());
+                if (item.dataset.id === currentMusicId.toString()) {
                     item.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-                 }
+                }
             });
-
-             // Update active state styling in the music list modal (mobile)
+            // Update active state styling in the music list modal (mobile)
              document.querySelectorAll('#musicListMobile .music-item').forEach((item, idx) => {
-                item.classList.toggle('bg-indigo-600', idx === index); // Highlight active song
-                item.classList.toggle('bg-gray-800', idx !== index); // Ensure others are default color
-                 if (idx === index) {
+                 // Compare using the dataset.id which holds the Supabase ID
+                item.classList.toggle('bg-indigo-600', item.dataset.id === currentMusicId.toString());
+                item.classList.toggle('bg-gray-800', item.dataset.id !== currentMusicId.toString());
+                 if (item.dataset.id === currentMusicId.toString()) {
                     item.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
                  }
             });
-
 
             // Load and play the new audio source
             audioPlayer.load(); // Important to load the new source
@@ -655,9 +647,8 @@
                 // If autoplay fails, ensure play icon is shown
                 playPauseIcon.className = 'fa fa-play fa-lg';
             });
-
             updatePlayerUIState(); // Update buttons etc. based on new state
-            // closeMobileMusicList(); // Mobile list is not opened by a button anymore
+            // closeMobileMusicList(); // Uncomment if you want modal to close automatically
         }
 
         // Plays the next song in the list, wrapping around to the beginning
@@ -683,8 +674,8 @@
         // --- Mobile Music List Modal Control ---
         // These functions remain but are not triggered by a button in the mobile view anymore
         function toggleMobileMusicList() {
-             const modal = document.getElementById('mobileMusicListModal'); // Get modal inside the function
-             if (modal) { // Check if modal element exists
+             const modal = document.getElementById('mobileMusicListModal');
+             if (modal) {
                  modal.classList.toggle('open');
              } else {
                  console.error("Mobile music list modal element not found!");
@@ -692,8 +683,8 @@
         }
 
         function openMobileMusicList() {
-             const modal = document.getElementById('mobileMusicListModal'); // Get modal inside the function
-             if (modal) { // Check if modal element exists
+             const modal = document.getElementById('mobileMusicListModal');
+             if (modal) {
                  modal.classList.add('open');
              } else {
                   console.error("Mobile music list modal element not found!");
@@ -701,362 +692,616 @@
         }
 
         function closeMobileMusicList() {
-             const modal = document.getElementById('mobileMusicListModal'); // Get modal inside the function
-             if (modal) { // Check if modal element exists
+             const modal = document.getElementById('mobileMusicListModal');
+             if (modal) {
                  modal.classList.remove('open');
              } else {
                  console.error("Mobile music list modal element not found!");
              }
         }
 
+        // --- Render Music List (Fetch from Supabase) ---
 
-        // --- Render Music List ---
-
-        // Fetches music data from IndexedDB and renders the list in both desktop sidebar and mobile modal
-        function renderMusics() {
-            if (!db) {
-                console.error("Veritabanı henüz hazır değil.");
-                return;
-            }
-            // Clear previous lists
+        // Fetches music data from Supabase and renders the list
+        async function renderMusics() {
+            // Clear previous lists and data
             if (musicListDesktop) musicListDesktop.innerHTML = '';
             if (musicListMobile) musicListMobile.innerHTML = ''; // Clear mobile list as well
             if (deleteSelect) deleteSelect.innerHTML = '<option value="" disabled selected>Silmek için seçin...</option>';
             musicData = []; // Clear internal data array
 
             try {
-                const transaction = db.transaction(['musics'], 'readonly');
-                const objectStore = transaction.objectStore('musics');
-                const request = objectStore.getAll(); // Get all music items
+                // Fetch data from the 'musics' table
+                // You might add .order('created_at', { ascending: false }) or similar here
+                const { data, error } = await supabase
+                    .from('musics')
+                    .select('id, name, audio_url, image_url')
+                     .order('created_at', { ascending: false }); // Order by creation date descending
 
-                request.onsuccess = function(event) {
-                    musicData = event.target.result; // Store fetched data
-                    console.log(`Bulunan müzik sayısı: ${musicData.length}`);
-
-                    // Update song count displays (only desktop count remains in the UI)
-                    if(songCountDesktop) songCountDesktop.textContent = `${musicData.length} Şarkı`;
-
-
-                    // If no music is found, display a message and reset player state
-                    if (musicData.length === 0) {
-                        const noMusicMessage = '<p class="text-gray-400 text-center mt-4">Henüz müzik eklenmemiş.</p>';
-                        if (musicListDesktop) musicListDesktop.innerHTML = noMusicMessage;
-                        if (musicListMobile) musicListMobile.innerHTML = noMusicMessage; // Display message in mobile list
-                         if (currentMusicId !== null) { // Reset player only if a song was playing
-                            audioPlayer.pause();
-                            audioPlayer.src = ''; // Clear source
-                            coverImage.src = defaultCover; // Reset cover image
-                            currentMusicId = null;
-                            currentMusicIndex = -1; // Reset index
-                         }
-                         if(currentSongTitleElement) currentSongTitleElement.textContent = "Müzik Seçin"; // Reset song title
-                         updatePlayerUIState(); // Update button states
-                        return; // Exit if no music
-                    }
-
-                    // Find the index of the currently playing song in the new list
-                    currentMusicIndex = musicData.findIndex(music => music.id === currentMusicId);
-
-                    // Render each music item in both the desktop sidebar and mobile modal
-                    musicData.forEach((music, index) => {
-                        // Function to create a music list item element
-                        const createMusicItem = (listType) => {
-                            const div = document.createElement('div');
-                            // Apply active class if this is the currently loaded song
-                            div.className = `music-item flex items-center gap-3 p-3 rounded-lg cursor-pointer transition-all transform hover:scale-[1.03] ${music.id === currentMusicId ? 'bg-indigo-600' : 'bg-gray-800 hover:bg-indigo-700'}`;
-                            div.dataset.id = music.id; // Store music ID for easy access
-
-                            // Create image element for cover art
-                            const img = document.createElement('img');
-                            img.src = music.imageUrl || 'https://placehold.co/60x60/7f9cf5/ffffff?text=♪'; // Default icon if no image
-                            img.alt = "Kapak";
-                            img.className = "w-12 h-12 rounded-md object-cover flex-shrink-0";
-                            img.onerror = () => img.src = 'https://placehold.co/60x60/7f9cf5/ffffff?text=♪'; // Fallback image on error
-                            div.appendChild(img);
-
-                            // Create span for music title
-                            const title = document.createElement('span');
-                            title.className = "font-medium truncate flex-grow";
-                            title.innerText = music.name;
-                            div.appendChild(title);
-
-                            // Add click event listener to load and play the music
-                            div.onclick = () => {
-                                loadAndPlayMusic(index); // Load and play based on index
-                            };
-                            return div;
-                        };
-
-                        // Add to desktop list if element exists
-                        if (musicListDesktop) musicListDesktop.appendChild(createMusicItem('desktop'));
-
-                        // Add to mobile list if element exists
-                        if (musicListMobile) musicListMobile.appendChild(createMusicItem('mobile'));
-
-
-                        // Create option element for the delete dropdown if element exists
-                        if (deleteSelect) {
-                            const option = document.createElement('option');
-                            option.value = music.id;
-                            option.text = music.name;
-                            deleteSelect.appendChild(option); // Add to delete dropdown
-                        }
-                    });
-
-                     updatePlayerUIState(); // Update buttons after rendering
-                };
-
-                request.onerror = function(event) {
-                    console.error('Müzikler alınırken hata: ', event.target.error);
+                if (error) {
+                    console.error('Supabase fetch error:', error);
                     const errorMessage = '<p class="text-red-400 text-center mt-4">Müzikler yüklenemedi.</p>';
                     if (musicListDesktop) musicListDesktop.innerHTML = errorMessage;
-                    if (musicListMobile) musicListMobile.innerHTML = errorMessage; // Display error in mobile list
-                     updatePlayerUIState(); // Update buttons even on error
+                    if (musicListMobile) musicListMobile.innerHTML = errorMessage;
+                    updatePlayerUIState();
+                    return;
                 }
 
-            } catch (error) {
-                console.error("RenderMusics içinde hata:", error);
-                alert("Müzik listesini oluştururken bir sorun oluştu.");
-                 updatePlayerUIState(); // Update buttons on catch
-            }
-        }
+                musicData = data || []; // Store fetched data
+                console.log(`Bulunan müzik sayısı: ${musicData.length}`);
 
-        // --- Add Music ---
+                // Update song count displays
+                if (songCountDesktop) songCountDesktop.textContent = `${musicData.length} Şarkı`;
 
-        // Handles adding new music via the admin panel form
-        function addMusic() {
-            const nameInput = document.getElementById('musicName');
-            const fileInput = document.getElementById('musicFile');
-            const imageInput = document.getElementById('musicImage');
-
-            const name = nameInput.value.trim();
-            const file = fileInput.files[0];
-            const image = imageInput.files[0];
-
-            if (!file || !name) {
-                alert('Müzik adı ve müzik dosyası alanları zorunludur!');
-                return;
-            }
-
-            // Show loading indicator on the button
-            const addButton = adminControlsDiv.querySelector('button[onclick="addMusic()"]');
-            const originalButtonText = addButton.innerHTML;
-            addButton.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Ekleniyor...';
-            addButton.disabled = true;
-
-            // Read the audio file as a Data URL
-            const audioReader = new FileReader();
-            audioReader.onload = function(e) {
-                const musicObj = {
-                    name: name,
-                    audioUrl: e.target.result, // Data URL of the audio file
-                    imageUrl: null // Placeholder for image URL
-                };
-
-                // If an image is provided, read it as a Data URL
-                if (image) {
-                    if (image.size > 5 * 1024 * 1024) { // 5MB image size limit
-                       alert("Resim dosyası çok büyük! (Maksimum 5MB)");
-                       // Restore button state
-                       addButton.innerHTML = originalButtonText;
-                       addButton.disabled = false;
-                       return;
-                    }
-                    const imageReader = new FileReader();
-                    imageReader.onload = function(event) {
-                        musicObj.imageUrl = event.target.result; // Data URL of the image file
-                        saveMusic(musicObj, addButton, originalButtonText); // Save music object to DB
-                    };
-                    imageReader.onerror = function() {
-                        console.error("Resim dosyası okunurken hata.");
-                        alert("Resim dosyası okunurken bir hata oluştu.");
-                         // Restore button state
-                        addButton.innerHTML = originalButtonText;
-                        addButton.disabled = false;
-                    }
-                    imageReader.readAsDataURL(image);
-                } else {
-                    // Save music object without an image URL
-                    saveMusic(musicObj, addButton, originalButtonText);
-                }
-            };
-            audioReader.onerror = function() {
-                console.error("Ses dosyası okunurken hata.");
-                alert("Ses dosyası okunurken bir hata oluştu.");
-                 // Restore button state
-                addButton.innerHTML = originalButtonText;
-                addButton.disabled = false;
-            }
-            audioReader.readAsDataURL(file); // Start reading the audio file
-        }
-
-        // --- Save Music to DB ---
-
-        // Saves a music object to the IndexedDB
-        function saveMusic(musicObj, buttonElement, originalButtonHTML) { // Receive button state elements
-            if (!db) {
-                alert("Veritabanı bağlantısı yok.");
-                 // Restore button state
-                buttonElement.innerHTML = originalButtonHTML;
-                buttonElement.disabled = false;
-                return;
-            }
-            try {
-                const transaction = db.transaction(['musics'], 'readwrite'); // Read/write transaction
-                const objectStore = transaction.objectStore('musics');
-                const request = objectStore.add(musicObj); // Add the music object
-
-                request.onsuccess = function() {
-                    console.log("Müzik başarıyla eklendi:", musicObj.name);
-                    renderMusics(); // Refresh lists after adding
-                    // Clear form fields
-                    document.getElementById('musicName').value = '';
-                    document.getElementById('musicFile').value = '';
-                    document.getElementById('musicImage').value = '';
-                    alert('Müzik başarıyla eklendi!');
-                     // Restore button state
-                    buttonElement.innerHTML = originalButtonHTML;
-                    buttonElement.disabled = false;
-                };
-
-                request.onerror = function(event) {
-                    console.error('Müzik eklenirken hata oluştu: ', event.target.error);
-                    alert(`Müzik eklenemedi: ${event.target.error.message}`);
-                     // Restore button state
-                    buttonElement.innerHTML = originalButtonHTML;
-                    buttonElement.disabled = false;
-                };
-            } catch (error) {
-                 console.error("SaveMusic içinde hata:", error);
-                 alert("Müzik kaydedilirken bir sorun oluştu.");
-                  // Restore button state
-                 buttonElement.innerHTML = originalButtonHTML;
-                 buttonElement.disabled = false;
-            }
-        }
-
-        // --- Delete Music ---
-
-        // Handles deleting a music item from the IndexedDB
-        function deleteMusic() {
-            const musicIdToDelete = parseInt(deleteSelect.value); // Get the selected music ID
-            if (isNaN(musicIdToDelete)) {
-                alert('Lütfen silinecek bir müzik seçin.');
-                return;
-            }
-
-            const musicNameToDelete = deleteSelect.options[deleteSelect.selectedIndex].text; // Get the name for confirmation
-            if (!confirm(`"${musicNameToDelete}" adlı müziği silmek istediğinizden emin misiniz?`)) {
-                return; // User cancelled
-            }
-
-            if (!db) {
-                 alert("Veritabanı bağlantısı yok.");
-                 return;
-            }
-
-            try {
-                const transaction = db.transaction(['musics'], 'readwrite'); // Read/write transaction
-                const objectStore = transaction.objectStore('musics');
-                const request = objectStore.delete(musicIdToDelete); // Delete the music by ID
-
-                request.onsuccess = function() {
-                    console.log(`Müzik ID ${musicIdToDelete} silindi.`);
-
-                    // Check if the deleted music was the currently playing one
-                    const wasCurrentMusicDeleted = (currentMusicId === musicIdToDelete);
-
-                    // Stop player and clear info if the current song was deleted
-                    if (wasCurrentMusicDeleted) {
+                if (musicData.length === 0) {
+                    const noMusicMessage = '<p class="text-gray-400 text-center mt-4">Henüz müzik eklenmemiş.</p>';
+                    if (musicListDesktop) musicListDesktop.innerHTML = noMusicMessage;
+                    if (musicListMobile) musicListMobile.innerHTML = noMusicMessage;
+                    // Reset player state if no music is found
+                    if (currentMusicId !== null) {
                         audioPlayer.pause();
                         audioPlayer.src = ''; // Clear source
                         coverImage.src = defaultCover; // Reset cover image
                         currentMusicId = null;
                         currentMusicIndex = -1; // Reset index
                     }
+                     if(currentSongTitleElement) currentSongTitleElement.textContent = "Müzik Seçin"; // Reset song title
+                    updatePlayerUIState();
+                    return;
+                }
 
-                    // Re-render the music list *after* handling the player state
-                    renderMusics();
-
-                    alert(`"${musicNameToDelete}" başarıyla silindi!`);
-
-                     // If the deleted song was playing and there are other songs, try to play the first one
-                     if (wasCurrentMusicDeleted && musicData.length > 0) {
-                         // The renderMusics function will have updated musicData
-                         // Load and play the first song in the updated list
-                         loadAndPlayMusic(0);
-                     } else if (musicData.length === 0) {
-                         // If the list is now empty, ensure player UI is fully reset
-                         updatePlayerUIState();
+                // Find the index of the currently playing song in the new list
+                // Need to find by ID as the order might change
+                const currentSongIndexInNewList = musicData.findIndex(music => music.id === currentMusicId);
+                // If the song is found, update the current index
+                if(currentSongIndexInNewList !== -1) {
+                    currentMusicIndex = currentSongIndexInNewList;
+                } else {
+                    // If the current song was deleted or not found in the new list
+                    currentMusicId = null;
+                    currentMusicIndex = -1;
+                    // Reset player state if the song was playing
+                     if (!audioPlayer.paused || audioPlayer.currentTime > 0) {
+                         audioPlayer.pause();
+                         audioPlayer.src = '';
+                         coverImage.src = defaultCover;
+                         if(currentSongTitleElement) currentSongTitleElement.textContent = "Müzik Seçin";
                      }
+                }
 
-                };
 
-                request.onerror = function(event) {
-                    console.error('Müzik silinirken hata oluştu: ', event.target.error);
-                    alert(`Müzik silinemedi: ${event.target.error.message}`);
-                };
-            } catch(error) {
-                 console.error("DeleteMusic içinde hata:", error);
-                 alert("Müzik silinirken bir sorun oluştu.");
+                // Render each music item in both the desktop sidebar and mobile modal
+                musicData.forEach((music, index) => {
+                    const createMusicItem = () => { // Removed listType param as it's not used in creation
+                        const div = document.createElement('div');
+                        // Apply active class if this is the currently loaded song
+                         // Use music.id for comparison
+                        div.className = `music-item flex items-center gap-3 p-3 rounded-lg cursor-pointer transition-all transform hover:scale-[1.03] ${music.id === currentMusicId ? 'bg-indigo-600' : 'bg-gray-800 hover:bg-indigo-700'}`;
+                        div.dataset.id = music.id; // Store music ID for easy access
+
+                        const img = document.createElement('img');
+                         // Use music.image_url from Supabase
+                        img.src = music.image_url || 'https://placehold.co/60x60/7f9cf5/ffffff?text=♪'; // Default icon if no image
+                        img.alt = "Kapak";
+                        img.className = "w-12 h-12 rounded-md object-cover flex-shrink-0";
+                        img.onerror = () => img.src = 'https://placehold.co/60x60/7f9cf5/ffffff?text=♪'; // Fallback image on error
+                        div.appendChild(img);
+
+                        const title = document.createElement('span');
+                        title.className = "font-medium truncate flex-grow";
+                        title.innerText = music.name;
+                        div.appendChild(title);
+
+                        // Add click event listener to load and play the music
+                        div.onclick = () => {
+                             // Find the index of the clicked music item in the current musicData array
+                             const clickedIndex = musicData.findIndex(item => item.id === music.id);
+                             if (clickedIndex !== -1) {
+                                loadAndPlayMusic(clickedIndex); // Load and play based on found index
+                                closeMobileMusicList(); // Close modal after selecting on mobile
+                             } else {
+                                 console.error("Tıklanan müzik listede bulunamadı:", music.id);
+                             }
+                        };
+                        return div;
+                    };
+
+                    // Add to desktop list if element exists
+                    if (musicListDesktop) musicListDesktop.appendChild(createMusicItem());
+                    // Add to mobile list if element exists
+                    if (musicListMobile) musicListMobile.appendChild(createMusicItem());
+                    // Create option element for the delete dropdown if element exists
+                    if (deleteSelect) {
+                        const option = document.createElement('option');
+                        option.value = music.id; // Use music.id from Supabase
+                        option.text = music.name;
+                        deleteSelect.appendChild(option); // Add to delete dropdown
+                    }
+                });
+
+                // If a song was playing and is still in the list, re-select it and update UI
+                 if (currentMusicId !== null && currentMusicIndex !== -1) {
+                     // Re-highlight the active song in the UI lists
+                     document.querySelectorAll('.music-item').forEach(item => {
+                         item.classList.toggle('bg-indigo-600', item.dataset.id === currentMusicId.toString());
+                         item.classList.toggle('bg-gray-800', item.dataset.id !== currentMusicId.toString());
+                     });
+                     // Ensure player UI state (play/pause button, times) is correct for the loaded song
+                     updatePlayerUIState(); // Updates button states based on audioPlayer state
+                 } else {
+                      // If no song is loaded or the loaded song is no longer in the list, reset player UI
+                      updatePlayerUIState();
+                 }
+
+
+            } catch (error) {
+                console.error("renderMusics içinde hata:", error);
+                const errorMessage = '<p class="text-red-400 text-center mt-4">Müzik listesini yüklerken bir sorun oluştu.</p>';
+                if (musicListDesktop) musicListDesktop.innerHTML = errorMessage;
+                if (musicListMobile) musicListMobile.innerHTML = errorMessage;
+                updatePlayerUIState();
             }
         }
 
-        // --- Admin Panel Visibility ---
+        // --- Add Music (Upload to Storage & Insert to DB) ---
+
+        // Handles adding new music via the admin panel form
+        async function addMusic() {
+            // Check if user is logged in before allowing add
+            const user = await supabase.auth.getUser();
+            if (user.error || !user.data.user) {
+                 alert('Müzik eklemek için giriş yapmalısınız.');
+                 return;
+            }
+
+            const nameInput = document.getElementById('musicName');
+            const fileInput = document.getElementById('musicFile');
+            const imageInput = document.getElementById('musicImage');
+
+            const name = nameInput.value.trim();
+            const audioFile = fileInput.files[0];
+            const imageFile = imageInput.files[0];
+
+            if (!audioFile || !name) {
+                alert('Müzik adı ve müzik dosyası alanları zorunludur!');
+                return;
+            }
+
+            // Show loading indicator on the button
+            const addButton = document.getElementById('addMusicBtn'); // Use the button ID
+            const originalButtonText = addButton.innerHTML;
+            addButton.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Ekleniyor...';
+            addButton.disabled = true;
+
+            let audioUrl = null;
+            let imageUrl = null;
+            const filesToRemoveOnError = []; // Keep track of uploaded files in case of later failure
+
+            try {
+                // 1. Upload Audio File to Supabase Storage
+                // Generate a unique path (e.g., using user ID, timestamp and original name)
+                const userId = user.data.user.id; // Get logged-in user's ID
+                const audioFileName = `${userId}/${Date.now()}_${audioFile.name.replace(/\s+/g, '_')}`; // Path within the bucket, potentially user-specific
+                const audioFilePath = `public/${audioFileName}`; // Full path in storage bucket
+                filesToRemoveOnError.push(audioFilePath);
+
+                const { data: audioUploadData, error: audioUploadError } = await supabase.storage
+                    .from('music-files') // Your storage bucket name
+                    .upload(audioFilePath, audioFile);
+
+                if (audioUploadError) {
+                    throw new Error(`Ses dosyası yükleme hatası: ${audioUploadError.message}`);
+                }
+
+                // Get the public URL for the uploaded audio file
+                const { data: publicAudioUrlData } = supabase.storage
+                    .from('music-files')
+                    .getPublicUrl(audioFilePath);
+                audioUrl = publicAudioUrlData.publicUrl;
+
+
+                // 2. Upload Image File to Supabase Storage (if exists)
+                if (imageFile) {
+                     if (imageFile.size > 5 * 1024 * 1024) { // 5MB image size limit
+                        throw new Error("Resim dosyası çok büyük! (Maksimum 5MB)");
+                    }
+                    const imageFileName = `${userId}/${Date.now()}_${imageFile.name.replace(/\s+/g, '_')}`; // Path within the bucket, potentially user-specific
+                    const imageFilePath = `public/${imageFileName}`; // Full path in storage bucket
+                    filesToRemoveOnError.push(imageFilePath); // Add to list in case DB insert fails
+
+                    const { data: imageUploadData, error: imageUploadError } = await supabase.storage
+                        .from('music-files') // Your storage bucket name
+                        .upload(imageFilePath, imageFile);
+
+                    if (imageUploadError) {
+                         throw new Error(`Resim dosyası yükleme hatası: ${imageUploadError.message}`);
+                    }
+                    // Get the public URL for the uploaded image file
+                    const { data: publicImageUrlData } = supabase.storage
+                        .from('music-files')
+                        .getPublicUrl(imageFilePath);
+                    imageUrl = publicImageUrlData.publicUrl;
+                }
+
+                // 3. Insert Music Record into Supabase Database
+                const { data: musicInsertData, error: musicInsertError } = await supabase
+                    .from('musics')
+                    .insert([{
+                        name: name,
+                        audio_url: audioUrl,
+                        image_url: imageUrl,
+                        user_id: userId // Associate music with the user who added it
+                    }])
+                    .select(); // Select the inserted data to get the new ID
+
+                if (musicInsertError) {
+                     throw new Error(`Veritabanına kayıt hatası: ${musicInsertError.message}`);
+                }
+
+                console.log("Müzik başarıyla eklendi:", name, musicInsertData);
+                renderMusics(); // Refresh lists after adding
+                // Clear form fields
+                nameInput.value = '';
+                fileInput.value = '';
+                imageInput.value = '';
+                alert('Müzik başarıyla eklendi!');
+
+            } catch (error) {
+                console.error('Müzik eklenirken hata oluştu: ', error.message);
+                alert(`Müzik eklenemedi: ${error.message}`);
+
+                // Clean up uploaded files if there was an error during upload or DB insert
+                 if (filesToRemoveOnError.length > 0) {
+                     console.log("Hata oluştu, yüklenen dosyalar siliniyor:", filesToRemoveOnError);
+                      const { error: cleanupError } = await supabase.storage
+                         .from('music-files')
+                         .remove(filesToRemoveOnError);
+                      if (cleanupError) {
+                         console.error("Dosya temizleme hatası:", cleanupError);
+                      } else {
+                          console.log("Yüklenen dosyalar başarıyla temizlendi.");
+                      }
+                 }
+
+
+            } finally {
+                // Restore button state
+                addButton.innerHTML = originalButtonText;
+                addButton.disabled = false;
+            }
+        }
+
+        // --- Delete Music (Delete from DB & Remove from Storage) ---
+
+        // Handles deleting a music item
+        async function deleteMusic() {
+            // Check if user is logged in before allowing delete
+            const user = await supabase.auth.getUser();
+             if (user.error || !user.data.user) {
+                  alert('Müzik silmek için giriş yapmalısınız.');
+                  return;
+             }
+
+            const musicIdToDelete = deleteSelect.value; // Get the selected music ID (it's a string from Supabase)
+
+            if (!musicIdToDelete) {
+                alert('Lütfen silinecek bir müzik seçin.');
+                return;
+            }
+
+            const musicNameToDelete = deleteSelect.options[deleteSelect.selectedIndex].text;
+            if (!confirm(`"${musicNameToDelete}" adlı müziği silmek istediğinizden emin misiniz?`)) {
+                return; // User cancelled
+            }
+
+             // Show loading indicator on the button
+             const deleteButton = document.getElementById('deleteMusicBtn'); // Use the button ID
+             const originalDeleteButtonText = deleteButton.innerHTML;
+             deleteButton.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Siliniyor...';
+             deleteButton.disabled = true;
+
+
+            try {
+                // 1. Get the music record and file paths before deleting
+                const { data: musicToDelete, error: fetchError } = await supabase
+                    .from('musics')
+                    .select('id, audio_url, image_url, user_id') // Also fetch user_id for RLS check if needed
+                    .eq('id', musicIdToDelete)
+                    .single(); // Get a single matching record
+
+                if (fetchError || !musicToDelete) {
+                     console.error('Silinecek müzik bilgisi alınamadı:', fetchError?.message);
+                     // If fetching info fails, throw error as we might not have permissions or record is gone
+                     throw new Error(`Silinecek müzik bulunamadı veya erişim reddedildi: ${fetchError?.message}`);
+                }
+
+                 // Optional but recommended check: Ensure the logged-in user is the owner (if user_id column exists)
+                 // This is better enforced by RLS, but a client-side check adds user experience
+                 if (musicToDelete.user_id && musicToDelete.user_id !== user.data.user.id) {
+                     alert("Sadece kendi eklediğiniz müzikleri silebilirsiniz."); // User-friendly message
+                      throw new Error("Unauthorized delete attempt."); // Log more specific error internally
+                 }
+
+
+                const filesToRemove = [];
+                // Extract file paths from URLs. Assumes 'public' bucket and potential user ID folder.
+                const baseUrl = `${SUPABASE_URL}/storage/v1/object/public/music-files/`;
+
+                if (musicToDelete?.audio_url && musicToDelete.audio_url.startsWith(baseUrl)) {
+                     const audioFilePath = musicToDelete.audio_url.substring(baseUrl.length);
+                     if(audioFilePath) filesToRemove.push(audioFilePath);
+                 }
+
+                if (musicToDelete?.image_url && musicToDelete.image_url.startsWith(baseUrl)) {
+                     const imageFilePath = musicToDelete.image_url.substring(baseUrl.length);
+                     if(imageFilePath) filesToRemove.push(imageFilePath);
+                }
+
+
+                // 2. Delete Music Record from Supabase Database
+                // RLS policies should ensure only allowed users can delete
+                const { error: dbDeleteError } = await supabase
+                    .from('musics')
+                    .delete()
+                    .eq('id', musicIdToDelete); // Ensure the ID matches the fetched one
+
+                if (dbDeleteError) {
+                    // If DB delete fails, don't proceed with Storage delete
+                    throw new Error(`Veritabanından silme hatası: ${dbDeleteError.message}`);
+                }
+
+                console.log(`Müzik ID ${musicIdToDelete} veritabanından silindi.`);
+
+                // 3. Delete files from Supabase Storage (only if DB delete was successful)
+                 if (filesToRemove.length > 0) {
+                     const { error: storageDeleteError } = await supabase.storage
+                         .from('music-files') // Your storage bucket name
+                         .remove(filesToRemove);
+
+                     if (storageDeleteError) {
+                         console.error('Depolama alanından silinirken hata oluştu (veritabanı kaydı silindi):', storageDeleteError);
+                         // It's okay to continue even if file deletion fails, the database record is gone
+                     } else {
+                          console.log(`Dosyalar başarıyla silindi: ${filesToRemove.join(', ')}`);
+                     }
+                 }
+
+
+                // Check if the deleted music was the currently playing one
+                const wasCurrentMusicDeleted = (currentMusicId === musicIdToDelete);
+
+                // Stop player and clear info if the current song was deleted
+                if (wasCurrentMusicDeleted) {
+                    audioPlayer.pause();
+                    audioPlayer.src = ''; // Clear source
+                    coverImage.src = defaultCover; // Reset cover image
+                    currentMusicId = null;
+                    currentMusicIndex = -1; // Reset index
+                    if(currentSongTitleElement) currentSongTitleElement.textContent = "Müzik Seçin"; // Reset song title
+                }
+
+                // Re-render the music list
+                await renderMusics(); // Ensure renderMusics completes before checking next song
+
+                alert(`"${musicNameToDelete}" başarıyla silindi!`);
+
+                 // If the deleted song was playing and there are other songs, try to play the first one
+                 if (wasCurrentMusicDeleted && musicData.length > 0) {
+                     // The renderMusics function will have updated musicData
+                     // Load and play the first song in the updated list
+                     loadAndPlayMusic(0);
+                 } else if (musicData.length === 0) {
+                     // If the list is now empty, ensure player UI is fully reset
+                     updatePlayerUIState();
+                 }
+
+            } catch (error) {
+                console.error('Müzik silinirken hata oluştu: ', error.message);
+                alert(`Müzik silinemedi: ${error.message}`);
+            } finally {
+                 // Restore button state
+                deleteButton.innerHTML = originalDeleteButtonText;
+                deleteButton.disabled = false;
+            }
+        }
+
+        // --- Admin Panel Visibility & Auth State Handling ---
 
         // Shows the admin panel modal
         function showAdminPanel() {
             adminPanelDiv.classList.remove('hidden');
             adminPanelDiv.classList.add('flex');
-            adminPassInput.focus(); // Focus the password input
+            // Supabase Auth state listener will handle which form is shown
+             // Initially focus the email input if the login form is visible
+             if (!loginForm.classList.contains('hidden') && authEmailInput) {
+                 authEmailInput.focus();
+             }
         }
 
         // Hides the admin panel modal and resets the form
         function closeAdminPanel() {
             adminPanelDiv.classList.add('hidden');
             adminPanelDiv.classList.remove('flex');
-            // Hide controls and show login form again
-            adminControlsDiv.classList.add('hidden');
-            adminControlsDiv.classList.remove('flex', 'flex-col', 'space-y-4'); // Remove flex classes
-            loginForm.classList.remove('hidden'); // Show login form
-            loginForm.classList.add('flex'); // Make login form flex
-            adminPassInput.value = ''; // Clear password field
-             // Clear add music form fields as well
+            // Clear add music form fields
             document.getElementById('musicName').value = '';
             document.getElementById('musicFile').value = '';
             document.getElementById('musicImage').value = '';
              // Reset delete select
             deleteSelect.value = ""; // Select the disabled option
+             // Clear auth fields
+             if(authEmailInput) authEmailInput.value = '';
+             if(authPassInput) authPassInput.value = '';
         }
 
-        // --- Admin Password Check ---
-
-        // Checks the entered password (client-side check - NOT SECURE for production)
-        function checkPassword() {
-            const pass = adminPassInput.value;
-            // !!! GÜVENLİK UYARISI: Şifre KESİNLİKLE sunucu tarafında kontrol edilmelidir. !!!
-            // Bu sadece görsel bir örnektir.
-            if (pass === '1234') { // Example password (replace with secure server-side check)
+        // Supabase Auth State Listener: Manages visibility of login form and admin controls
+        supabase.auth.onAuthStateChange((event, session) => {
+            console.log("Auth state changed:", event, session);
+            if (session) {
+                // User is logged in (session exists)
                 loginForm.classList.add('hidden'); // Hide login form
-                loginForm.classList.remove('flex');
+                loginForm.classList.remove('flex', 'space-y-4');
+
                 adminControlsDiv.classList.remove('hidden'); // Show admin controls
-                adminControlsDiv.classList.add('flex', 'flex-col', 'space-y-4'); // Add flex classes
+                adminControlsDiv.classList.add('flex', 'flex-col', 'space-y-4');
+
+                 if(loggedInUserEmailSpan && session.user && session.user.email) {
+                     loggedInUserEmailSpan.textContent = `Giriş Yapıldı: ${session.user.email}`;
+                 }
+
+                 // Optional: Re-render music list if it depends on user authentication (e.g. showing only user's music)
+                 // renderMusics(); // Uncomment if needed
             } else {
-                alert('Şifre yanlış!');
-                adminPassInput.value = ''; // Clear password field on failure
-                adminPassInput.focus(); // Refocus the password input
+                // User is logged out (no session)
+                loginForm.classList.remove('hidden'); // Show login form
+                loginForm.classList.add('flex', 'flex-col', 'space-y-4'); // Ensure flex properties for layout
+
+                adminControlsDiv.classList.add('hidden'); // Hide admin controls
+                adminControlsDiv.classList.remove('flex', 'flex-col', 'space-y-4');
+
+                if(loggedInUserEmailSpan) {
+                    loggedInUserEmailSpan.textContent = ''; // Clear user email display
+                }
+
+                // Optional: Re-render music list to show only public items if applicable
+                // renderMusics(); // Uncomment if needed
+            }
+        });
+
+        // --- Supabase Authentication Functions ---
+
+        // Handles user sign-in with email and password
+        async function signIn() {
+            const email = authEmailInput.value.trim();
+            const password = authPassInput.value.trim();
+
+            if (!email || !password) {
+                alert("Lütfen email ve şifreyi girin.");
+                return;
+            }
+
+            // Show loading state on button
+            signInBtn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Giriş Yapılıyor...';
+            signInBtn.disabled = true;
+
+            const { data, error } = await supabase.auth.signInWithPassword({
+                email: email,
+                password: password,
+            });
+
+            // Restore button state regardless of outcome
+            signInBtn.innerHTML = '<i class="fa fa-sign-in-alt"></i> Giriş Yap';
+            signInBtn.disabled = false;
+
+            if (error) {
+                console.error("Giriş hatası:", error.message);
+                alert(`Giriş başarısız: ${error.message}`);
+            } else {
+                console.log("Giriş başarılı!", data.user);
+                 // Clear inputs on success
+                 authEmailInput.value = '';
+                 authPassInput.value = '';
+                // Auth state listener will handle UI update
             }
         }
+
+        // Handles user sign-out
+        async function signOut() {
+             // Show loading state on button
+             signOutBtn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Çıkılıyor...';
+             signOutBtn.disabled = true;
+             adminButton.disabled = true; // Disable admin button too during sign out process
+
+            const { error } = await supabase.auth.signOut();
+
+             // Restore button states regardless of outcome
+             signOutBtn.innerHTML = '<i class="fa fa-sign-out-alt"></i> Çıkış Yap';
+             signOutBtn.disabled = false;
+             adminButton.disabled = false;
+
+
+            if (error) {
+                console.error("Çıkış hatası:", error.message);
+                alert(`Çıkış başarısız: ${error.message}`);
+            } else {
+                console.log("Başarıyla çıkış yapıldı.");
+                 // Auth state listener will handle UI update (show login form)
+                 // closeAdminPanel(); // Optional: Close the modal on sign out
+            }
+        }
+
+         // Optional: Handles user sign-up (needs signUpBtn in HTML)
+         /*
+        async function signUp() {
+             const email = authEmailInput.value.trim();
+             const password = authPassInput.value.trim();
+
+             if (!email || !password) {
+                 alert("Lütfen email ve şifreyi girin.");
+                 return;
+             }
+
+             // Show loading state on button
+             const signUpBtn = document.getElementById('signUpBtn');
+             const originalSignUpBtnText = signUpBtn.innerHTML;
+             signUpBtn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Kayıt Olunuyor...';
+             signUpBtn.disabled = true;
+
+             const { data, error } = await supabase.auth.signUp({
+                 email: email,
+                 password: password,
+             });
+
+             // Restore button state
+             signUpBtn.innerHTML = originalSignUpBtnText;
+             signUpBtn.disabled = false;
+
+
+             if (error) {
+                 console.error("Kayıt hatası:", error.message);
+                 alert(`Kayıt başarısız: ${error.message}`);
+             } else {
+                 console.log("Kayıt başarılı!", data.user);
+                  // Depending on your Supabase settings, user might need email confirmation
+                 alert('Kayıt başarılı! Lütfen email adresinizi kontrol ederek hesabınızı aktifleştirin.');
+                 // Clear inputs on success
+                 authEmailInput.value = '';
+                 authPassInput.value = '';
+                 // You might want to automatically sign them in or prompt them to sign in
+                 // signIn(); // Example: Auto sign-in after sign-up
+             }
+        }
+        */
+
+
+        // --- Event Listeners for Auth Buttons ---
+        if(signInBtn) signInBtn.addEventListener('click', signIn);
+        // If you added a signUpBtn, uncomment and add listener:
+        // const signUpBtn = document.getElementById('signUpBtn');
+        // if(signUpBtn) signUpBtn.addEventListener('click', signUp);
+        if(signOutBtn) signOutBtn.addEventListener('click', signOut);
+
+        // Make sure Add/Delete buttons trigger functions (already done with onclick, but adding event listeners is often better practice)
+         const addMusicBtn = document.getElementById('addMusicBtn');
+         if(addMusicBtn) addMusicBtn.addEventListener('click', addMusic);
+
+         const deleteMusicBtn = document.getElementById('deleteMusicBtn');
+         if(deleteMusicBtn) deleteMusicBtn.addEventListener('click', deleteMusic);
+
 
         // --- Initial Setup ---
 
         // Code to run when the script loads
         coverImage.src = defaultCover; // Set initial cover image
-        adminControlsDiv.classList.add('hidden'); // Ensure admin controls are hidden initially
+        // Admin controls visibility is now handled by the Supabase Auth state listener
         // Set initial volume bar value based on player's default volume
         volumeBar.value = audioPlayer.volume;
         updateVolumeIcon(audioPlayer.volume); // Update volume icon initially
-        updatePlayerUIState(); // Set initial button states (disabled if no music)
+        // Player UI state will be updated by renderMusics, but initial state can be set here
+        updatePlayerUIState();
+
+        // Initial fetch and render of music list from Supabase
+        // This runs regardless of login state, RLS will determine what data is returned
+        renderMusics();
 
     </script>
 
