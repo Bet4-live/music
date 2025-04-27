@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Müzik Çalar (Supabase Auth Entegre)</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -405,12 +406,11 @@
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
         // --- Supabase Setup ---
         // !! Buraya kendi Supabase Proje URL ve Public Anon Key bilgilerini GİRİN !!
-        const SUPABASE_URL = 'YOUR_SUPABASE_URL';
-        const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';
+        const SUPABASE_URL = 'https://skhbykqwdbwjcvqmwvft.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNraGJ5a3F3ZGJ3amN2cW13dmZ0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDU3Nzg0NDYsImV4cCI6MjA2MTM1NDQ0Nn0.e8pbfF7O_rTtSKxtFzzc_zZTsegsxsNaluHNFBbWbMs';
         // !! Supabase bilgilerini GİRDİĞİNİZDEN EMİN OLUN !!
 
         const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
@@ -836,7 +836,7 @@
 
             } catch (error) {
                 console.error("renderMusics içinde hata:", error);
-                const errorMessage = '<p class="text-red-400 text-center mt-4">Müzik listesini yüklerken bir sorun oluştu.</p>';
+                const errorMessage = '<p class="text-red-400 text-center mt-4">Müzikler yüklenemedi.</p>';
                 if (musicListDesktop) musicListDesktop.innerHTML = errorMessage;
                 if (musicListMobile) musicListMobile.innerHTML = errorMessage;
                 updatePlayerUIState();
