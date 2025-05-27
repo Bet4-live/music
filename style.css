@@ -13,6 +13,18 @@
     background: #777;
 }
 
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+.cover-rotate {
+  animation: spin 20s linear infinite;
+}
+button:hover {
+  transform: scale(1.05);
+  transition: transform 0.2s ease-in-out;
+}
+
 /* Base layout */
 body {
     font-family: 'Inter', sans-serif;
