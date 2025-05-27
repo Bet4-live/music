@@ -1,33 +1,50 @@
-/* Custom scrollbar styles for better look */
+/* Custom scrollbar styles for better look - Adjusted for dark theme */
 ::-webkit-scrollbar {
     width: 8px;
+    height: 8px; /* For horizontal scrollbars */
 }
 ::-webkit-scrollbar-track {
-    background: #2d2d3f; /* Sidebar track color */
+    background: #1e293b; /* Slate-800 - dark track for dark theme */
 }
 ::-webkit-scrollbar-thumb {
-    background: #555;
+    background: #475569; /* Slate-600 - darker thumb */
     border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
-    background: #777;
+    background: #64748b; /* Slate-500 - lighter on hover */
 }
 
-/* Ensure body takes full height and uses Inter font */
+/* Ensure body takes full height and uses Inter font, new flex layout */
 body {
     font-family: 'Inter', sans-serif;
     height: 100vh;
-    overflow: hidden; /* Prevent body scroll to manage scrolling within main/aside */
-    display: flex; /* Use flexbox for layout */
+    display: flex; /* Use flexbox for layout (sidebar + main) */
+    overflow: hidden; /* Prevent body scroll, children will manage their own scroll */
+    background-color: #0f172a; /* Slate-900 for a darker overall background */
+}
+
+/* Sidebar styling */
+aside {
+    flex-shrink: 0; /* Prevent sidebar from shrinking */
+    z-index: 20; /* Ensure it's above main content on overlap if any */
+    position: relative; /* For z-index to work */
+}
+aside h1 {
+    font-size: 2.25rem; /* text-4xl */
+}
+aside h2 {
+    font-size: 1.25rem; /* text-xl */
+}
+
+/* Main content area */
+main {
+    flex-grow: 1; /* Main content takes remaining space */
+    overflow-y: auto; /* Allow scrolling for main content */
+    position: relative; /* For absolute positioning of elements inside */
 }
 
 /* Hide default audio player controls completely */
 audio {
-   width: 100%;
-   max-width: 500px; /* Limit player width on larger screens */
-   margin-top: 1rem; /* Space above player */
-   filter: invert(15%) sepia(5%) saturate(1200%) hue-rotate(190deg) brightness(95%) contrast(90%); /* Subtle color adjustment */
-   border-radius: 999px; /* Fully rounded corners */
    opacity: 0; /* Hide completely */
    pointer-events: none; /* Disable interaction */
    height: 0px; /* No height */
@@ -40,93 +57,73 @@ input[type="range"] {
     -webkit-appearance: none;
     appearance: none;
     width: 100%;
-    height: 6px;
-    background: #e5e7eb; /* Lighter track color (gray-200) */
+    height: 5px; /* Slightly thinner */
+    background: #475569; /* Slate-600 for track */
     border-radius: 3px;
     cursor: pointer;
     outline: none;
+    transition: background 0.2s ease; /* Smooth transition for track */
 }
 
 /* Progress fill for seek bar */
 input[type="range"].seek-bar::-webkit-slider-runnable-track {
-    background: linear-gradient(to right, #4f46e5 var(--progress, 0%), #e5e7eb var(--progress, 0%));
-    height: 6px;
+    background: linear-gradient(to right, #6366f1 var(--progress, 0%), #475569 var(--progress, 0%)); /* Indigo-500 for progress */
+    height: 5px;
     border-radius: 3px;
 }
 input[type="range"].seek-bar::-moz-range-progress {
-    background-color: #4f46e5;
-    height: 6px;
-     border-radius: 3px;
+    background-color: #6366f1; /* Indigo-500 */
+    height: 5px;
+    border-radius: 3px;
 }
- input[type="range"].seek-bar::-moz-range-track {
-     background-color: #e5e7eb;
-     height: 6px;
-     border-radius: 3px;
- }
+input[type="range"].seek-bar::-moz-range-track {
+    background-color: #475569;
+    height: 5px;
+    border-radius: 3px;
+}
 
 /* Thumb styling for seek bar */
 input[type="range"]::-webkit-slider-thumb {
     -webkit-appearance: none;
     appearance: none;
-    width: 16px;
-    height: 16px;
-    background: #4f46e5; /* Indigo thumb color */
+    width: 14px; /* Slightly smaller */
+    height: 14px;
+    background: #6366f1; /* Indigo thumb color */
     border-radius: 50%;
     cursor: pointer;
-    margin-top: -5px; /* Center thumb vertically */
-    box-shadow: 0 1px 3px rgba(0,0,0,0.2); /* Add a subtle shadow */
+    margin-top: -4.5px; /* Center thumb vertically */
+    box-shadow: 0 1px 3px rgba(0,0,0,0.3); /* Add a subtle shadow */
+    transition: background 0.2s ease, transform 0.2s ease;
 }
 input[type="range"]::-moz-range-thumb {
-    width: 16px;
-    height: 16px;
-    background: #4f46e5; /* Indigo thumb color */
+    width: 14px;
+    height: 14px;
+    background: #6366f1; /* Indigo thumb color */
     border-radius: 50%;
     cursor: pointer;
     border: none; /* Remove default border in Firefox */
-     box-shadow: 0 1px 3px rgba(0,0,0,0.2); /* Add a subtle shadow */
+    box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+    transition: background 0.2s ease, transform 0.2s ease;
 }
 
 /* Volume bar specific thumb styling */
-input[type="range"].volume-bar {
-    background: #e5e7eb; /* Lighter track color (gray-200) */
-}
 input[type="range"].volume-bar::-webkit-slider-thumb {
-    background: #6b7280; /* Gray thumb for volume */
-     width: 12px;
-     height: 12px;
-    margin-top: -3px; /* Center thumb vertically */
-     box-shadow: 0 1px 3px rgba(0,0,0,0.2); /* Add a subtle shadow */
+    background: #94a3b8; /* Slate-400 thumb for volume */
+    width: 10px;
+    height: 10px;
+    margin-top: -2.5px; /* Center thumb vertically */
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
 }
- input[type="range"].volume-bar::-moz-range-thumb {
-    background: #6b7280; /* Gray thumb for volume */
-    width: 12px;
-    height: 12px;
-    border: none; /* Remove default border in Firefox */
-     box-shadow: 0 1px 3px rgba(0,0,0,0.2); /* Add a subtle shadow */
-}
-input[type="range"].volume-bar::-moz-range-track {
-     background-color: #e5e7eb;
-     height: 6px;
-     border-radius: 3px;
+input[type="range"].volume-bar::-moz-range-thumb {
+    background: #94a3b8; /* Slate-400 thumb for volume */
+    width: 10px;
+    height: 10px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
 }
 
-
-/* Basic transition for hover effects */
-.transition-all {
+/* Basic transition for hover effects on buttons */
+button {
     transition: all 0.2s ease-in-out;
-}
-
-/* Style for the custom player controls container */
-.custom-player-controls {
-    background-color: rgba(255, 255, 255, 0.9); /* Slightly more opaque white */
-    backdrop-filter: blur(10px); /* Stronger blur effect */
-    border-radius: 16px; /* More rounded */
-    padding: 15px 25px; /* Adjust padding */
-    margin-top: 1.5rem; /* Space above controls */
-    box-shadow: 0 6px 25px rgba(0, 0, 0, 0.15); /* Softer, larger shadow */
-    width: 100%;
-    max-width: 500px; /* Match audio player max-width */
-    border: 1px solid rgba(255, 255, 255, 0.3); /* Subtle border */
 }
 
 /* Styling for disabled buttons */
@@ -135,210 +132,239 @@ button:disabled {
     cursor: not-allowed;
 }
 
-/* Mobile Music List Modal */
-#mobileMusicListModal {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba(0, 0, 0, 0.7); /* Darker overlay */
-    backdrop-filter: blur(5px); /* Subtle blur */
-    z-index: 1000; /* Significantly increased z-index */
-    display: flex; /* Always use flexbox for centering */
-    align-items: center; /* Center vertically */
-    justify-content: center; /* Center horizontally */
-    opacity: 0; /* Start hidden */
-    visibility: hidden;
-    transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
-}
-
-#mobileMusicListModal.open {
-    opacity: 1;
-    visibility: visible;
-}
-
-#mobileMusicListContent {
-    background-color: #1e293b; /* Slate-800 */
+/* Active link styling in sidebar */
+.active-link {
+    background-color: #4f46e5; /* Indigo-600 for active state */
     color: white;
-    padding: 20px;
-    border-radius: 12px;
-    max-width: 90%; /* Max width on small screens */
-    width: 300px; /* A fixed width for the modal content */
-    max-height: 80vh; /* Limit height to prevent overflow */
-    overflow-y: auto; /* Add scrolling if content exceeds max height */
-    position: relative; /* For close button positioning */
-    box-shadow: 0 10px 30px rgba(0,0,0,0.3); /* More prominent shadow */
+}
+.active-link:hover {
+    background-color: #4f46e5 !important; /* Keep active color on hover */
 }
 
- #mobileMusicListContent h2 {
-     font-size: 1.5rem; /* Text-2xl */
-     font-weight: 700; /* Font-bold */
-     border-bottom: 1px solid #475569; /* Slate-600 */
-     padding-bottom: 12px; /* pb-3 */
-     margin-bottom: 16px; /* mb-4 */
-     display: flex;
-     align-items: center;
-     gap: 12px; /* gap-3 */
- }
-
-/* Upcoming Songs Container Styling */
-#upcomingSongsContainer {
-    -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
-    scrollbar-width: none; /* Hide scrollbar for Firefox */
-}
-
-#upcomingSongsContainer::-webkit-scrollbar {
-    display: none; /* Hide scrollbar for Chrome, Safari, Opera */
-}
-
-.upcoming-song-item {
-    flex: 0 0 auto; /* Prevent stretching */
-    width: 180px; /* Fixed width for each item */
-    background-color: #fff;
-    border-radius: 12px;
-    padding: 16px;
-    text-align: center;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+/* Music item in sidebar */
+.music-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem; /* gap-3 */
+    padding: 0.75rem; /* p-3 */
+    border-radius: 0.5rem; /* rounded-lg */
     cursor: pointer;
-    scroll-snap-align: start; /* Snap items to start */
+    transition: all 0.2s ease-in-out;
+    transform: scale(1); /* Initial scale */
+    color: #cbd5e1; /* slate-300 */
+}
+.music-item:hover {
+    background-color: #334155; /* slate-700 on hover */
+    transform: scale(1.03); /* Slightly enlarge on hover */
+}
+.music-item.active-song {
+    background-color: #4f46e5; /* indigo-600 */
+    color: white;
+}
+.music-item.active-song:hover {
+    background-color: #4f46e5 !important; /* Keep active color on hover */
+}
+.music-item img {
+    flex-shrink: 0;
+}
+.music-item span {
+    flex-grow: 1;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 }
 
-.upcoming-song-item:hover {
-    transform: translateY(-5px) scale(1.02);
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
-}
 
-.upcoming-song-item img {
-    width: 120px;
-    height: 120px;
-    border-radius: 8px;
+/* New styles for Music Cards in Main Content */
+.music-card {
+    background-color: #1e293b; /* Slate-800 */
+    padding: 1rem; /* p-4 */
+    border-radius: 0.5rem; /* rounded-lg */
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2); /* shadow-lg */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    transition: all 0.2s ease-in-out;
+    cursor: pointer;
+    position: relative; /* For current song indicator */
+    border: 2px solid transparent; /* Default border */
+}
+.music-card:hover {
+    background-color: #334155; /* Slate-700 */
+    transform: translateY(-4px); /* Lift effect */
+}
+.music-card img {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1 / 1; /* Ensure square aspect ratio */
+    border-radius: 0.375rem; /* rounded-md */
+    margin-bottom: 0.75rem; /* mb-3 */
     object-fit: cover;
-    margin: 0 auto 12px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
 }
-
-.upcoming-song-item .song-title {
-    font-weight: 600;
-    color: #333;
+.music-card h4 {
+    font-weight: 600; /* font-semibold */
+    font-size: 1.125rem; /* text-lg */
+    margin-bottom: 0.25rem;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    margin-bottom: 4px;
+    width: 100%; /* Ensure truncate works */
 }
-
-.upcoming-song-item .song-artist {
-    font-size: 0.875rem;
-    color: #666;
+.music-card p {
+    font-size: 0.875rem; /* text-sm */
+    color: #94a3b8; /* gray-400 */
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    width: 100%; /* Ensure truncate works */
+}
+
+.music-card.playing-song {
+    border-color: #6366f1; /* Highlight playing song */
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.5), 0 8px 20px rgba(0,0,0,0.3); /* Outer glow and larger shadow */
+    transform: scale(1.05) translateY(-6px); /* Slightly larger lift */
 }
 
 
-/* Responsive layout for sidebar and main content */
+/* Fixed Footer Player Bar */
+footer {
+    height: 90px; /* Fixed height for the player bar */
+    background-color: #1f2937; /* Darker slate-800 for footer */
+    border-top: 1px solid #334155; /* Slate-700 border */
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 1.5rem; /* px-6 */
+    z-index: 30; /* Ensure it's on top of everything */
+    box-shadow: 0 -5px 15px rgba(0,0,0,0.3);
+}
+footer #coverImage {
+    width: 60px;
+    height: 60px;
+    border-radius: 0.375rem; /* rounded-md */
+    object-fit: cover;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+footer #currentSongTitle {
+    font-size: 1.125rem; /* text-lg */
+    font-weight: 600; /* font-semibold */
+    color: white;
+    margin-bottom: 0; /* Remove default margin */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 180px; /* Limit width */
+}
+footer p { /* For artist name */
+    font-size: 0.875rem; /* text-sm */
+    color: #94a3b8; /* gray-400 */
+}
+
+/* Adjust control button sizes for footer */
+footer button {
+    background: transparent;
+    border: none;
+    color: #94a3b8; /* gray-400 */
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+footer button:hover {
+    color: white;
+}
+footer #playPauseBtn {
+    background-color: #6366f1; /* Indigo-500 */
+    width: 48px; /* w-12 */
+    height: 48px; /* h-12 */
+    font-size: 1.5rem; /* text-2xl */
+}
+footer #playPauseBtn:hover {
+    background-color: #4f46e5; /* Indigo-600 */
+    transform: scale(1.1);
+}
+footer #prevBtn, footer #nextBtn {
+    width: 32px;
+    height: 32px;
+    font-size: 1.25rem; /* text-xl */
+}
+footer #volumeIcon {
+    font-size: 1.25rem; /* text-xl */
+}
+
+
+/* Responsive adjustments for mobile */
 @media (max-width: 767px) { /* Apply below md breakpoint */
     body {
         flex-direction: column; /* Stack elements vertically on small screens */
-        overflow-y: auto; /* Allow scrolling on the body when stacked */
+        overflow-y: auto; /* Allow body scrolling */
     }
     aside {
-        display: none !important; /* Hide desktop sidebar on mobile with high priority */
+        display: none !important; /* Hide desktop sidebar on mobile */
     }
-
     main {
-        width: 100%; /* Main content takes full width */
-        height: auto; /* Auto height */
-        flex-grow: 1; /* Allow main content to take remaining space */
-         overflow-y: visible; /* Main content handles its own potential scrolling */
-         padding-top: 1rem; /* Adjust padding */
-         padding-bottom: 6rem; /* Add padding at the bottom for controls */
+        padding-top: 1rem;
+        padding-bottom: 90px; /* Account for fixed footer */
     }
-     .custom-player-controls {
-         padding: 10px 15px; /* Reduce padding on small screens */
-         margin-top: 1rem; /* Adjust margin */
-     }
-     /* Hide the top buttons container on mobile */
-     .top-buttons-mobile {
-         display: none;
-     }
-     /* Hide admin button on mobile */
-     #adminButton {
-         display: none;
-     }
-     #coverImage {
-         width: 250px; /* Smaller cover image on mobile */
-         height: 250px;
-         margin-bottom: 1rem; /* Adjust margin */
-     }
-     #player {
-         padding-top: 0; /* Remove extra top padding */
-     }
-     /* Hide mobile song count on mobile (as the container is hidden) */
-     #songCountMobile {
-         display: none;
-     }
-     #upcomingSongsContainer {
-         justify-content: flex-start; /* Align items to the start on mobile */
-     }
+    footer {
+        padding: 0 1rem; /* px-4 */
+        height: 80px; /* Slightly smaller footer on mobile */
+    }
+    footer #currentSongTitle {
+        max-width: 120px; /* Smaller width for title on mobile */
+        font-size: 1rem;
+    }
+    footer p {
+        font-size: 0.75rem;
+    }
+    footer #coverImage {
+        width: 50px;
+        height: 50px;
+    }
+    footer #playPauseBtn {
+        width: 40px;
+        height: 40px;
+        font-size: 1.25rem;
+    }
+    footer #prevBtn, footer #nextBtn {
+        width: 28px;
+        height: 28px;
+        font-size: 1rem;
+    }
+    footer #volumeBar {
+        width: 70px;
+    }
+    footer #volumeIcon {
+        font-size: 1rem;
+    }
+    #adminButton { /* Admin button might need a mobile specific position */
+        position: fixed; /* Fixed on mobile viewport */
+        top: 1rem;
+        right: 1rem;
+        z-index: 40; /* Ensure it's above other content */
+    }
+    .music-card img {
+        height: auto; /* Let height adjust with width */
+    }
+    .music-card {
+        padding: 0.75rem; /* smaller padding */
+    }
 }
 
- @media (min-width: 768px) { /* Apply from md breakpoint */
-    body {
-        flex-direction: row; /* Side-by-side layout */
-    }
-     /* Show desktop sidebar on desktop */
+@media (min-width: 768px) { /* Apply from md breakpoint (desktop) */
     aside {
-        display: flex;
-        width: 18rem; /* md:w-72 */
-        height: 100vh; /* Full height */
-        overflow-y: auto; /* Allow scrolling */
-         position: static; /* Static position on desktop */
-         left: auto; /* Reset left property */
+        display: flex; /* Show sidebar */
     }
-     main {
-        flex-grow: 1; /* Main content takes remaining space */
-        height: 100vh; /* Full height */
-        overflow-y: auto; /* Allow scrolling */
-        padding-top: 2.5rem; /* top-10 */
-        padding-bottom: 2.5rem; /* bottom-10 */
-     }
-     /* Hide mobile menu button on desktop */
-     .menu-button-mobile {
-         display: none !important;
-     }
-     /* Hide mobile button container on desktop */
-     .top-buttons-mobile {
-         display: none;
-     }
-     #adminButton {
-         position: absolute; /* Absolute positioning on larger screens */
-         top: 1.25rem; /* top-5 */
-         right: 1.25rem; /* right-5 */
-         display: flex; /* Show admin button on desktop */
-         padding: 0.5rem 0.75rem; /* Adjust padding for icon-only button */
-     }
-      #adminButton i {
-          margin: 0; /* Remove margin next to text */
-      }
-      #coverImage {
-         width: 300px; /* Original size on larger screens */
-         height: 300px;
-         margin-bottom: 1.5rem; /* mb-6 */
-     }
-     /* Hide mobile music list modal on desktop */
-     #mobileMusicListModal {
-         display: none !important;
-     }
-     #songCountMobile {
-         display: none; /* Hide mobile song count on desktop */
-     }
-     #songCountDesktop {
-         display: inline-block; /* Show desktop song count */
-         font-size: 1rem; /* text-base */
-         color: #9ca3af; /* gray-400 */
-         font-weight: 500; /* font-medium */
-         margin-left: auto; /* Push to the right */
-     }
+    main {
+        padding-top: 2rem; /* top-8 */
+        padding-bottom: 2rem; /* bottom-8 */
+    }
+    #adminButton {
+        position: absolute; /* Absolute position inside main on desktop */
+        top: 2rem; /* top-8 */
+        right: 2rem; /* right-8 */
+        z-index: 10; /* Lower z-index than modal */
+    }
 }
