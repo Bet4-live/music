@@ -42,6 +42,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         volumeIcon: document.getElementById('volumeIcon'),
         searchBarDesktop: document.getElementById('searchBarDesktop'),
         searchBarMobile: document.getElementById('searchBarMobile'),
+        searchTypeDesktop: document.getElementById('searchTypeDesktop'),
+        searchTypeMobile: document.getElementById('searchTypeMobile'),
         clearSearchDesktop: document.getElementById('clearSearchDesktop'),
         clearSearchMobile: document.getElementById('clearSearchMobile'),
         closeMobileListBtn: document.getElementById('closeMobileListBtn'),
@@ -245,13 +247,36 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     const filterMusicList = () => {
         const query = (elements.searchBarDesktop.value || elements.searchBarMobile.value || '').trim().toLowerCase();
-        state.filteredMusicData = state.musicData.filter(music => music.name.toLowerCase().includes(query));
-        
+        const searchType = elements.searchTypeDesktop.value || elements.searchTypeMobile.value;
+
+        if (!query) {
+            state.filteredMusicData = [...state.musicData];
+        } else {
+            state.filteredMusicData = state.musicData.filter(music => {
+                if (searchType === 'name') {
+                    return music.name.toLowerCase().includes(query);
+                } else if (searchType === 'duration') {
+                    const durationMinutes = parseFloat(query);
+                    if (isNaN(durationMinutes)) return true; // Geçersiz giriş, tümünü göster
+                    const durationSeconds = durationMinutes * 60;
+                    return music.duration && music.duration <= durationSeconds;
+                } else if (searchType === 'date') {
+                    const days = parseInt(query);
+                    if (isNaN(days)) return true; // Geçersiz giriş, tümünü göster
+                    const cutoffDate = new Date();
+                    cutoffDate.setDate(cutoffDate.getDate() - days);
+                    const musicDate = new Date(music.created_at);
+                    return musicDate >= cutoffDate;
+                }
+                return true;
+            });
+        }
+
         // Show/Hide clear buttons based on search input
         elements.clearSearchDesktop.style.display = query ? 'block' : 'none';
         elements.clearSearchMobile.style.display = query ? 'block' : 'none';
-        
-        renderMusicList(query);
+
+        renderMusicList(query, searchType);
     };
 
     const clearSearch = () => {
@@ -269,7 +294,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         return text.replace(regex, '<span class="highlight">$1</span>');
     };
 
-    const renderMusicList = async (query = '') => {
+    const renderMusicList = async (query = '', searchType = 'name') => {
         elements.musicListDesktop.innerHTML = '';
         elements.musicListMobile.innerHTML = '';
         elements.deleteSelect.innerHTML = '<option value="" disabled selected>Silmek için seçin...</option>';
@@ -277,7 +302,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         try {
             const { data, error } = await supabaseClient
                 .from('musics')
-                .select('id, name, audio_url, image_url')
+                .select('id, name, audio_url, image_url, duration, created_at')
                 .order('created_at', { ascending: false });
 
             if (error) throw new Error(error.message);
@@ -304,7 +329,14 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
 
             if (state.filteredMusicData.length === 0 && query) {
-                const noResultsMessage = `<p class="text-gray-400 text-center mt-4">"${query}" için sonuç bulunamadı.</p>`;
+                let noResultsMessage;
+                if (searchType === 'name') {
+                    noResultsMessage = `<p class="text-gray-400 text-center mt-4">"${query}" için sonuç bulunamadı.</p>`;
+                } else if (searchType === 'duration') {
+                    noResultsMessage = `<p class="text-gray-400 text-center mt-4">${query} dakikadan kısa şarkı bulunamadı.</p>`;
+                } else {
+                    noResultsMessage = `<p class="text-gray-400 text-center mt-4">Son ${query} günde eklenen şarkı bulunamadı.</p>`;
+                }
                 elements.musicListDesktop.innerHTML = noResultsMessage;
                 elements.musicListMobile.innerHTML = noResultsMessage;
                 return;
@@ -341,7 +373,14 @@ document.addEventListener('DOMContentLoaded', async () => {
 
                     const title = document.createElement('span');
                     title.className = "font-medium truncate flex-grow";
-                    title.innerHTML = highlightText(music.name, query);
+                    if (searchType === 'name') {
+                        title.innerHTML = highlightText(music.name, query);
+                    } else if (searchType === 'duration') {
+                        title.innerHTML = `${music.name} (${formatTime(music.duration)})`;
+                    } else {
+                        const createdAt = new Date(music.created_at).toLocaleDateString('tr-TR');
+                        title.innerHTML = `${music.name} (Eklenme: ${createdAt})`;
+                    }
                     div.appendChild(title);
 
                     div.onclick = () => loadAndPlayMusic(index);
@@ -367,6 +406,20 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     };
 
+    const getAudioDuration = (file) => {
+        return new Promise((resolve) => {
+            const audio = new Audio();
+            audio.src = URL.createObjectURL(file);
+            audio.addEventListener('loadedmetadata', () => {
+                resolve(audio.duration);
+                URL.revokeObjectURL(audio.src);
+            });
+            audio.addEventListener('error', () => {
+                resolve(null);
+            });
+        });
+    };
+
     const addMusic = async () => {
         const user = await supabaseClient.auth.getUser();
         if (user.error || !user.data.user) {
@@ -388,6 +441,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         let audioUrl = null;
         let imageUrl = null;
+        let duration = null;
         const filesToRemoveOnError = [];
 
         try {
@@ -395,6 +449,10 @@ document.addEventListener('DOMContentLoaded', async () => {
             const audioFileName = `${userId}/${Date.now()}_${audioFile.name.replace(/\s+/g, '_')}`;
             const audioFilePath = `public/${audioFileName}`;
             filesToRemoveOnError.push(audioFilePath);
+
+            // Calculate duration before uploading
+            duration = await getAudioDuration(audioFile);
+            if (!duration) throw new Error('Ses dosyasının süresi alınamadı.');
 
             const { error: audioUploadError } = await supabaseClient.storage
                 .from('music-files')
@@ -425,7 +483,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             const { error: musicInsertError } = await supabaseClient
                 .from('musics')
-                .insert([{ name, audio_url: audioUrl, image_url: imageUrl, user_id: userId }]);
+                .insert([{ name, audio_url: audioUrl, image_url: imageUrl, user_id: userId, duration }]);
             if (musicInsertError) throw new Error(`Veritabanı hatası: ${musicInsertError.message}`);
 
             renderMusicList();
@@ -617,6 +675,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     const debouncedFilterMusicList = debounce(filterMusicList, 300);
     elements.searchBarDesktop.addEventListener('input', debouncedFilterMusicList);
     elements.searchBarMobile.addEventListener('input', debouncedFilterMusicList);
+    elements.searchTypeDesktop.addEventListener('change', filterMusicList);
+    elements.searchTypeMobile.addEventListener('change', filterMusicList);
 
     // Clear search button listeners
     elements.clearSearchDesktop.addEventListener('click', clearSearch);
