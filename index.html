@@ -13,62 +13,26 @@
     <link rel="stylesheet" href="style.css">
     <link rel="shortcut icon" href="music.png" />
 </head>
-<body class="bg-gray-900 text-gray-200"> <aside class="w-64 md:w-72 lg:w-80 bg-gray-950 text-white p-5 flex flex-col shadow-lg">
-        <button id="homeButton" class="text-2xl font-bold border-b border-gray-700 pb-3 mb-4 flex items-center justify-center gap-2 text-indigo-400 hover:text-indigo-300 transition-all transform hover:scale-105 active:scale-95 focus:outline-none">
-            <i class="fa fa-home"></i> Müzikler
-        </button>
+<body class="dark-mode"> <main class="flex-1 p-8 relative flex flex-col items-center justify-center">
 
-        <div id="songCountContainer" class="text-sm text-gray-400 mb-4 text-center">
-            Toplam <span id="songCount" class="font-semibold text-indigo-400">0</span> Müzik
-        </div>
-
-        <div id="musicListContainer" class="flex-1 overflow-y-auto custom-scrollbar pr-2 mb-4">
-            <div id="musicList">
-                </div>
-        </div>
-
-        <div class="flex items-center justify-between mt-auto">
-            <h3 class="text-gray-400 text-sm">Yaklaşan Şarkılar (Yakında...)</h3>
-        </div>
-        <div id="upcomingSongsContainer" class="flex overflow-x-auto custom-scrollbar mt-2 p-2 bg-gray-800 rounded-lg space-x-3">
-            </div>
-        <div class="flex justify-between mt-3">
-            <button id="scrollLeftUpcoming" class="bg-gray-700 text-gray-300 px-3 py-1 rounded-full text-sm hover:bg-gray-600 transition-all transform hover:scale-105 active:scale-95 focus:outline-none">
-                <i class="fa fa-chevron-left"></i>
-            </button>
-            <button id="scrollRightUpcoming" class="bg-gray-700 text-gray-300 px-3 py-1 rounded-full text-sm hover:bg-gray-600 transition-all transform hover:scale-105 active:scale-95 focus:outline-none">
-                <i class="fa fa-chevron-right"></i>
-            </button>
-        </div>
-    </aside>
-
-    <main class="flex-1 p-8 overflow-y-auto relative flex flex-col items-center justify-start pb-40"> <button id="mobileMenuButton" class="menu-button-mobile md:hidden bg-gray-700 text-white p-3 rounded-lg fixed top-5 left-5 z-50 shadow-lg hover:bg-gray-600 transition-all transform hover:scale-105 active:scale-95 focus:outline-none">
+        <button id="mobileMenuButton" class="menu-button-mobile md:hidden bg-gray-700 text-white p-3 rounded-lg fixed top-5 left-5 z-50 shadow-lg hover:bg-gray-600 transition-all transform hover:scale-105 active:scale-95 focus:outline-none">
             <i class="fa fa-bars"></i>
         </button>
 
-        <div class="top-buttons-mobile md:hidden fixed top-5 right-5 flex gap-3 z-50">
-            <button id="openMobileListBtn" class="bg-gray-700 text-white p-3 rounded-lg shadow-lg hover:bg-gray-600 transition-all transform hover:scale-105 active:scale-95 focus:outline-none">
-                <i class="fa fa-list"></i>
-            </button>
-            <button id="adminButtonMobile" class="bg-gray-700 text-white p-3 rounded-lg shadow-lg hover:bg-gray-600 transition-all transform hover:scale-105 active:scale-95 focus:outline-none">
-                <i class="fa fa-user-gear"></i>
-            </button>
-        </div>
-
-        <button id="adminButton" class="hidden md:flex bg-gray-700 text-white p-3 rounded-lg shadow-lg hover:bg-gray-600 transition-all transform hover:scale-105 active:scale-95 focus:outline-none">
+        <button id="adminButton" class="hidden md:block absolute top-5 right-[calc(320px+1.25rem)] bg-gray-700 text-white p-3 rounded-lg shadow-lg hover:bg-gray-600 transition-all transform hover:scale-105 active:scale-95 focus:outline-none">
             <i class="fa fa-user-gear"></i>
         </button>
 
-        <button id="themeToggleButton" class="absolute top-5 right-20 md:right-20 lg:right-32 bg-gray-700 text-white p-3 rounded-full shadow-lg hover:bg-gray-600 transition-all transform hover:rotate-6 hover:scale-110 active:scale-95 focus:outline-none z-50">
-            <i class="fa fa-moon"></i> </button>
+        <button id="themeToggleButton" class="absolute top-5 right-[calc(320px+5.5rem)] bg-gray-700 text-white p-3 rounded-full shadow-lg hover:bg-gray-600 transition-all transform hover:rotate-6 hover:scale-110 active:scale-95 focus:outline-none z-50">
+            <i class="fa fa-sun"></i> </button>
 
 
-        <div class="flex flex-col items-center justify-center h-full w-full">
-            <div id="emptyStateMessage" class="text-xl text-gray-500 hidden animate-fade-in">
+        <div class="flex flex-col items-center justify-center h-full w-full max-w-xl">
+            <div id="emptyStateMessage" class="text-3xl font-bold text-gray-500 animate-fade-in hidden">
                 Müzik Seçin
             </div>
-            <img id="coverImage" src="default-cover.jpg" alt="Müzik Kapağı" class="w-64 h-64 md:w-80 md:h-80 rounded-lg shadow-lg mb-6 transform transition-all duration-300">
-            <h2 id="songTitle" class="text-3xl font-bold text-gray-100 text-center mb-2">Başlık</h2>
+            <img id="coverImage" src="default-cover.jpg" alt="Müzik Kapağı" class="w-64 h-64 md:w-80 md:h-80 rounded-xl shadow-lg mb-6 transform transition-all duration-300">
+            <h2 id="songTitle" class="text-4xl font-bold text-gray-100 text-center mb-2">Başlık</h2>
             <p id="artistName" class="text-xl text-gray-400 text-center">Sanatçı</p>
         </div>
 
@@ -82,7 +46,34 @@
 
     </main>
 
-    <div id="musicPlayerContainer" class="fixed bottom-0 left-0 right-0 bg-gray-800 bg-opacity-90 backdrop-blur-sm p-4 z-40 flex flex-col items-center justify-center shadow-lg">
+    <aside class="w-80 bg-gray-950 p-5 flex flex-col shadow-lg rounded-l-3xl border-l border-gray-800 relative z-30">
+        <button id="homeButton" class="text-2xl font-bold border-b-2 border-indigo-600 pb-3 mb-4 flex items-center justify-center gap-2 text-indigo-400 hover:text-indigo-300 transition-all transform hover:scale-105 active:scale-95 focus:outline-none bg-transparent">
+            <i class="fa fa-headphones-alt"></i> Müzikler
+        </button>
+
+        <div id="songCountContainer" class="text-sm text-gray-400 mb-4 text-center">
+            Toplam <span id="songCount" class="font-semibold text-indigo-400">0</span> Müzik
+        </div>
+
+        <div id="musicListContainer" class="flex-1 overflow-y-auto custom-scrollbar pr-2 mb-4">
+            <div id="musicList" class="space-y-3">
+                </div>
+        </div>
+
+        <div class="flex items-center justify-between mt-auto">
+            <h3 class="text-gray-400 text-sm">Yaklaşan Şarkılar (Yakında...)</h3>
+        </div>
+        <div id="upcomingSongsContainer" class="flex overflow-x-auto custom-scrollbar mt-2 p-2 bg-gray-800 rounded-lg space-x-3 hidden"> </div>
+        <div class="flex justify-between mt-3 hidden"> <button id="scrollLeftUpcoming" class="bg-gray-700 text-gray-300 px-3 py-1 rounded-full text-sm hover:bg-gray-600 transition-all transform hover:scale-105 active:scale-95 focus:outline-none">
+                <i class="fa fa-chevron-left"></i>
+            </button>
+            <button id="scrollRightUpcoming" class="bg-gray-700 text-gray-300 px-3 py-1 rounded-full text-sm hover:bg-gray-600 transition-all transform hover:scale-105 active:scale-95 focus:outline-none">
+                <i class="fa fa-chevron-right"></i>
+            </button>
+        </div>
+    </aside>
+
+    <div id="musicPlayerContainer" class="fixed bottom-0 left-0 right-80 bg-gray-800 bg-opacity-90 backdrop-blur-sm p-4 z-40 flex flex-col items-center justify-center shadow-lg rounded-t-xl">
         <audio id="audioPlayer" src=""></audio>
         <div class="w-full max-w-xl mb-4">
             <input type="range" id="progressBar" value="0" step="0.01" class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer custom-range-slider">
