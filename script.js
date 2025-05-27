@@ -1,15 +1,17 @@
-const SUPABASE_URL = 'https://skhbykqwdbwjcvqmwvft.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNraGJ5a3F3ZGJ3amN2cW13dmZ0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDU3Nzg0NDYsImV4cCI6MjA2MTM1NDQ0Nn0.e8pbfF7O_rTtSKxtFzzc_zZTsegsxsNaluHNFBbWbMs';
+const SUPABASE_URL = process.env.SUPABASE_URL || 'https://skhbykqwdbwjcvqmwvft.supabase.co';
+const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNraGJ5a3F3ZGJ3amN2cW13dmZ0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDA3Nzg0NDYsImV4cCI6MjA2MTM1NDQ0Nn0.e8pbfF7O_rTtSKxtFzzc_zZTsegsxsNaluHNFBbWbMs';
 
 document.addEventListener('DOMContentLoaded', async () => {
+    console.log("Supabase CDN yüklenmeye çalışılıyor...");
     if (typeof window.supabase === 'undefined') {
-        console.error("Supabase kütüphanesi yüklenemedi.");
+        console.error("Supabase kütüphanesi yüklenemedi. CDN bağlantısını kontrol edin:", 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js');
         alert("Uygulama başlatılamadı. Lütfen tekrar deneyin.");
         return;
     }
+    console.log("Supabase kütüphanesi başarıyla yüklendi.");
 
     const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-    console.log("Supabase istemcisi oluşturuldu.");
+    console.log("Supabase istemcisi oluşturuldu:", SUPABASE_URL);
 
     // DOM Elements
     const elements = {
