@@ -1,7 +1,7 @@
 // --- Supabase Setup ---
 // !! Buraya kendi Supabase Proje URL ve Public Anon Key bilgilerini GİRİN !!
 const SUPABASE_URL = 'https://skhbykqwdbwjcvqmwvft.supabase.co'; // <-- KENDİ URL'NİZİ GİRİN
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNraGJ5a3F3ZGJ3amN2cW13dmZ0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDU3Nzg0NDYsImV4cCI6MjA2MTM1NDQ0Nn0.e8pbfF7O_rTtSKxtFzzc_zZTsegsxsNaluHNFBbWbMs'; // <-- KENDİ ANON KEY'İNİZİ GİRİN
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNraGJ5a3F3ZGJ3amN2cW13dmZ0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDU3Nzg0NDYsImexdCI6MjA2MTM1NDQ0Nn0.e8pbfF7O_rTtSKxtFzzc_zZTsegsxsNaluHNFBbWbMs'; // <-- KENDİ ANON KEY'İNİZİ GİRİN
 // !! Supabase bilgilerini GİRDİĞİNİZDEN EMİN OLUN !!
 
 // Supabase istemcisini tutacak değişkeni tanımlıyoruz
@@ -70,6 +70,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         const scrollLeftUpcoming = document.getElementById('scrollLeftUpcoming');
         const scrollRightUpcoming = document.getElementById('scrollRightUpcoming');
 
+        // Theme Toggle Elements
+        const themeToggleBtn = document.getElementById('themeToggle');
+        const themeIcon = document.getElementById('themeIcon');
+
 
         // State Variables
         const defaultCover = 'https://placehold.co/300x300/e2e8f0/94a3b8?text=Müzik+Seçin';
@@ -89,11 +93,11 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         function updateVolumeIcon(volume) {
              if (volume === 0) {
-                volumeIcon.className = 'fa fa-volume-xmark text-gray-600 hover:text-gray-900 cursor-pointer w-5 text-center';
+                volumeIcon.className = 'fa fa-volume-xmark var-text-player-control hover:var-text-player-control-hover cursor-pointer w-5 text-center';
             } else if (volume < 0.5) {
-                volumeIcon.className = 'fa fa-volume-low text-gray-600 hover:text-gray-900 cursor-pointer w-5 text-center';
+                volumeIcon.className = 'fa fa-volume-low var-text-player-control hover:var-text-player-control-hover cursor-pointer w-5 text-center';
             } else {
-                volumeIcon.className = 'fa fa-volume-high text-gray-600 hover:text-gray-900 cursor-pointer w-5 text-center';
+                volumeIcon.className = 'fa fa-volume-high var-text-player-control hover:var-text-player-control-hover cursor-pointer w-5 text-center';
             }
         }
 
@@ -129,7 +133,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         // --- updateSeekBar fonksiyonu ve içindeki log ---
         function updateSeekBar() {
-            console.log('timeupdate olayı tetiklendi. currentTime:', audioPlayer.currentTime, 'duration:', audioPlayer.duration);
+            // console.log('timeupdate olayı tetiklendi. currentTime:', audioPlayer.currentTime, 'duration:', audioPlayer.duration); // Too chatty
             if (audioPlayer.duration && isFinite(audioPlayer.duration)) {
                 const percentage = (audioPlayer.currentTime / audioPlayer.duration) * 100;
                 seekBar.value = percentage;
@@ -202,35 +206,38 @@ document.addEventListener('DOMContentLoaded', async () => {
             currentMusicIndex = index;
             if(currentSongTitleElement) currentSongTitleElement.textContent = music.name;
 
-            document.querySelectorAll('#musicListDesktop .music-item, #searchResults .music-item, #upcomingSongsContainer .upcoming-song-item').forEach((item) => {
+            // Remove selected classes from all music items first
+            document.querySelectorAll('.music-item').forEach((item) => {
+                item.classList.remove('bg-indigo-600'); // Remove active for desktop/mobile
+                item.classList.remove('bg-gray-700'); // Remove active for search
+                item.classList.add('bg-gray-800', 'hover:bg-indigo-700'); // Re-add default for desktop
+                if (item.closest('#searchResults')) {
+                    item.classList.remove('bg-gray-800', 'hover:bg-indigo-700');
+                    item.classList.add('bg-gray-700', 'hover:bg-gray-600');
+                }
+            });
+
+            // Add selected classes to the current music item
+            document.querySelectorAll(`.music-item[data-id="${currentMusicId}"]`).forEach((item) => {
+                item.classList.remove('bg-gray-800', 'hover:bg-indigo-700', 'bg-gray-700', 'hover:bg-gray-600');
+                item.classList.add('bg-indigo-600');
+                item.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            });
+
+
+            // Update upcoming songs styling
+            document.querySelectorAll('#upcomingSongsContainer .upcoming-song-item').forEach((item) => {
                 const isSelected = item.dataset.id === currentMusicId.toString();
-                item.classList.toggle('bg-indigo-600', isSelected);
-                item.classList.toggle('bg-gray-800', isSelected && item.closest('#musicListDesktop')); // Specific for desktop list
-                item.classList.toggle('bg-gray-700', isSelected && item.closest('#searchResults')); // Specific for search results
-                // For upcoming songs, we change the background and add a highlight border
-                if (item.closest('#upcomingSongsContainer')) {
-                    item.classList.toggle('ring-2', isSelected);
-                    item.classList.toggle('ring-indigo-500', isSelected);
-                    item.classList.toggle('bg-indigo-100', isSelected);
-                    item.classList.toggle('text-indigo-800', isSelected);
-                } else {
-                     item.classList.toggle('bg-gray-800', !isSelected);
-                     item.classList.toggle('hover:bg-indigo-700', !isSelected && item.closest('#musicListDesktop'));
-                     item.classList.toggle('hover:bg-gray-700', !isSelected && item.closest('#searchResults'));
-                }
-
-
-                if (isSelected) {
-                    item.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                item.classList.toggle('ring-2', isSelected);
+                item.classList.toggle('ring-indigo-500', isSelected);
+                item.classList.toggle('bg-indigo-100', isSelected);
+                item.classList.toggle('text-indigo-800', isSelected);
+                // Remove default for non-selected
+                if (!isSelected) {
+                    item.classList.remove('ring-2', 'ring-indigo-500', 'bg-indigo-100', 'text-indigo-800');
                 }
             });
-             document.querySelectorAll('#musicListMobile .music-item').forEach((item, idx) => {
-                item.classList.toggle('bg-indigo-600', item.dataset.id === currentMusicId.toString());
-                item.classList.toggle('bg-gray-800', item.dataset.id !== currentMusicId.toString());
-                 if (item.dataset.id === currentMusicId.toString()) {
-                    item.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-                 }
-            });
+
 
             audioPlayer.load();
             audioPlayer.play().catch(e => {
@@ -303,13 +310,13 @@ document.addEventListener('DOMContentLoaded', async () => {
             );
 
             if (filteredMusic.length === 0) {
-                searchResultsContainer.innerHTML = '<p class="text-gray-400 text-center">Müzik bulunamadı.</p>';
+                searchResultsContainer.innerHTML = '<p class="var-text-search-item text-center">Müzik bulunamadı.</p>';
                 return;
             }
 
             filteredMusic.forEach(music => {
                 const div = document.createElement('div');
-                div.className = `music-item flex items-center gap-3 p-3 rounded-lg cursor-pointer transition-all transform hover:scale-[1.02] bg-gray-700 hover:bg-gray-600`;
+                div.className = `music-item flex items-center gap-3 p-3 rounded-lg cursor-pointer transition-all transform hover:scale-[1.02] var-bg-search-item hover:var-bg-search-item-hover`;
                 div.dataset.id = music.id;
 
                 const img = document.createElement('img');
@@ -320,7 +327,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 div.appendChild(img);
 
                 const title = document.createElement('span');
-                title.className = "font-medium text-white truncate flex-grow";
+                title.className = "font-medium truncate flex-grow var-text-search-item";
                 title.innerText = music.name;
                 div.appendChild(title);
 
@@ -345,7 +352,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                  const errorMessage = '<p class="text-red-400 text-center mt-4">Supabase bağlantısı kurulamadı.</p>';
                  if (musicListDesktop) musicListDesktop.innerHTML = errorMessage;
                  if (musicListMobile) { // Mobile list elementini doğru alalım
-                    const mobileListContent = document.getElementById('mobileMusicListContent');
+                    const mobileListContent = document.getElementById('musicListMobile');
                      if(mobileListContent) mobileListContent.innerHTML = errorMessage;
                  }
                  updatePlayerUIState();
@@ -380,7 +387,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 if (songCountDesktop) songCountDesktop.textContent = `${musicData.length} Şarkı`;
 
                 if (musicData.length === 0) {
-                    const noMusicMessage = '<p class="text-gray-400 text-center mt-4">Henüz müzik eklenmemiş.</p>';
+                    const noMusicMessage = '<p class="var-text-sidebar-count text-center mt-4">Henüz müzik eklenmemiş.</p>';
                     if (musicListDesktop) musicListDesktop.innerHTML = noMusicMessage;
                     if (mobileListContent) mobileListContent.innerHTML = noMusicMessage; // Use mobile list content
                     if (currentMusicId !== null) {
@@ -407,7 +414,9 @@ document.addEventListener('DOMContentLoaded', async () => {
                 musicData.forEach((music, index) => {
                     const createMusicItem = (isMobile = false) => {
                          const div = document.createElement('div');
-                         div.className = `music-item flex items-center gap-3 p-3 rounded-lg cursor-pointer transition-all transform hover:scale-[1.03] ${music.id === currentMusicId ? 'bg-indigo-600' : 'bg-gray-800 hover:bg-indigo-700'}`;
+                         // Use specific class for active/selected state and default state
+                         const isActive = music.id === currentMusicId;
+                         div.className = `music-item flex items-center gap-3 p-3 rounded-lg cursor-pointer transition-all transform hover:scale-[1.03] ${isActive ? 'bg-indigo-600' : 'bg-gray-800 hover:bg-indigo-700'}`;
                          div.dataset.id = music.id;
 
                          const img = document.createElement('img');
@@ -445,9 +454,12 @@ document.addEventListener('DOMContentLoaded', async () => {
                 });
 
                  if (currentMusicId !== null && currentMusicIndex !== -1) {
+                     // Ensure the correct classes are applied after re-rendering
                      document.querySelectorAll('.music-item').forEach(item => {
-                         item.classList.toggle('bg-indigo-600', item.dataset.id === currentMusicId.toString());
-                         item.classList.toggle('bg-gray-800', item.dataset.id !== currentMusicId.toString());
+                         const isSelected = item.dataset.id === currentMusicId.toString();
+                         item.classList.toggle('bg-indigo-600', isSelected);
+                         item.classList.toggle('bg-gray-800', !isSelected);
+                         item.classList.toggle('hover:bg-indigo-700', !isSelected);
                      });
                      updatePlayerUIState();
                  } else {
@@ -470,17 +482,15 @@ document.addEventListener('DOMContentLoaded', async () => {
         function renderUpcomingSongs() {
             upcomingSongsContainer.innerHTML = '';
             if (musicData.length === 0) {
-                upcomingSongsContainer.innerHTML = '<p class="text-gray-600 text-center w-full">Henüz müzik yok.</p>';
+                upcomingSongsContainer.innerHTML = '<p class="var-text-upcoming-artist text-center w-full">Henüz müzik yok.</p>';
                 return;
             }
 
-            // Shuffle musicData or select a subset for "upcoming" if desired
-            // For now, let's just display a subset or all, without complex logic
             const songsToDisplay = musicData.slice(0, 10); // Display first 10 or fewer
 
             songsToDisplay.forEach(music => {
                 const div = document.createElement('div');
-                div.className = `upcoming-song-item snap-start`; // Add snap-start for smooth scrolling
+                div.className = `upcoming-song-item snap-start`;
                 div.dataset.id = music.id;
 
                 const img = document.createElement('img');
@@ -493,12 +503,6 @@ document.addEventListener('DOMContentLoaded', async () => {
                 title.className = "song-title";
                 title.innerText = music.name;
                 div.appendChild(title);
-
-                // You might want to add artist information if available in your music data
-                // const artist = document.createElement('div');
-                // artist.className = "song-artist";
-                // artist.innerText = "Bilinmeyen Sanatçı"; // Replace with actual artist if available
-                // div.appendChild(artist);
 
                 div.onclick = () => {
                     const clickedIndex = musicData.findIndex(item => item.id === music.id);
@@ -712,7 +716,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                       if (storageDeleteError) {
                           console.error('Depolama alanından silinirken hata oluştu (veritabanı kaydı silindi):', storageDeleteError);
                       } else {
-                           console.log(`Dosyalar başarıyla silindi: ${filesToRemove.join(', ')}`);
+                           console.log("Yüklenen dosyalar başarıyla temizlendi.");
                        }
                   }
 
@@ -835,6 +839,40 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
         }
 
+        // --- Theme Toggle Functionality ---
+        function toggleTheme() {
+            const currentTheme = document.body.classList.contains('dark-theme') ? 'dark' : 'light';
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+
+            if (newTheme === 'dark') {
+                document.body.classList.remove('light-theme');
+                document.body.classList.add('dark-theme');
+                themeIcon.className = 'fa fa-moon';
+            } else {
+                document.body.classList.remove('dark-theme');
+                document.body.classList.add('light-theme');
+                themeIcon.className = 'fa fa-sun';
+            }
+            localStorage.setItem('theme', newTheme);
+        }
+
+        function loadThemePreference() {
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme) {
+                if (savedTheme === 'dark') {
+                    document.body.classList.add('dark-theme');
+                    themeIcon.className = 'fa fa-moon';
+                } else {
+                    document.body.classList.add('light-theme');
+                    themeIcon.className = 'fa fa-sun';
+                }
+            } else {
+                // Default to light theme if no preference is saved
+                document.body.classList.add('light-theme');
+                themeIcon.className = 'fa fa-sun';
+            }
+        }
+
 
         // --- Event Listeners for Auth Buttons and Admin Button ---
 
@@ -847,7 +885,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         // timeupdate listener buraya ekleniyor
         if(audioPlayer) {
             audioPlayer.addEventListener('timeupdate', updateSeekBar);
-            console.log("timeupdate listener audioPlayer elementine eklendi.");
+            // console.log("timeupdate listener audioPlayer elementine eklendi."); // Too chatty
         } else {
              console.error("audioPlayer elementi bulunamadı, timeupdate listener eklenemedi.");
         }
@@ -884,6 +922,9 @@ document.addEventListener('DOMContentLoaded', async () => {
             });
         }
 
+        // Theme toggle listener
+        if(themeToggleBtn) themeToggleBtn.addEventListener('click', toggleTheme);
+
         // Modal close listeners
         const closeMobileListBtn = document.getElementById('closeMobileListBtn');
         if(closeMobileListBtn) closeMobileListBtn.addEventListener('click', closeMobileMusicList);
@@ -899,6 +940,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 
         // --- Initial Setup ---
+        loadThemePreference(); // Load theme preference on startup
         coverImage.src = defaultCover;
         volumeBar.value = audioPlayer.volume;
         updateVolumeIcon(audioPlayer.volume);
