@@ -87,6 +87,9 @@ input[type="range"]::-moz-range-thumb {
 }
 
 /* Volume bar specific thumb styling */
+input[type="range"].volume-bar {
+    background: #e5e7eb; /* Lighter track color (gray-200) */
+}
 input[type="range"].volume-bar::-webkit-slider-thumb {
     background: #6b7280; /* Gray thumb for volume */
      width: 12px;
@@ -98,7 +101,13 @@ input[type="range"].volume-bar::-webkit-slider-thumb {
     background: #6b7280; /* Gray thumb for volume */
     width: 12px;
     height: 12px;
+    border: none; /* Remove default border in Firefox */
      box-shadow: 0 1px 3px rgba(0,0,0,0.2); /* Add a subtle shadow */
+}
+input[type="range"].volume-bar::-moz-range-track {
+     background-color: #e5e7eb;
+     height: 6px;
+     border-radius: 3px;
 }
 
 
@@ -173,76 +182,58 @@ button:disabled {
      gap: 12px; /* gap-3 */
  }
 
-/* New Header Styling */
-header {
-    /* Existing Tailwind classes for header */
+/* Upcoming Songs Container Styling */
+#upcomingSongsContainer {
+    -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+    scrollbar-width: none; /* Hide scrollbar for Firefox */
 }
 
-/* Sidebar navigation links */
-.nav-link {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem; /* gap-3 */
-    padding: 0.75rem; /* p-3 */
-    border-radius: 0.5rem; /* rounded-lg */
-    transition: all 0.2s ease-in-out; /* transition-colors */
+#upcomingSongsContainer::-webkit-scrollbar {
+    display: none; /* Hide scrollbar for Chrome, Safari, Opera */
 }
 
-.nav-link:hover {
-    background-color: #334155; /* gray-700 */
-}
-
-.nav-link.active-link {
-    background-color: #4f46e5; /* indigo-600 */
-    font-weight: 600; /* font-semibold */
-}
-
-/* Music Card Styling (for grid layouts) */
-.music-card {
-    background-color: #1e293b; /* Slate-800 */
-    border-radius: 0.75rem; /* rounded-xl */
-    padding: 1rem; /* p-4 */
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+.upcoming-song-item {
+    flex: 0 0 auto; /* Prevent stretching */
+    width: 180px; /* Fixed width for each item */
+    background-color: #fff;
+    border-radius: 12px;
+    padding: 16px;
     text-align: center;
-    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
     transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    cursor: pointer;
+    scroll-snap-align: start; /* Snap items to start */
 }
 
-.music-card:hover {
+.upcoming-song-item:hover {
     transform: translateY(-5px) scale(1.02);
-    box-shadow: 0 8px 15px rgba(0,0,0,0.3);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
 }
 
-.music-card img {
-    width: 120px; /* Fixed size for card images */
+.upcoming-song-item img {
+    width: 120px;
     height: 120px;
-    border-radius: 0.5rem; /* rounded-md */
+    border-radius: 8px;
     object-fit: cover;
-    margin-bottom: 0.75rem; /* mb-3 */
-    border: 2px solid rgba(255,255,255,0.1);
+    margin: 0 auto 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
-.music-card h4 {
-    font-size: 1rem; /* text-base */
-    font-weight: 600; /* font-semibold */
-    color: white;
-    margin-bottom: 0.25rem; /* mb-1 */
+.upcoming-song-item .song-title {
+    font-weight: 600;
+    color: #333;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    width: 100%;
+    margin-bottom: 4px;
 }
 
-.music-card p {
-    font-size: 0.875rem; /* text-sm */
-    color: #94a3b8; /* slate-400 */
+.upcoming-song-item .song-artist {
+    font-size: 0.875rem;
+    color: #666;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    width: 100%;
 }
 
 
@@ -273,7 +264,7 @@ header {
          display: none;
      }
      /* Hide admin button on mobile */
-     #adminButtonHeader {
+     #adminButton {
          display: none;
      }
      #coverImage {
@@ -284,22 +275,12 @@ header {
      #player {
          padding-top: 0; /* Remove extra top padding */
      }
-     /* Hide search bar and greeting in header on mobile */
-     header #searchBar, header #headerGreeting {
+     /* Hide mobile song count on mobile (as the container is hidden) */
+     #songCountMobile {
          display: none;
      }
-     header {
-         padding: 1rem; /* Adjust padding */
-         justify-content: center; /* Center "Müzik" title */
-     }
-     header h1 {
-         margin-right: auto; /* Push "Müzik" to left */
-         margin-left: auto; /* Push "Müzik" to center */
-     }
-     /* Mobile music list trigger will be present in main */
-     #openMobileMusicListBtn {
-         display: block; /* Show a button in main to open mobile list */
-         margin-top: 1rem;
+     #upcomingSongsContainer {
+         justify-content: flex-start; /* Align items to the start on mobile */
      }
 }
 
@@ -320,7 +301,7 @@ header {
         flex-grow: 1; /* Main content takes remaining space */
         height: 100vh; /* Full height */
         overflow-y: auto; /* Allow scrolling */
-        padding-top: 1rem; /* Adjust padding */
+        padding-top: 2.5rem; /* top-10 */
         padding-bottom: 2.5rem; /* bottom-10 */
      }
      /* Hide mobile menu button on desktop */
@@ -331,11 +312,15 @@ header {
      .top-buttons-mobile {
          display: none;
      }
-     #adminButtonHeader {
-         display: flex; /* Show admin button in header on desktop */
+     #adminButton {
+         position: absolute; /* Absolute positioning on larger screens */
+         top: 1.25rem; /* top-5 */
+         right: 1.25rem; /* right-5 */
+         display: flex; /* Show admin button on desktop */
+         padding: 0.5rem 0.75rem; /* Adjust padding for icon-only button */
      }
-      #adminButton { /* Original admin button that is now unused */
-         display: none;
+      #adminButton i {
+          margin: 0; /* Remove margin next to text */
       }
       #coverImage {
          width: 300px; /* Original size on larger screens */
@@ -346,14 +331,14 @@ header {
      #mobileMusicListModal {
          display: none !important;
      }
-     /* Show search bar and greeting in header on desktop */
-     header #searchBar, header #headerGreeting {
-         display: block;
+     #songCountMobile {
+         display: none; /* Hide mobile song count on desktop */
      }
-     header {
-         justify-content: space-between;
-     }
-     #openMobileMusicListBtn {
-         display: none; /* Hide the mobile list trigger button on desktop */
+     #songCountDesktop {
+         display: inline-block; /* Show desktop song count */
+         font-size: 1rem; /* text-base */
+         color: #9ca3af; /* gray-400 */
+         font-weight: 500; /* font-medium */
+         margin-left: auto; /* Push to the right */
      }
 }
