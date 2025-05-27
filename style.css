@@ -1,9 +1,9 @@
-/* Custom Scrollbar */
+/* Custom scrollbar styles for better look */
 ::-webkit-scrollbar {
     width: 8px;
 }
 ::-webkit-scrollbar-track {
-    background: #2d2d3f;
+    background: #2d2d3f; /* Sidebar track color */
 }
 ::-webkit-scrollbar-thumb {
     background: #555;
@@ -13,40 +13,41 @@
     background: #777;
 }
 
-/* Body and Layout */
+/* Ensure body takes full height and uses Inter font */
 body {
     font-family: 'Inter', sans-serif;
     height: 100vh;
-    overflow: hidden;
-    display: flex;
-    background: linear-gradient(135deg, #1e293b, #111827);
+    overflow: hidden; /* Prevent body scroll to manage scrolling within main/aside */
+    display: flex; /* Use flexbox for layout */
 }
 
-/* Audio Player (Hidden) */
+/* Hide default audio player controls completely */
 audio {
-    width: 100%;
-    max-width: 500px;
-    margin-top: 1rem;
-    filter: invert(15%) sepia(5%) saturate(1200%) hue-rotate(190deg) brightness(95%) contrast(90%);
-    border-radius: 999px;
-    opacity: 0;
-    pointer-events: none;
-    height: 0;
-    visibility: hidden;
-    position: absolute;
+   width: 100%;
+   max-width: 500px; /* Limit player width on larger screens */
+   margin-top: 1rem; /* Space above player */
+   filter: invert(15%) sepia(5%) saturate(1200%) hue-rotate(190deg) brightness(95%) contrast(90%); /* Subtle color adjustment */
+   border-radius: 999px; /* Fully rounded corners */
+   opacity: 0; /* Hide completely */
+   pointer-events: none; /* Disable interaction */
+   height: 0px; /* No height */
+   visibility: hidden; /* Hide it completely */
+   position: absolute; /* Remove from layout flow */
 }
 
-/* Progress Bar */
+/* Custom progress bar styling */
 input[type="range"] {
     -webkit-appearance: none;
     appearance: none;
     width: 100%;
     height: 6px;
-    background: #e5e7eb;
+    background: #e5e7eb; /* Lighter track color (gray-200) */
     border-radius: 3px;
     cursor: pointer;
     outline: none;
 }
+
+/* Progress fill for seek bar */
 input[type="range"].seek-bar::-webkit-slider-runnable-track {
     background: linear-gradient(to right, #4f46e5 var(--progress, 0%), #e5e7eb var(--progress, 0%));
     height: 6px;
@@ -55,70 +56,71 @@ input[type="range"].seek-bar::-webkit-slider-runnable-track {
 input[type="range"].seek-bar::-moz-range-progress {
     background-color: #4f46e5;
     height: 6px;
-    border-radius: 3px;
+     border-radius: 3px;
 }
-input[type="range"].seek-bar::-moz-range-track {
-    background-color: #e5e7eb;
-    height: 6px;
-    border-radius: 3px;
-}
+ input[type="range"].seek-bar::-moz-range-track {
+     background-color: #e5e7eb;
+     height: 6px;
+     border-radius: 3px;
+ }
+
+/* Thumb styling for seek bar */
 input[type="range"]::-webkit-slider-thumb {
     -webkit-appearance: none;
     appearance: none;
     width: 16px;
     height: 16px;
-    background: #4f46e5;
+    background: #4f46e5; /* Indigo thumb color */
     border-radius: 50%;
     cursor: pointer;
-    margin-top: -5px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    margin-top: -5px; /* Center thumb vertically */
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2); /* Add a subtle shadow */
 }
 input[type="range"]::-moz-range-thumb {
     width: 16px;
     height: 16px;
-    background: #4f46e5;
+    background: #4f46e5; /* Indigo thumb color */
     border-radius: 50%;
     cursor: pointer;
-    border: none;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    border: none; /* Remove default border in Firefox */
+     box-shadow: 0 1px 3px rgba(0,0,0,0.2); /* Add a subtle shadow */
 }
+
+/* Volume bar specific thumb styling */
 input[type="range"].volume-bar::-webkit-slider-thumb {
-    background: #6b7280;
+    background: #6b7280; /* Gray thumb for volume */
+     width: 12px;
+     height: 12px;
+    margin-top: -3px; /* Center thumb vertically */
+     box-shadow: 0 1px 3px rgba(0,0,0,0.2); /* Add a subtle shadow */
+}
+ input[type="range"].volume-bar::-moz-range-thumb {
+    background: #6b7280; /* Gray thumb for volume */
     width: 12px;
     height: 12px;
-    margin-top: -3px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
-}
-input[type="range"].volume-bar::-moz-range-thumb {
-    background: #6b7280;
-    width: 12px;
-    height: 12px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+     box-shadow: 0 1px 3px rgba(0,0,0,0.2); /* Add a subtle shadow */
 }
 
-/* Progress Ring */
-#progressRing {
-    transform: rotate(-90deg);
-    transition: stroke-dashoffset 0.3s ease;
+
+/* Basic transition for hover effects */
+.transition-all {
+    transition: all 0.2s ease-in-out;
 }
 
-/* Custom Player Controls */
+/* Style for the custom player controls container */
 .custom-player-controls {
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(12px);
-    border-radius: 16px;
-    padding: 15px 25px;
-    margin-top: 1.5rem;
-    box-shadow: 0 6px 25px rgba(0, 0, 0, 0.2);
+    background-color: rgba(255, 255, 255, 0.9); /* Slightly more opaque white */
+    backdrop-filter: blur(10px); /* Stronger blur effect */
+    border-radius: 16px; /* More rounded */
+    padding: 15px 25px; /* Adjust padding */
+    margin-top: 1.5rem; /* Space above controls */
+    box-shadow: 0 6px 25px rgba(0, 0, 0, 0.15); /* Softer, larger shadow */
     width: 100%;
-    max-width: 500px;
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    display: flex;
-    align-items: center;
-    gap: 1rem;
+    max-width: 500px; /* Match audio player max-width */
+    border: 1px solid rgba(255, 255, 255, 0.3); /* Subtle border */
 }
 
-/* Disabled Buttons */
+/* Styling for disabled buttons */
 button:disabled {
     opacity: 0.4;
     cursor: not-allowed;
@@ -131,145 +133,227 @@ button:disabled {
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(0, 0, 0, 0.8);
-    backdrop-filter: blur(5px);
-    z-index: 1000;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    opacity: 0;
+    background-color: rgba(0, 0, 0, 0.7); /* Darker overlay */
+    backdrop-filter: blur(5px); /* Subtle blur */
+    z-index: 1000; /* Significantly increased z-index */
+    display: flex; /* Always use flexbox for centering */
+    align-items: center; /* Center vertically */
+    justify-content: center; /* Center horizontally */
+    opacity: 0; /* Start hidden */
     visibility: hidden;
     transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
 }
+
 #mobileMusicListModal.open {
     opacity: 1;
     visibility: visible;
 }
+
 #mobileMusicListContent {
-    background: #1e293b;
+    background-color: #1e293b; /* Slate-800 */
     color: white;
     padding: 20px;
     border-radius: 12px;
-    max-width: 90%;
-    width: 350px;
-    max-height: 80vh;
-    overflow-y: auto;
-    position: relative;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    max-width: 90%; /* Max width on small screens */
+    width: 300px; /* A fixed width for the modal content */
+    max-height: 80vh; /* Limit height to prevent overflow */
+    overflow-y: auto; /* Add scrolling if content exceeds max height */
+    position: relative; /* For close button positioning */
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3); /* More prominent shadow */
 }
-#mobileMusicListContent h2 {
-    font-size: 1.5rem;
-    font-weight: 700;
-    border-bottom: 1px solid #475569;
-    padding-bottom: 12px;
-    margin-bottom: 16px;
+
+ #mobileMusicListContent h2 {
+     font-size: 1.5rem; /* Text-2xl */
+     font-weight: 700; /* Font-bold */
+     border-bottom: 1px solid #475569; /* Slate-600 */
+     padding-bottom: 12px; /* pb-3 */
+     margin-bottom: 16px; /* mb-4 */
+     display: flex;
+     align-items: center;
+     gap: 12px; /* gap-3 */
+ }
+
+/* New Header Styling */
+header {
+    /* Existing Tailwind classes for header */
+}
+
+/* Sidebar navigation links */
+.nav-link {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 0.75rem; /* gap-3 */
+    padding: 0.75rem; /* p-3 */
+    border-radius: 0.5rem; /* rounded-lg */
+    transition: all 0.2s ease-in-out; /* transition-colors */
 }
 
-/* Search Highlight */
-.highlight {
-    background-color: #4f46e5;
-    padding: 0 2px;
-    border-radius: 2px;
+.nav-link:hover {
+    background-color: #334155; /* gray-700 */
 }
 
-/* Clear Search Button */
-#clearSearchDesktop, #clearSearchMobile {
-    display: none; /* Varsayılan olarak gizli */
+.nav-link.active-link {
+    background-color: #4f46e5; /* indigo-600 */
+    font-weight: 600; /* font-semibold */
 }
 
-/* Responsive Design */
-@media (max-width: 767px) {
+/* Music Card Styling (for grid layouts) */
+.music-card {
+    background-color: #1e293b; /* Slate-800 */
+    border-radius: 0.75rem; /* rounded-xl */
+    padding: 1rem; /* p-4 */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    cursor: pointer;
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+
+.music-card:hover {
+    transform: translateY(-5px) scale(1.02);
+    box-shadow: 0 8px 15px rgba(0,0,0,0.3);
+}
+
+.music-card img {
+    width: 120px; /* Fixed size for card images */
+    height: 120px;
+    border-radius: 0.5rem; /* rounded-md */
+    object-fit: cover;
+    margin-bottom: 0.75rem; /* mb-3 */
+    border: 2px solid rgba(255,255,255,0.1);
+}
+
+.music-card h4 {
+    font-size: 1rem; /* text-base */
+    font-weight: 600; /* font-semibold */
+    color: white;
+    margin-bottom: 0.25rem; /* mb-1 */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 100%;
+}
+
+.music-card p {
+    font-size: 0.875rem; /* text-sm */
+    color: #94a3b8; /* slate-400 */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 100%;
+}
+
+
+/* Responsive layout for sidebar and main content */
+@media (max-width: 767px) { /* Apply below md breakpoint */
     body {
-        flex-direction: column;
-        overflow-y: auto;
+        flex-direction: column; /* Stack elements vertically on small screens */
+        overflow-y: auto; /* Allow scrolling on the body when stacked */
     }
     aside {
-        display: none !important;
+        display: none !important; /* Hide desktop sidebar on mobile with high priority */
     }
+
     main {
-        width: 100%;
-        height: auto;
-        flex-grow: 1;
-        overflow-y: visible;
-        padding-top: 1rem;
-        padding-bottom: 6rem;
+        width: 100%; /* Main content takes full width */
+        height: auto; /* Auto height */
+        flex-grow: 1; /* Allow main content to take remaining space */
+         overflow-y: visible; /* Main content handles its own potential scrolling */
+         padding-top: 1rem; /* Adjust padding */
+         padding-bottom: 6rem; /* Add padding at the bottom for controls */
     }
-    .custom-player-controls {
-        padding: 10px 15px;
-        margin-top: 1rem;
-    }
-    .top-buttons-mobile {
-        display: flex;
-    }
-    #adminButton {
-        display: none;
-    }
-    #coverImage {
-        width: 250px;
-        height: 250px;
-        margin-bottom: 1rem;
-    }
-    #player {
-        padding-top: 0;
-    }
-    #songCountMobile {
-        display: inline-block;
-    }
+     .custom-player-controls {
+         padding: 10px 15px; /* Reduce padding on small screens */
+         margin-top: 1rem; /* Adjust margin */
+     }
+     /* Hide the top buttons container on mobile */
+     .top-buttons-mobile {
+         display: none;
+     }
+     /* Hide admin button on mobile */
+     #adminButtonHeader {
+         display: none;
+     }
+     #coverImage {
+         width: 250px; /* Smaller cover image on mobile */
+         height: 250px;
+         margin-bottom: 1rem; /* Adjust margin */
+     }
+     #player {
+         padding-top: 0; /* Remove extra top padding */
+     }
+     /* Hide search bar and greeting in header on mobile */
+     header #searchBar, header #headerGreeting {
+         display: none;
+     }
+     header {
+         padding: 1rem; /* Adjust padding */
+         justify-content: center; /* Center "Müzik" title */
+     }
+     header h1 {
+         margin-right: auto; /* Push "Müzik" to left */
+         margin-left: auto; /* Push "Müzik" to center */
+     }
+     /* Mobile music list trigger will be present in main */
+     #openMobileMusicListBtn {
+         display: block; /* Show a button in main to open mobile list */
+         margin-top: 1rem;
+     }
 }
-@media (min-width: 768px) {
+
+ @media (min-width: 768px) { /* Apply from md breakpoint */
     body {
-        flex-direction: row;
+        flex-direction: row; /* Side-by-side layout */
     }
+     /* Show desktop sidebar on desktop */
     aside {
         display: flex;
-        width: 18rem;
-        height: 100vh;
-        overflow-y: auto;
-        position: static;
-        left: auto;
+        width: 18rem; /* md:w-72 */
+        height: 100vh; /* Full height */
+        overflow-y: auto; /* Allow scrolling */
+         position: static; /* Static position on desktop */
+         left: auto; /* Reset left property */
     }
-    main {
-        flex-grow: 1;
-        height: 100vh;
-        overflow-y: auto;
-        padding-top: 2.5rem;
-        padding-bottom: 2.5rem;
-    }
-    .menu-button-mobile {
-        display: none !important;
-    }
-    .top-buttons-mobile {
-        display: none;
-    }
-    #adminButton {
-        position: absolute;
-        top: 1.25rem;
-        right: 1.25rem;
-        display: flex;
-        padding: 0.5rem 0.75rem;
-    }
-    #adminButton i {
-        margin: 0;
-    }
-    #coverImage {
-        width: 300px;
-        height: 300px;
-        margin-bottom: 1.5rem;
-    }
-    #mobileMusicListModal {
-        display: none !important;
-    }
-    #songCountMobile {
-        display: none;
-    }
-    #songCountDesktop {
-        display: inline-block;
-        font-size: 1rem;
-        color: #9ca3af;
-        font-weight: 500;
-        margin-left: auto;
-    }
+     main {
+        flex-grow: 1; /* Main content takes remaining space */
+        height: 100vh; /* Full height */
+        overflow-y: auto; /* Allow scrolling */
+        padding-top: 1rem; /* Adjust padding */
+        padding-bottom: 2.5rem; /* bottom-10 */
+     }
+     /* Hide mobile menu button on desktop */
+     .menu-button-mobile {
+         display: none !important;
+     }
+     /* Hide mobile button container on desktop */
+     .top-buttons-mobile {
+         display: none;
+     }
+     #adminButtonHeader {
+         display: flex; /* Show admin button in header on desktop */
+     }
+      #adminButton { /* Original admin button that is now unused */
+         display: none;
+      }
+      #coverImage {
+         width: 300px; /* Original size on larger screens */
+         height: 300px;
+         margin-bottom: 1.5rem; /* mb-6 */
+     }
+     /* Hide mobile music list modal on desktop */
+     #mobileMusicListModal {
+         display: none !important;
+     }
+     /* Show search bar and greeting in header on desktop */
+     header #searchBar, header #headerGreeting {
+         display: block;
+     }
+     header {
+         justify-content: space-between;
+     }
+     #openMobileMusicListBtn {
+         display: none; /* Hide the mobile list trigger button on desktop */
+     }
 }
