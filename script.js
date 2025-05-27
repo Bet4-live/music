@@ -11,34 +11,31 @@ let supabaseClient;
 document.addEventListener('DOMContentLoaded', async () => {
     console.log("DOMContentLoaded olayı tetiklendi. Script çalışıyor...");
 
-    // Supabase kütüphanesinin global olarak tanımladığı 'supabase' objesine erişmeye çalışıyoruz
     try {
-        // window.supabase varlığını kontrol edelim
         if (typeof window.supabase === 'undefined') {
             console.error("Hata: window.supabase tanımlanmamış. Supabase kütüphanesi yüklenemedi veya çalışmadı.");
             alert("Supabase kütüphanesi yüklenirken bir sorun oluştu.");
-            return; // Eğer global Supabase objesi yoksa daha fazla ilerleme
+            return;
         }
 
-        // Supabase istemcisini DOĞRUDAN window.supabase objesinden oluşturuyoruz
         supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
         console.log("Supabase istemcisi başarıyla oluşturuldu.");
 
         // --- DOM Elements ---
-        // DOM elementlerine burada erişiyoruz çünkü DOMContentLoaded tetiklendi
         const musicListDesktop = document.getElementById('musicListDesktop');
-        const musicListMobile = document.getElementById('mobileMusicListModal'); // Modal elementini doğru alalım
-        const audioPlayer = document.getElementById('audioPlayer'); // <-- audioPlayer elementi burada alınıyor
-        console.log("audioPlayer elementi bulundu:", audioPlayer); // <-- Bu log eklendi
+        const musicCardsContainer = document.getElementById('musicCardsContainer');
+        const upcomingMusicContainer = document.getElementById('upcomingMusicContainer'); // Yeni eklenen
+        const audioPlayer = document.getElementById('audioPlayer');
+        console.log("audioPlayer elementi bulundu:", audioPlayer);
 
-        const coverImage = document.getElementById('coverImage');
+        const coverImage = document.getElementById('coverImage'); // Footer içinde
         const deleteSelect = document.getElementById('deleteSelect');
         const adminButton = document.getElementById('adminButton');
         const adminPanelDiv = document.getElementById('adminPanel');
         const adminControlsDiv = document.getElementById('adminControls');
         const loginForm = document.getElementById('loginForm');
-        const songCountDesktop = document.getElementById('songCountDesktop');
-        const currentSongTitleElement = document.getElementById('currentSongTitle');
+        // songCountDesktop artık kullanılmayacak, sidebar'ın yapısı değişti.
+        const currentSongTitleElement = document.getElementById('currentSongTitle'); // Footer içinde
 
         // Auth related elements
         const authEmailInput = document.getElementById('authEmail');
@@ -47,7 +44,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         const signOutBtn = document.getElementById('signOutBtn');
         const loggedInUserEmailSpan = document.getElementById('loggedInUserEmail');
 
-        // Custom Player Elements
+        // Custom Player Elements (All now within footer)
         const playPauseBtn = document.getElementById('playPauseBtn');
         const playPauseIcon = playPauseBtn.querySelector('i');
         const prevBtn = document.getElementById('prevBtn');
@@ -59,7 +56,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         const volumeIcon = document.getElementById('volumeIcon');
 
         // State Variables
-        const defaultCover = 'https://placehold.co/300x300/e2e8f0/94a3b8?text=Müzik+Seçin';
+        const defaultCover = 'https://placehold.co/60x60/e2e8f0/94a3b8?text=Müzik+Seçin';
         let currentMusicId = null; // ID of the currently loaded music (Supabase ID)
         let currentMusicIndex = -1; // Index in the currently rendered musicData array
         let musicData = []; // Array to hold the current list of music objects from Supabase
@@ -76,11 +73,11 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         function updateVolumeIcon(volume) {
              if (volume === 0) {
-                volumeIcon.className = 'fa fa-volume-xmark text-gray-600 hover:text-gray-900 cursor-pointer w-5 text-center';
+                volumeIcon.className = 'fa fa-volume-xmark text-gray-400 hover:text-white cursor-pointer w-5 text-center';
             } else if (volume < 0.5) {
-                volumeIcon.className = 'fa fa-volume-low text-gray-600 hover:text-gray-900 cursor-pointer w-5 text-center';
+                volumeIcon.className = 'fa fa-volume-low text-gray-400 hover:text-white cursor-pointer w-5 text-center';
             } else {
-                volumeIcon.className = 'fa fa-volume-high text-gray-600 hover:text-gray-900 cursor-pointer w-5 text-center';
+                volumeIcon.className = 'fa fa-volume-high text-gray-400 hover:text-white cursor-pointer w-5 text-center';
             }
         }
 
@@ -90,33 +87,56 @@ document.addEventListener('DOMContentLoaded', async () => {
             nextBtn.disabled = !hasMultipleSongs;
 
             if (audioPlayer.paused) {
-                playPauseIcon.className = 'fa fa-play fa-lg';
+                playPauseIcon.className = 'fa fa-play fa-xl';
             } else {
-                playPauseIcon.className = 'fa fa-pause fa-lg';
+                playPauseIcon.className = 'fa fa-pause fa-xl';
             }
 
             if (currentMusicId === null) {
-                currentTimeSpan.textContent = "0:00"; totalDurationSpan.textContent = "0:00";
-                seekBar.value = 0; seekBar.style.setProperty('--progress', `0%`);
+                currentTimeSpan.textContent = "0:00";
+                totalDurationSpan.textContent = "0:00";
+                seekBar.value = 0;
+                seekBar.style.setProperty('--progress', `0%`);
                 seekBar.disabled = true;
                 if(currentSongTitleElement) currentSongTitleElement.textContent = "Müzik Seçin";
+                if(coverImage) coverImage.src = defaultCover;
             } else {
                 seekBar.disabled = false;
+            }
+
+            // Update highlighting for music cards and sidebar items
+            document.querySelectorAll('.music-item').forEach(item => {
+                item.classList.remove('active-song');
+            });
+            document.querySelectorAll('.music-card').forEach(card => {
+                card.classList.remove('playing-song');
+            });
+
+            if (currentMusicId !== null) {
+                const currentSidebarItem = document.querySelector(`.music-item[data-id="${currentMusicId}"]`);
+                if (currentSidebarItem) {
+                    currentSidebarItem.classList.add('active-song');
+                    currentSidebarItem.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                }
+                const currentMusicCard = document.querySelector(`.music-card[data-id="${currentMusicId}"]`);
+                if (currentMusicCard) {
+                    currentMusicCard.classList.add('playing-song');
+                    // Optional: Scroll card into view if needed
+                }
             }
         }
 
         function togglePlayPause() {
             if (!audioPlayer.src || currentMusicId === null) return;
             if (audioPlayer.paused) {
-                audioPlayer.play().catch(e => console.error("Oynatma hatası:", e));
+                audioPlayer.play().catch(e => console.error("Oynatma hatası:", e, "Kullanıcı etkileşimi bekleniyor."));
             } else {
                 audioPlayer.pause();
             }
+            updatePlayerUIState(); // Ensure icon updates immediately
         }
 
-        // --- updateSeekBar fonksiyonu ve içindeki log ---
         function updateSeekBar() {
-            console.log('timeupdate olayı tetiklendi. currentTime:', audioPlayer.currentTime, 'duration:', audioPlayer.duration);
             if (audioPlayer.duration && isFinite(audioPlayer.duration)) {
                 const percentage = (audioPlayer.currentTime / audioPlayer.duration) * 100;
                 seekBar.value = percentage;
@@ -136,10 +156,12 @@ document.addEventListener('DOMContentLoaded', async () => {
                 seekBar.style.setProperty('--progress', `0%`);
                 currentTimeSpan.textContent = formatTime(0);
             } else {
-                totalDurationSpan.textContent = "0:00"; currentTimeSpan.textContent = "0:00";
+                totalDurationSpan.textContent = "0:00";
+                currentTimeSpan.textContent = "0:00";
                 seekBar.value = 0;
                 seekBar.style.setProperty('--progress', `0%`);
             }
+            updatePlayerUIState(); // Update buttons and seekbar state
         }
 
         function seek() {
@@ -160,7 +182,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         function toggleMute() {
             if (audioPlayer.volume > 0) {
                 lastVolume = audioPlayer.volume;
-                audioPlayer.volume = 0; volumeBar.value = 0;
+                audioPlayer.volume = 0;
+                volumeBar.value = 0;
                 updateVolumeIcon(0);
             } else {
                 audioPlayer.volume = lastVolume;
@@ -172,8 +195,11 @@ document.addEventListener('DOMContentLoaded', async () => {
         function loadAndPlayMusic(index) {
             if (index < 0 || index >= musicData.length) {
                 console.log("Geçersiz müzik indexi:", index);
-                 audioPlayer.pause(); audioPlayer.src = ''; coverImage.src = defaultCover;
-                 currentMusicId = null; currentMusicIndex = -1;
+                 audioPlayer.pause();
+                 audioPlayer.src = '';
+                 coverImage.src = defaultCover;
+                 currentMusicId = null;
+                 currentMusicIndex = -1;
                  if(currentSongTitleElement) currentSongTitleElement.textContent = "Müzik Seçin";
                  updatePlayerUIState();
                 return;
@@ -189,27 +215,14 @@ document.addEventListener('DOMContentLoaded', async () => {
             currentMusicIndex = index;
             if(currentSongTitleElement) currentSongTitleElement.textContent = music.name;
 
-            document.querySelectorAll('#musicListDesktop .music-item').forEach((item, idx) => {
-                item.classList.toggle('bg-indigo-600', item.dataset.id === currentMusicId.toString());
-                item.classList.toggle('bg-gray-800', item.dataset.id !== currentMusicId.toString());
-                if (item.dataset.id === currentMusicId.toString()) {
-                    item.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-                }
-            });
-             document.querySelectorAll('#musicListMobile .music-item').forEach((item, idx) => {
-                item.classList.toggle('bg-indigo-600', item.dataset.id === currentMusicId.toString());
-                item.classList.toggle('bg-gray-800', item.dataset.id !== currentMusicId.toString());
-                 if (item.dataset.id === currentMusicId.toString()) {
-                    item.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-                 }
-            });
+            // Highlight in sidebar and main content cards
+            updatePlayerUIState(); // This function now handles highlighting
 
             audioPlayer.load();
             audioPlayer.play().catch(e => {
                 console.error("Otomatik oynatma engellendi veya hata:", e);
-                playPauseIcon.className = 'fa fa-play fa-lg';
+                playPauseIcon.className = 'fa fa-play fa-xl'; // Keep play icon if auto-play fails
             });
-            updatePlayerUIState();
         }
 
         function playNext() {
@@ -221,7 +234,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         function playPrevious() {
              if (musicData.length === 0) return;
              if (audioPlayer.currentTime > 3 && currentMusicIndex !== -1) {
-                 audioPlayer.currentTime = 0;
+                 audioPlayer.currentTime = 0; // Restart current song if played for > 3 seconds
                  audioPlayer.play().catch(e => console.error("Oynatma hatası:", e));
              } else {
                 let prevIndex = (currentMusicIndex - 1 + musicData.length) % musicData.length;
@@ -229,39 +242,28 @@ document.addEventListener('DOMContentLoaded', async () => {
              }
         }
 
-        // --- Mobile Music List Modal Control ---
-        function toggleMobileMusicList() {
-             const modal = document.getElementById('mobileMusicListModal');
-             if (modal) { modal.classList.toggle('open'); } else { console.error("Mobile music list modal element not found!"); }
-        }
-        function openMobileMusicList() {
-             const modal = document.getElementById('mobileMusicListModal');
-             if (modal) { modal.classList.add('open'); } else { console.error("Mobile music list modal element not found!"); }
-        }
-        function closeMobileMusicList() {
-             const modal = document.getElementById('mobileMusicListModal');
-             if (modal) { modal.classList.remove('open'); } else { console.error("Mobile music list modal element not found!"); }
-        }
+        // Mobile Music List Modal Control - No longer used in this layout, but keeping functions as stubs
+        function toggleMobileMusicList() { /* Removed functionality */ console.log("Mobile music list modal is deprecated in new UI."); }
+        function openMobileMusicList() { /* Removed functionality */ console.log("Mobile music list modal is deprecated in new UI."); }
+        function closeMobileMusicList() { /* Removed functionality */ console.log("Mobile music list modal is deprecated in new UI."); }
 
 
         // --- Render Music List (Fetch from Supabase) ---
         async function renderMusics() {
             if (!supabaseClient) {
                 console.error("Supabase istemcisi henüz hazır değil (renderMusics içinde).");
-                 const errorMessage = '<p class="text-red-400 text-center mt-4">Supabase bağlantısı kurulamadı.</p>';
-                 if (musicListDesktop) musicListDesktop.innerHTML = errorMessage;
-                 if (musicListMobile) { // Mobile list elementini doğru kullanalım
-                    const mobileListContent = document.getElementById('mobileMusicListContent');
-                     if(mobileListContent) mobileListContent.innerHTML = errorMessage;
-                 }
-                 updatePlayerUIState();
-                 return;
+                const errorMessage = '<p class="text-red-400 text-center mt-4">Supabase bağlantısı kurulamadı.</p>';
+                if (musicListDesktop) musicListDesktop.innerHTML = errorMessage;
+                if (musicCardsContainer) musicCardsContainer.innerHTML = errorMessage;
+                if (upcomingMusicContainer) upcomingMusicContainer.innerHTML = '<p class="text-gray-400 text-center col-span-full">Yüklenemedi.</p>';
+                updatePlayerUIState();
+                return;
             }
              console.log("renderMusics çalışıyor...");
 
             if (musicListDesktop) musicListDesktop.innerHTML = '';
-            const mobileListContent = document.getElementById('mobileMusicListContent');
-            if (mobileListContent) mobileListContent.innerHTML = ''; // Clear mobile list content
+            if (musicCardsContainer) musicCardsContainer.innerHTML = ''; // Clear main music cards
+            if (upcomingMusicContainer) upcomingMusicContainer.innerHTML = ''; // Clear upcoming music cards
             if (deleteSelect) deleteSelect.innerHTML = '<option value="" disabled selected>Silmek için seçin...</option>';
             musicData = [];
 
@@ -275,7 +277,8 @@ document.addEventListener('DOMContentLoaded', async () => {
                     console.error('Supabase fetch error:', error);
                     const errorMessage = '<p class="text-red-400 text-center mt-4">Müzikler yüklenemedi: ' + error.message + '</p>';
                     if (musicListDesktop) musicListDesktop.innerHTML = errorMessage;
-                    if (mobileListContent) mobileListContent.innerHTML = errorMessage; // Use mobile list content
+                    if (musicCardsContainer) musicCardsContainer.innerHTML = errorMessage;
+                    if (upcomingMusicContainer) upcomingMusicContainer.innerHTML = '<p class="text-gray-400 text-center col-span-full">Yüklenemedi.</p>';
                     updatePlayerUIState();
                     return;
                 }
@@ -283,65 +286,71 @@ document.addEventListener('DOMContentLoaded', async () => {
                 musicData = data || [];
                 console.log(`Bulunan müzik sayısı: ${musicData.length}`);
 
-                if (songCountDesktop) songCountDesktop.textContent = `${musicData.length} Şarkı`;
+                // songCountDesktop kaldırıldığı için bu satır da kaldırıldı.
+                // if (songCountDesktop) songCountDesktop.textContent = `${musicData.length} Şarkı`;
 
                 if (musicData.length === 0) {
                     const noMusicMessage = '<p class="text-gray-400 text-center mt-4">Henüz müzik eklenmemiş.</p>';
                     if (musicListDesktop) musicListDesktop.innerHTML = noMusicMessage;
-                    if (mobileListContent) mobileListContent.innerHTML = noMusicMessage; // Use mobile list content
+                    if (musicCardsContainer) musicCardsContainer.innerHTML = '<p class="text-gray-400 text-center col-span-full">Henüz müzik eklenmemiş.</p>';
+                    if (upcomingMusicContainer) upcomingMusicContainer.innerHTML = '<p class="text-gray-400 text-center col-span-full">Yaklaşan şarkı bulunmamaktadır.</p>';
                     if (currentMusicId !== null) {
-                        audioPlayer.pause(); audioPlayer.src = ''; coverImage.src = defaultCover;
-                        currentMusicId = null; currentMusicIndex = -1;
+                        audioPlayer.pause();
+                        audioPlayer.src = '';
+                        coverImage.src = defaultCover;
+                        currentMusicId = null;
+                        currentMusicIndex = -1;
                     }
                     if(currentSongTitleElement) currentSongTitleElement.textContent = "Müzik Seçin";
                     updatePlayerUIState();
                     return;
                 }
 
+                // Check if current song is still in the list after refresh
                 const currentSongIndexInNewList = musicData.findIndex(music => music.id === currentMusicId);
                 if(currentSongIndexInNewList !== -1) {
                     currentMusicIndex = currentSongIndexInNewList;
                 } else {
-                    currentMusicId = null; currentMusicIndex = -1;
+                    currentMusicId = null;
+                    currentMusicIndex = -1;
                      if (!audioPlayer.paused || audioPlayer.currentTime > 0) {
-                         audioPlayer.pause(); audioPlayer.src = ''; coverImage.src = defaultCover;
+                         audioPlayer.pause();
+                         audioPlayer.src = '';
+                         coverImage.src = defaultCover;
                          if(currentSongTitleElement) currentSongTitleElement.textContent = "Müzik Seçin";
                      }
                 }
 
+                // Populate sidebar music list and admin delete select
                 musicData.forEach((music, index) => {
-                    const createMusicItem = () => {
-                         const div = document.createElement('div');
-                         div.className = `music-item flex items-center gap-3 p-3 rounded-lg cursor-pointer transition-all transform hover:scale-[1.03] ${music.id === currentMusicId ? 'bg-indigo-600' : 'bg-gray-800 hover:bg-indigo-700'}`;
-                         div.dataset.id = music.id;
+                    // Sidebar music item
+                    const div = document.createElement('div');
+                    div.className = `music-item ${music.id === currentMusicId ? 'active-song' : ''}`;
+                    div.dataset.id = music.id;
 
-                         const img = document.createElement('img');
-                         img.src = music.image_url || 'https://placehold.co/60x60/7f9cf5/ffffff?text=♪';
-                         img.alt = "Kapak"; img.className = "w-12 h-12 rounded-md object-cover flex-shrink-0";
-                         img.onerror = () => img.src = 'https://placehold.co/60x60/7f9cf5/ffffff?text=♪';
-                         div.appendChild(img);
+                    const img = document.createElement('img');
+                    img.src = music.image_url || 'https://placehold.co/60x60/7f9cf5/ffffff?text=♪';
+                    img.alt = "Kapak";
+                    img.className = "w-12 h-12 rounded-md object-cover flex-shrink-0";
+                    img.onerror = () => img.src = 'https://placehold.co/60x60/7f9cf5/ffffff?text=♪';
+                    div.appendChild(img);
 
-                         const title = document.createElement('span');
-                         title.className = "font-medium truncate flex-grow";
-                         title.innerText = music.name;
-                         div.appendChild(title);
+                    const title = document.createElement('span');
+                    title.className = "font-medium truncate flex-grow";
+                    title.innerText = music.name;
+                    div.appendChild(title);
 
-                         div.onclick = () => {
-                             const clickedIndex = musicData.findIndex(item => item.id === music.id);
-                             if (clickedIndex !== -1) {
-                                loadAndPlayMusic(clickedIndex);
-                                closeMobileMusicList();
-                             } else {
-                                 console.error("Tıklanan müzik listede bulunamadı:", music.id);
-                             }
-                         };
-                         return div;
+                    div.onclick = () => {
+                        const clickedIndex = musicData.findIndex(item => item.id === music.id);
+                        if (clickedIndex !== -1) {
+                           loadAndPlayMusic(clickedIndex);
+                        } else {
+                            console.error("Tıklanan müzik listede bulunamadı:", music.id);
+                        }
                     };
+                    if (musicListDesktop) musicListDesktop.appendChild(div);
 
-                    if (musicListDesktop) musicListDesktop.appendChild(createMusicItem());
-                    // Add to the mobile list content element
-                    const mobileMusicListElement = document.getElementById('musicListMobile');
-                    if (mobileMusicListElement) mobileMusicListElement.appendChild(createMusicItem());
+                    // Admin delete select option
                     if (deleteSelect) {
                         const option = document.createElement('option');
                         option.value = music.id;
@@ -350,22 +359,76 @@ document.addEventListener('DOMContentLoaded', async () => {
                     }
                 });
 
-                 if (currentMusicId !== null && currentMusicIndex !== -1) {
-                     document.querySelectorAll('.music-item').forEach(item => {
-                         item.classList.toggle('bg-indigo-600', item.dataset.id === currentMusicId.toString());
-                         item.classList.toggle('bg-gray-800', item.dataset.id !== currentMusicId.toString());
-                     });
-                     updatePlayerUIState();
-                 } else {
-                      updatePlayerUIState();
-                 }
+                // Populate main music cards for "Senin için Hazırlandı"
+                if (musicCardsContainer) {
+                    if (musicData.length > 0) {
+                        // Display all music as cards for "Senin için Hazırlandı" or a subset
+                        musicData.forEach((music) => {
+                            const card = document.createElement('div');
+                            card.className = `music-card ${music.id === currentMusicId ? 'playing-song' : ''}`;
+                            card.dataset.id = music.id;
 
+                            card.innerHTML = `
+                                <img src="${music.image_url || 'https://placehold.co/150x150/7f9cf5/ffffff?text=♪'}" alt="Albüm Kapağı" />
+                                <h4 title="${music.name}">${music.name}</h4>
+                                <p>Bilinmeyen Sanatçı</p> `;
+                            card.onclick = () => {
+                                const clickedIndex = musicData.findIndex(item => item.id === music.id);
+                                if (clickedIndex !== -1) {
+                                    loadAndPlayMusic(clickedIndex);
+                                }
+                            };
+                            musicCardsContainer.appendChild(card);
+                        });
+                    } else {
+                        musicCardsContainer.innerHTML = '<p class="text-gray-400 text-center col-span-full">Henüz müzik eklenmemiş.</p>';
+                    }
+                }
+
+                // Populate "Yaklaşan Şarkılar" (Upcoming Music)
+                if (upcomingMusicContainer) {
+                    upcomingMusicContainer.innerHTML = ''; // Clear previous content
+                    let upcomingCount = 0;
+                    for (let i = 0; i < musicData.length; i++) {
+                        const nextIndex = (currentMusicIndex + 1 + i) % musicData.length;
+                        if (nextIndex === currentMusicIndex) continue; // Skip if it loops back to current
+                        if (musicData[nextIndex].id === currentMusicId) continue; // Ensure it's not the currently playing song
+                        if (upcomingCount >= 5) break; // Limit to next 5 songs
+                        
+                        const music = musicData[nextIndex];
+                        const card = document.createElement('div');
+                        card.className = `music-card`; // No playing-song class for upcoming
+                        card.dataset.id = music.id;
+
+                        card.innerHTML = `
+                            <img src="${music.image_url || 'https://placehold.co/150x150/7f9cf5/ffffff?text=♪'}" alt="Albüm Kapağı" />
+                            <h4 title="${music.name}">${music.name}</h4>
+                            <p>Bilinmeyen Sanatçı</p>
+                        `;
+                        card.onclick = () => {
+                            const clickedIndex = musicData.findIndex(item => item.id === music.id);
+                            if (clickedIndex !== -1) {
+                                loadAndPlayMusic(clickedIndex);
+                            }
+                        };
+                        upcomingMusicContainer.appendChild(card);
+                        upcomingCount++;
+                    }
+
+                    if (upcomingCount === 0) {
+                        upcomingMusicContainer.innerHTML = '<p class="text-gray-400 text-center col-span-full">Yaklaşan şarkı bulunmamaktadır.</p>';
+                    }
+                }
+
+
+                updatePlayerUIState(); // Re-highlight current song after rendering
+                
             } catch (error) {
                 console.error("renderMusics içinde hata:", error);
-                 const errorMessage = '<p class="text-red-400 text-center mt-4">Müzik listesini yüklerken bir sorun oluştu.</p>';
+                const errorMessage = '<p class="text-red-400 text-center mt-4">Müzik listesini yüklerken bir sorun oluştu.</p>';
                 if (musicListDesktop) musicListDesktop.innerHTML = errorMessage;
-                const mobileListContent = document.getElementById('mobileMusicListContent');
-                if (mobileListContent) mobileListContent.innerHTML = errorMessage; // Use mobile list content
+                if (musicCardsContainer) musicCardsContainer.innerHTML = errorMessage;
+                if (upcomingMusicContainer) upcomingMusicContainer.innerHTML = '<p class="text-gray-400 text-center col-span-full">Yüklenemedi.</p>';
                 updatePlayerUIState();
             }
         }
@@ -568,19 +631,22 @@ document.addEventListener('DOMContentLoaded', async () => {
                  const wasCurrentMusicDeleted = (currentMusicId === musicIdToDelete);
 
                  if (wasCurrentMusicDeleted) {
-                     audioPlayer.pause(); audioPlayer.src = ''; coverImage.src = defaultCover;
-                     currentMusicId = null; currentMusicIndex = -1;
+                     audioPlayer.pause();
+                     audioPlayer.src = '';
+                     coverImage.src = defaultCover;
+                     currentMusicId = null;
+                     currentMusicIndex = -1;
                      if(currentSongTitleElement) currentSongTitleElement.textContent = "Müzik Seçin";
                  }
 
-                 await renderMusics();
+                 await renderMusics(); // Re-render the lists
 
                  alert(`"${musicNameToDelete}" başarıyla silindi!`);
 
                   if (wasCurrentMusicDeleted && musicData.length > 0) {
-                      loadAndPlayMusic(0);
+                      loadAndPlayMusic(0); // Play the first song if current was deleted
                   } else if (musicData.length === 0) {
-                      updatePlayerUIState();
+                      updatePlayerUIState(); // Update UI if no songs left
                   }
 
              } catch (error) {
@@ -609,7 +675,7 @@ document.addEventListener('DOMContentLoaded', async () => {
              document.getElementById('musicName').value = '';
              document.getElementById('musicFile').value = '';
              document.getElementById('musicImage').value = '';
-             deleteSelect.value = "";
+             if(deleteSelect) deleteSelect.value = ""; // Clear delete select
               if(authEmailInput) authEmailInput.value = '';
               if(authPassInput) authPassInput.value = '';
         }
@@ -685,35 +751,30 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
 
 
-        // --- Event Listeners for Auth Buttons and Admin Button ---
-
+        // --- Event Listeners ---
         if (adminButton) { adminButton.addEventListener('click', showAdminPanel); } else { console.error("Admin button element not found!"); }
         if(signInBtn) signInBtn.addEventListener('click', signIn);
         if(signOutBtn) signOutBtn.addEventListener('click', signOut);
 
         // Player control listeners
         if(playPauseBtn) playPauseBtn.addEventListener('click', togglePlayPause);
-        // timeupdate listener buraya ekleniyor
         if(audioPlayer) {
             audioPlayer.addEventListener('timeupdate', updateSeekBar);
-            console.log("timeupdate listener audioPlayer elementine eklendi.");
+            audioPlayer.addEventListener('loadedmetadata', setDuration);
+            audioPlayer.addEventListener('play', () => updatePlayerUIState());
+            audioPlayer.addEventListener('pause', () => updatePlayerUIState());
+            audioPlayer.addEventListener('ended', playNext);
+            console.log("Audio player listeners added.");
         } else {
-             console.error("audioPlayer elementi bulunamadı, timeupdate listener eklenemedi.");
+             console.error("audioPlayer elementi bulunamadı, player listenerlar eklenemedi.");
         }
-        if(audioPlayer) audioPlayer.addEventListener('loadedmetadata', setDuration);
-        if(audioPlayer) audioPlayer.addEventListener('play', () => updatePlayerUIState());
-        if(audioPlayer) audioPlayer.addEventListener('pause', () => updatePlayerUIState());
-        if(audioPlayer) audioPlayer.addEventListener('ended', playNext);
         if(seekBar) seekBar.addEventListener('input', seek);
         if(volumeBar) volumeBar.addEventListener('input', changeVolume);
         if(volumeIcon) volumeIcon.addEventListener('click', toggleMute);
         if(prevBtn) prevBtn.addEventListener('click', playPrevious);
         if(nextBtn) nextBtn.addEventListener('click', playNext);
 
-
-        // Modal close listeners
-        const closeMobileListBtn = document.getElementById('closeMobileListBtn');
-        if(closeMobileListBtn) closeMobileListBtn.addEventListener('click', closeMobileMusicList);
+        // Admin panel close listener
         const closeAdminPanelBtn = document.getElementById('closeAdminPanelBtn');
         if(closeAdminPanelBtn) closeAdminPanelBtn.addEventListener('click', closeAdminPanel);
 
@@ -726,13 +787,15 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 
         // --- Initial Setup ---
-        coverImage.src = defaultCover;
-        volumeBar.value = audioPlayer.volume;
-        updateVolumeIcon(audioPlayer.volume);
-        updatePlayerUIState();
+        // Ensure default image and volume are set, and UI is updated initially
+        if (coverImage) coverImage.src = defaultCover;
+        if (audioPlayer && volumeBar) {
+            volumeBar.value = audioPlayer.volume;
+            updateVolumeIcon(audioPlayer.volume);
+        }
+        updatePlayerUIState(); // Initial UI state update
 
-        renderMusics();
-
+        renderMusics(); // Fetch and render music on page load
 
     } catch (error) {
         console.error("DOMContentLoaded içinde yakalanan genel hata:", error);
