@@ -41,11 +41,12 @@ document.addEventListener('DOMContentLoaded', async () => {
         const durationElement = document.getElementById('duration');
         const volumeBar = document.getElementById('volumeBar');
         const volumeIcon = document.getElementById('volumeIcon');
-        const coverImage = document.getElementById('coverImage');
-        const footerCoverImage = document.getElementById('footerCoverImage');
+        const coverImage = document.getElementById('coverImage'); // Plak şeklindeki kapak
+        const footerCoverImage = document.getElementById('footerCoverImage'); // Footer'daki küçük kapak
         const currentSongTitleElement = document.getElementById('currentSongTitle');
         const currentSongArtistElement = document.getElementById('currentSongArtist');
 
+        // Yeni Eklenen UI Elementleri
         const welcomeScreen = document.getElementById('welcomeScreen');
         const albumCoverContainer = document.getElementById('albumCoverContainer');
         const welcomeText = document.getElementById('welcomeText');
@@ -189,13 +190,14 @@ document.addEventListener('DOMContentLoaded', async () => {
                     audioPlayer.pause();
                     audioPlayer.src = '';
                     currentPlayingIndex = -1; // Çalan şarkı yok
-                    resetPlayerUI(); // UI'ı sıfırla
-                    welcomeScreen.classList.remove('hidden'); // Hoş geldiniz ekranını göster
-                    albumCoverContainer.classList.add('hidden'); // Albüm kapağını gizle
+                    resetPlayerUI(); // UI'ı sıfırla ve hoş geldiniz ekranını göster
                 } else if (musicData.length > 0 && currentPlayingIndex >= musicData.length) {
                     // Eğer silinen şarkı yüzünden index dışı kalırsa
                     currentPlayingIndex = 0; // İlk şarkıya ayarla
                     loadAndPlayMusic(currentPlayingIndex); // İlk şarkıyı yükle ve çal
+                } else {
+                    // Sadece UI'ı güncelle
+                    updatePlayerUIState();
                 }
             } catch (error) {
                 console.error('Müzik silinirken hata oluştu:', error.message);
@@ -261,6 +263,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 // Çalma düğmelerine event listener ekle
                 document.querySelectorAll('.play-btn').forEach(button => {
                     button.addEventListener('click', (e) => {
+                        e.stopPropagation(); // Kartın kendi click olayını engelle
                         const index = parseInt(e.currentTarget.dataset.index);
                         loadAndPlayMusic(index);
                     });
@@ -269,11 +272,8 @@ document.addEventListener('DOMContentLoaded', async () => {
                 // Kartların kendisine tıklayarak çalma
                 document.querySelectorAll('#musicListDesktop > div').forEach(card => {
                     card.addEventListener('click', (e) => {
-                        // Eğer tıklanan element play-btn veya içindeki i etiketi değilse
-                        if (!e.target.closest('.play-btn')) {
-                            const index = parseInt(e.currentTarget.dataset.index);
-                            loadAndPlayMusic(index);
-                        }
+                        const index = parseInt(e.currentTarget.dataset.index);
+                        loadAndPlayMusic(index);
                     });
                 });
 
