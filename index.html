@@ -64,7 +64,7 @@
         <div id="mainContent">
             <div class="flex items-center mb-8">
                 <div class="flex-grow">
-                    <h2 class="text-4xl font-bold mb-2">Merhaba!</h2>
+                    <h2 class="text-4xl font-bold mb-2">Yaklaşan Şarkılar</h2>
                     <p class="text-gray-400 text-lg">Senin için hazırlandı.</p>
                 </div>
                 </div>
@@ -72,14 +72,8 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6" id="musicCardsContainer">
                 <div class="bg-slate-800 p-4 rounded-lg shadow-lg flex flex-col items-center text-center hover:bg-slate-700 transition-colors cursor-pointer">
                     <img src="https://placehold.co/150x150/7f9cf5/ffffff?text=Senin+İçin" alt="Playlist Cover" class="w-full h-auto rounded-md mb-3 object-cover">
-                    <h4 class="font-semibold text-lg truncate w-full">Popüler Şarkılar</h4>
-                    <p class="text-sm text-gray-400 truncate w-full">En çok dinlenenler</p>
-                </div>
-            </div>
-
-            <div class="mt-12">
+                    <div class="mt-12">
                 <div class="flex justify-between items-center mb-6">
-                    <h2 class="text-3xl font-bold">Yaklaşan Şarkılar</h2>
                     <div class="flex gap-2">
                         <button id="upcomingPrevBtn" class="bg-slate-700 hover:bg-indigo-600 text-white p-2 rounded-full w-8 h-8 flex items-center justify-center transition-colors" aria-label="Önceki Yaklaşan Şarkılar">
                             <i class="fa fa-chevron-left"></i>
@@ -89,6 +83,10 @@
                         </button>
                     </div>
                 </div>
+                </div>
+            </div>
+
+            
                 <div class="relative">
                     <div id="upcomingMusicContainerWrapper" class="overflow-hidden">
                         <div id="upcomingMusicContainer" class="flex gap-6 transition-transform duration-300 ease-in-out pb-2">
