@@ -3,75 +3,157 @@
     width: 8px;
 }
 ::-webkit-scrollbar-track {
-    background: var(--bg-secondary); /* Sidebar track color, adapts to theme */
+    background: var(--bg-secondary);
+    border-radius: 10px;
 }
 ::-webkit-scrollbar-thumb {
-    background: var(--accent-color-dark); /* Thumb color, adapts to theme */
+    background: var(--accent-color-dark);
     border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
-    background: var(--accent-color); /* Hover thumb color */
+    background: var(--accent-color);
 }
 
-/* CSS Custom Properties (Değişkenler) for theming */
+/* CSS Custom Properties (Variables) for theming */
 :root {
-    --bg-primary: #1a202c; /* body background */
-    --bg-secondary: #2d3748; /* aside, modal background */
-    --bg-tertiary: #111827; /* player container background */
-    --text-color-light: #e2e8f0; /* primary text */
-    --text-color-dark: #a0aec0; /* secondary text */
-    --border-color: #4a5568; /* borders */
-    --accent-color: #6366f1; /* Indigo 500 */
-    --accent-color-hover: #4f46e5; /* Indigo 600 */
-    --accent-color-dark: #3730a3; /* Indigo 800 */
-    --success-color: #10b981; /* Green 500 */
-    --error-color: #ef4444; /* Red 500 */
+    /* Dark Mode (Default) */
+    --bg-primary: #121212; /* Main background */
+    --bg-secondary: #1a1a1a; /* Aside background */
+    --bg-tertiary: #282828; /* Player background, modal inner */
+    --text-color-light: #ffffff; /* Primary text */
+    --text-color-dark: #b3b3b3; /* Secondary text */
+    --border-color: #333333; /* Borders, separators */
+    --accent-color: #1DB954; /* Spotify Green */
+    --accent-color-hover: #1ED760; /* Lighter Green on hover */
+    --accent-color-dark: #0F823E; /* Darker Green */
+    --success-color: #21a15a;
+    --error-color: #e53935;
+
+    /* Light Mode (Optional, for future use) */
+    /* This section is commented out or can be replaced if a light mode is needed */
+    /* body.light-mode {
+        --bg-primary: #f0f2f5;
+        --bg-secondary: #ffffff;
+        --bg-tertiary: #e0e0e0;
+        --text-color-light: #333333;
+        --text-color-dark: #666666;
+        --border-color: #cccccc;
+        --accent-color: #007bff;
+        --accent-color-hover: #0056b3;
+        --accent-color-dark: #004085;
+    } */
 }
 
-/* Light mode (optional, for future expansion) */
-body.light-mode {
-    --bg-primary: #f8f8f8;
-    --bg-secondary: #ffffff;
-    --bg-tertiary: #f0f0f0;
-    --text-color-light: #2d3748;
-    --text-color-dark: #4a5568;
-    --border-color: #e2e8f0;
-    --accent-color: #4f46e5;
-    --accent-color-hover: #4338ca;
-    --accent-color-dark: #312e81;
-    --success-color: #059669;
-    --error-color: #dc2626;
-}
 
-
-/* Ensure body takes full height and uses Inter font */
 body {
     font-family: 'Inter', sans-serif;
     height: 100vh;
-    overflow: hidden; /* Prevent body scroll to manage scrolling within main/aside */
-    display: flex; /* Use flexbox for layout */
-    background-color: var(--bg-primary); /* Use custom property */
-    color: var(--text-color-light); /* Use custom property */
-}
-
-/* Base styles for aside */
-aside {
-    background-color: var(--bg-secondary);
-}
-
-/* Base styles for main */
-main {
+    overflow: hidden;
+    display: grid; /* Use CSS Grid for main layout */
+    grid-template-columns: 1fr 320px; /* main takes 1fr, aside takes 320px */
+    grid-template-rows: 1fr;
     background-color: var(--bg-primary);
     color: var(--text-color-light);
 }
 
+/* Main Content Area */
+main {
+    grid-column: 1 / 2; /* Main takes the first column */
+    grid-row: 1 / 2;
+    background-color: var(--bg-primary);
+    color: var(--text-color-light);
+    overflow-y: auto; /* Allow scrolling for main content if needed */
+    padding-bottom: 10rem; /* Space for the fixed player at the bottom */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center; /* Center content vertically and horizontally */
+}
+
+/* Right Sidebar (Aside) */
+aside {
+    grid-column: 2 / 3; /* Aside takes the second column */
+    grid-row: 1 / 2;
+    background-color: var(--bg-secondary);
+    color: var(--text-color-light);
+    padding: 1.25rem; /* p-5 */
+    display: flex;
+    flex-direction: column;
+    box-shadow: -5px 0 15px rgba(0,0,0,0.5); /* Shadow for separation */
+    border-left: 1px solid var(--border-color); /* Subtle border */
+    border-radius: 1.5rem 0 0 1.5rem; /* rounded-l-3xl (approx) */
+    position: relative; /* For z-index and potential child positioning */
+    z-index: 30; /* Ensure it's above other elements */
+}
+
+/* Music List Item (Referans Görseldeki Beyaz Kareler) */
+.music-list-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem; /* gap-3 */
+    padding: 0.75rem; /* p-3 */
+    margin-bottom: 0.75rem; /* mb-3 */
+    background-color: #ffffff; /* White background */
+    color: #333333; /* Dark text for light background */
+    border-radius: 0.75rem; /* rounded-xl (approx) */
+    cursor: pointer;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1); /* Subtle shadow */
+    transition: all 0.2s ease-in-out;
+    border: 1px solid rgba(0,0,0,0.05); /* Very light border */
+}
+
+.music-list-item:last-child {
+    margin-bottom: 0; /* Remove bottom margin for last item */
+}
+
+.music-list-item:hover {
+    transform: translateY(-2px); /* Slight lift on hover */
+    box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+}
+
+.music-list-item.active {
+    background-color: var(--accent-color); /* Green background for active song */
+    color: white; /* White text for active song */
+    transform: scale(1.02); /* Slightly enlarge active song */
+    box-shadow: 0 0 20px rgba(29, 185, 84, 0.5); /* Green glow for active */
+    border-color: var(--accent-color-hover);
+}
+
+.music-list-item.active .text-gray-100,
+.music-list-item.active .text-gray-400 {
+    color: white !important; /* Ensure text is white in active state */
+}
+
+.music-list-item img {
+    width: 48px; /* w-12 */
+    height: 48px; /* h-12 */
+    border-radius: 0.5rem; /* rounded-md */
+    object-fit: cover;
+}
+
+.music-list-item h4 {
+    font-weight: 600; /* font-semibold */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.music-list-item p {
+    font-size: 0.875rem; /* text-sm */
+    color: #666666; /* Darker grey for artist in light background */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+
 /* Hide default audio player controls completely */
 audio {
-   opacity: 0; /* Hide completely */
-   pointer-events: none; /* Disable interaction */
-   height: 0px; /* No height */
-   visibility: hidden; /* Hide it completely */
-   position: absolute; /* Remove from document flow */
+   opacity: 0;
+   pointer-events: none;
+   height: 0px;
+   visibility: hidden;
+   position: absolute;
 }
 
 /* Spinner for loading overlay */
@@ -82,13 +164,13 @@ audio {
 
 /* Custom range slider (progress bar and volume bar) */
 .custom-range-slider {
-    -webkit-appearance: none; /* Hides the default slider */
-    background: var(--border-color); /* Track background */
-    outline: none; /* Remove outline */
-    opacity: 0.7; /* Opacity for styling */
-    transition: opacity .2s; /* Smooth transition on hover */
-    height: 6px; /* Track height */
-    border-radius: 999px; /* Rounded track */
+    -webkit-appearance: none;
+    background: var(--border-color);
+    outline: none;
+    opacity: 0.7;
+    transition: opacity .2s;
+    height: 6px;
+    border-radius: 999px;
 }
 
 .custom-range-slider:hover {
@@ -96,19 +178,19 @@ audio {
 }
 
 .custom-range-slider::-webkit-slider-thumb {
-    -webkit-appearance: none; /* Hides the default slider thumb */
-    width: 18px; /* Thumb width */
-    height: 18px; /* Thumb height */
-    border-radius: 50%; /* Make it round */
-    background: var(--accent-color); /* Thumb color */
-    cursor: grab; /* Cursor for dragging */
-    box-shadow: 0 0 5px rgba(0,0,0,0.3); /* Subtle shadow */
-    transition: background-color 0.2s, transform 0.2s; /* Smooth transition */
+    -webkit-appearance: none;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--accent-color);
+    cursor: grab;
+    box-shadow: 0 0 5px rgba(0,0,0,0.3);
+    transition: background-color 0.2s, transform 0.2s;
 }
 
 .custom-range-slider::-webkit-slider-thumb:active {
     cursor: grabbing;
-    transform: scale(1.1); /* Slightly enlarge on active */
+    transform: scale(1.1);
 }
 
 .custom-range-slider::-moz-range-thumb {
@@ -145,7 +227,7 @@ audio {
     animation: fadeOut 0.5s ease-in forwards;
 }
 
-/* Specific button animations (Tailwind provides some, but we can enhance) */
+/* Button Animations */
 button {
     transition: all 0.2s ease-in-out;
 }
@@ -158,118 +240,71 @@ button:active {
     transform: scale(0.95);
 }
 
-/* Override default Tailwind for certain elements if needed */
-.text-indigo-400 { color: var(--accent-color); }
-.hover\:text-indigo-300:hover { color: var(--accent-color-hover); }
-.bg-indigo-600 { background-color: var(--accent-color); }
-.hover\:bg-indigo-500:hover { background-color: var(--accent-color-hover); }
-
-/* Custom class for music list items */
-.music-list-item {
-    background-color: var(--bg-secondary);
-    border: 1px solid var(--border-color);
-    color: var(--text-color-light);
-    transition: background-color 0.2s ease, transform 0.1s ease;
-}
-.music-list-item:hover {
-    background-color: var(--bg-secondary); /* Darker on hover */
-    transform: translateY(-2px); /* Slight lift */
-    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-}
-.music-list-item.active {
-    background-color: var(--accent-color-dark); /* Active background */
-    border-color: var(--accent-color);
-    box-shadow: 0 0 15px rgba(99, 102, 241, 0.4); /* Glow effect */
-    transform: translateY(-2px);
-}
-.music-list-item.active .text-gray-100 {
-    color: white; /* Active song title color */
-}
-.music-list-item.active .text-gray-400 {
-    color: var(--text-color-light); /* Active song artist color */
+/* Oynatıcı Konteyneri (Fixed at bottom, adjusted for sidebar) */
+#musicPlayerContainer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    /* Sağ kenar çubuğunun genişliği kadar sağdan boşluk bırak */
+    right: 320px; /* w-80 = 320px */
+    background-color: var(--bg-tertiary); /* Darker background */
+    background-opacity: 0.9;
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    padding: 1.5rem; /* p-6 */
+    z-index: 40;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 -5px 15px rgba(0,0,0,0.5); /* Shadow above player */
+    border-top-left-radius: 1.5rem; /* rounded-t-xl */
+    border-top-right-radius: 1.5rem; /* rounded-t-xl */
 }
 
-/* Admin panel input/select styles */
-.admin-panel-modal input,
-.admin-panel-modal select {
-    background-color: var(--bg-tertiary);
-    border-color: var(--border-color);
-    color: var(--text-color-light);
-}
-.admin-panel-modal input::placeholder {
-    color: var(--text-color-dark);
-}
-.admin-panel-modal input:focus,
-.admin-panel-modal select:focus {
-    border-color: var(--accent-color);
-    box-shadow: 0 0 0 2px var(--accent-color);
+#musicPlayerContainer .w-full.max-w-xl {
+    margin-bottom: 1rem; /* Adjust spacing */
 }
 
-/* Specific styles for responsive design */
-@media (min-width: 768px) {
-    /* Main content adjustment for desktop */
+#musicPlayerContainer #timeDisplay {
+    margin-bottom: 1rem; /* Adjust spacing */
+}
+
+#musicPlayerContainer .flex.items-center.space-x-6 {
+    margin-bottom: 1rem; /* Adjust spacing */
+}
+
+
+/* Mobil Görünüm için Medya Sorguları */
+@media (max-width: 767px) { /* Small screens / Mobile */
+    body {
+        grid-template-columns: 1fr; /* Full width for main */
+        grid-template-rows: 1fr auto; /* Main and then player */
+    }
+
+    aside {
+        /* Mobile'da sağ kenar çubuğunu gizle veya modal olarak göster */
+        display: none; /* Varsayılan olarak gizli, mobil menü butonu ile açılacak */
+    }
+
     main {
-        width: calc(100vw - 20rem); /* Adjust width for aside */
-        height: 100vh; /* Full height */
-        overflow-y: auto; /* Allow scrolling */
-        padding-top: 2.5rem; /* top-10 */
-        padding-bottom: 10rem; /* Add padding for fixed player at bottom */
-        display: flex; /* Ensure flex for centering */
-        align-items: center; /* Center items vertically */
-        justify-content: center; /* Center items horizontally */
+        grid-column: 1 / 2;
+        grid-row: 1 / 2;
+        padding-bottom: 8rem; /* Mobil oynatıcı için boşluk */
     }
 
-    /* Hide mobile menu button on desktop */
-    .menu-button-mobile {
-        display: none !important;
-    }
-    /* Hide mobile button container on desktop */
-    .top-buttons-mobile {
-        display: none;
-    }
-    #adminButton {
-        position: absolute; /* Absolute positioning on larger screens */
-        top: 1.25rem; /* top-5 */
-        right: 1.25rem; /* right-5 */
-        display: flex; /* Show admin button on desktop */
-        padding: 0.75rem; /* Square padding for icon-only button */
-        border-radius: 9999px; /* Make it circular */
-    }
-    #adminButton i {
-        margin: 0; /* Remove margin next to text */
-    }
-    #themeToggleButton {
-        top: 1.25rem; /* Align with admin button */
-        right: 4.5rem; /* Position next to admin button */
-        padding: 0.75rem;
-    }
-    #coverImage {
-        width: 300px; /* Original size on larger screens */
-        height: 300px;
-        margin-bottom: 1.5rem; /* mb-6 */
-    }
-    /* Hide mobile music list modal on desktop */
-    #mobileMusicListModal {
-        display: none !important;
-    }
-    #songCountMobile {
-        display: none; /* Hide mobile song count on desktop */
-    }
-
-    /* Adjust the music player container for desktop */
     #musicPlayerContainer {
-        padding: 1.5rem; /* Slightly more padding on desktop */
-        flex-direction: row; /* Align items horizontally */
-        justify-content: center; /* Center items horizontally */
-        gap: 2rem; /* Space between components */
+        left: 0;
+        right: 0;
+        padding: 1rem;
+        border-radius: 1rem 1rem 0 0; /* Smaller top radius for mobile */
     }
-    #musicPlayerContainer .w-full.max-w-xl {
-        margin-bottom: 0; /* Remove bottom margin for horizontal layout */
+
+    #adminButton, #themeToggleButton {
+        display: none !important; /* Masaüstü butonlarını mobilde gizle */
     }
-    #musicPlayerContainer #timeDisplay {
-        margin-bottom: 0; /* Remove bottom margin */
-    }
-    #musicPlayerContainer .flex.items-center.space-x-6 {
-        margin-bottom: 0;
+
+    .menu-button-mobile, .top-buttons-mobile {
+        display: flex !important; /* Mobil butonları göster */
     }
 }
