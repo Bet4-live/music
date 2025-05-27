@@ -3,346 +3,36 @@
     width: 8px;
 }
 ::-webkit-scrollbar-track {
-    background: var(--scrollbar-track);
+    background: #2d2d3f; /* Sidebar track color */
 }
 ::-webkit-scrollbar-thumb {
-    background: var(--scrollbar-thumb);
+    background: #555;
     border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
-    background: var(--scrollbar-thumb-hover);
+    background: #777;
 }
 
-/* Theme Variables */
-body.light-theme {
-    --bg-100: #f8f9fa; /* Lighter background */
-    --bg-200: #e9ecef; /* Slightly darker background */
-    --text-heading: #343a40; /* Darker text for headings */
-    --text-body: #495057; /* Darker text for general content */
-    --text-accent: #007bff; /* Primary accent blue */
-    --bg-sidebar-from: #2C3E50; /* Dark blue/grey */
-    --bg-sidebar-to: #34495E; /* Slightly lighter dark blue/grey */
-    --border-sidebar-line: #495057; /* Dark grey border */
-    --text-sidebar-count: #adb5bd; /* Light grey text */
-    --bg-sidebar-active: #007bff; /* Accent blue for active link */
-    --bg-sidebar-hover: #495057; /* Dark grey for sidebar link hover */
-    --text-sidebar-link: #f8f9fa; /* Off-white for sidebar links */
-    --bg-main: #f8f9fa; /* Light background for main content */
-    --border-cover: #ffffff; /* White border for cover image */
-    --bg-player-controls: rgba(255, 255, 255, 0.95); /* White, slight opacity */
-    --border-player-controls: rgba(0, 0, 0, 0.1); /* Light grey border */
-    --text-player-time: #6c757d; /* Medium grey for time */
-    --text-player-control: #6c757d; /* Medium grey for controls */
-    --text-player-control-hover: #212529; /* Darker grey on hover */
-    --bg-accent: #007bff; /* Primary accent blue */
-    --bg-accent-hover: #0056b3; /* Darker blue on hover */
-    --text-player-button: #ffffff; /* White for player button */
-    --seek-bar-track: #e0e0e0; /* Light grey track */
-    --seek-bar-thumb: #007bff; /* Accent blue thumb */
-    --volume-bar-track: #e0e0e0; /* Light grey track */
-    --volume-bar-thumb: #6c757d; /* Medium grey thumb */
-    --bg-scroll-button: #e0e0e0; /* Light grey scroll button */
-    --bg-scroll-button-hover: #ced4da; /* Slightly darker scroll button */
-    --text-scroll-button: #495057; /* Dark text for scroll button */
-    --bg-upcoming-item: #ffffff; /* White background for upcoming item */
-    --text-upcoming-title: #343a40; /* Dark text for title */
-    --text-upcoming-artist: #6c757d; /* Medium grey for artist */
-    --ring-upcoming-active: #007bff; /* Accent blue ring for active */
-    --bg-upcoming-active: #e7f2ff; /* Light blue background for active */
-    --text-upcoming-active: #0056b3; /* Darker blue for active text */
-    --bg-search-overlay: rgba(248, 249, 250, 0.9); /* Light search overlay */
-    --text-search-overlay-close: #6c757d; /* Medium grey close button */
-    --text-search-overlay-close-hover: #343a40; /* Darker grey on hover */
-    --bg-search-results: #ffffff; /* White search results background */
-    --bg-search-item: #f1f3f5; /* Light grey search item */
-    --bg-search-item-hover: #e9ecef; /* Slightly darker search item hover */
-    --text-search-item: #212529; /* Dark text for search item */
-    --bg-input: #ffffff; /* White input background */
-    --text-input: #212529; /* Dark text for input */
-    --border-input: #ced4da; /* Light grey border for input */
-    --placeholder-input: #adb5bd; /* Light grey placeholder */
-    --ring-accent: #007bff; /* Accent blue for ring */
-    --bg-modal: #ffffff; /* White modal background */
-    --text-modal: #212529; /* Dark text for modal */
-    --text-modal-close: #6c757d; /* Medium grey close button */
-    --text-modal-close-hover: #343a40; /* Darker grey on hover */
-    --bg-admin-overlay: rgba(0, 0, 0, 0.7); /* Dark overlay */
-    --bg-admin-panel: #2C3E50; /* Dark blue/grey for admin panel */
-    --text-admin-panel: #f8f9fa; /* Off-white for admin panel text */
-    --text-admin-panel-close: #adb5bd; /* Light grey close button */
-    --text-admin-panel-close-hover: #f8f9fa; /* Off-white on hover */
-    --text-admin-panel-info: #adb5bd; /* Light grey info text */
-    --border-admin-panel-line: #495057; /* Dark grey border */
-    --text-admin-panel-label: #adb5bd; /* Light grey label */
-    --file-input-text: #007bff; /* Accent blue for file input text */
-    --file-input-bg: #e7f2ff; /* Light blue for file input background */
-    --file-input-bg-hover: #cedaf2; /* Slightly darker file input hover */
-    --bg-success-button: #28a745; /* Green for success */
-    --bg-success-button-hover: #218838; /* Darker green on hover */
-    --bg-delete-button: #dc3545; /* Red for delete */
-    --bg-delete-button-hover: #c82333; /* Darker red on hover */
-    --bg-button: #6c757d; /* Grey button */
-    --bg-button-hover: #5a6268; /* Darker grey on hover */
-    --text-button: #ffffff; /* White text for buttons */
-
-    /* Scrollbar for light theme */
-    --scrollbar-track: #e9ecef;
-    --scrollbar-thumb: #adb5bd;
-    --scrollbar-thumb-hover: #868e96;
-}
-
-body.dark-theme {
-    --bg-100: #1a202c; /* Dark background */
-    --bg-200: #2d3748; /* Slightly darker background */
-    --text-heading: #f8f8f2; /* Light text for headings */
-    --text-body: #a0aec0; /* Lighter text for general content */
-    --text-accent: #61afef; /* Primary accent blue (for dark theme) */
-    --bg-sidebar-from: #1f2937; /* Darker slate */
-    --bg-sidebar-to: #2a3547; /* Slightly lighter slate */
-    --border-sidebar-line: #4a5568; /* Darker grey border */
-    --text-sidebar-count: #718096; /* Medium grey text */
-    --bg-sidebar-active: #61afef; /* Accent blue for active link */
-    --bg-sidebar-hover: #4a5568; /* Darker grey for sidebar link hover */
-    --text-sidebar-link: #cbd5e0; /* Light grey for sidebar links */
-    --bg-main: #1a202c; /* Dark background for main content */
-    --border-cover: #4a5568; /* Dark grey border for cover image */
-    --bg-player-controls: rgba(45, 55, 72, 0.95); /* Dark grey, slight opacity */
-    --border-player-controls: rgba(0, 0, 0, 0.3); /* Darker border */
-    --text-player-time: #a0aec0; /* Medium light grey for time */
-    --text-player-control: #a0aec0; /* Medium light grey for controls */
-    --text-player-control-hover: #f8f8f2; /* Lighter grey on hover */
-    --bg-accent: #61afef; /* Primary accent blue */
-    --bg-accent-hover: #4b8cdb; /* Darker blue on hover */
-    --text-player-button: #1a202c; /* Dark text for player button */
-    --seek-bar-track: #4a5568; /* Dark grey track */
-    --seek-bar-thumb: #61afef; /* Accent blue thumb */
-    --volume-bar-track: #4a5568; /* Dark grey track */
-    --volume-bar-thumb: #718096; /* Medium grey thumb */
-    --bg-scroll-button: #4a5568; /* Dark grey scroll button */
-    --bg-scroll-button-hover: #616e87; /* Slightly darker scroll button */
-    --text-scroll-button: #f8f8f2; /* Light text for scroll button */
-    --bg-upcoming-item: #2d3748; /* Dark background for upcoming item */
-    --text-upcoming-title: #f8f8f2; /* Light text for title */
-    --text-upcoming-artist: #cbd5e0; /* Light grey for artist */
-    --ring-upcoming-active: #61afef; /* Accent blue ring for active */
-    --bg-upcoming-active: #3a495c; /* Dark blue background for active */
-    --text-upcoming-active: #e2f0fb; /* Light blue for active text */
-    --bg-search-overlay: rgba(26, 32, 44, 0.9); /* Dark search overlay */
-    --text-search-overlay-close: #a0aec0; /* Medium light grey close button */
-    --text-search-overlay-close-hover: #f8f8f2; /* Light grey on hover */
-    --bg-search-results: #2d3748; /* Dark search results background */
-    --bg-search-item: #3a495c; /* Darker search item */
-    --bg-search-item-hover: #4a5568; /* Slightly darker search item hover */
-    --text-search-item: #cbd5e0; /* Light text for search item */
-    --bg-input: #2d3748; /* Dark input background */
-    --text-input: #cbd5e0; /* Light text for input */
-    --border-input: #4a5568; /* Dark grey border for input */
-    --placeholder-input: #718096; /* Medium grey placeholder */
-    --ring-accent: #61afef; /* Accent blue for ring */
-    --bg-modal: #2d3748; /* Dark modal background */
-    --text-modal: #f8f8f2; /* Light text for modal */
-    --text-modal-close: #a0aec0; /* Medium light grey close button */
-    --text-modal-close-hover: #f8f8f2; /* Light grey on hover */
-    --bg-admin-overlay: rgba(0, 0, 0, 0.7); /* Dark overlay */
-    --bg-admin-panel: #1f2937; /* Darker slate for admin panel */
-    --text-admin-panel: #f8f8f2; /* Light text for admin panel */
-    --text-admin-panel-close: #718096; /* Medium grey close button */
-    --text-admin-panel-close-hover: #f8f8f2; /* Light grey on hover */
-    --text-admin-panel-info: #a0aec0; /* Light grey info text */
-    --border-admin-panel-line: #4a5568; /* Dark grey border */
-    --text-admin-panel-label: #a0aec0; /* Light grey label */
-    --file-input-text: #61afef; /* Accent blue for file input text */
-    --file-input-bg: #3a495c; /* Darker blue for file input background */
-    --file-input-bg-hover: #4b5a6d; /* Slightly darker file input hover */
-    --bg-success-button: #28a745; /* Green for success */
-    --bg-success-button-hover: #218838; /* Darker green on hover */
-    --bg-delete-button: #dc3545; /* Red for delete */
-    --bg-delete-button-hover: #c82333; /* Darker red on hover */
-    --bg-button: #718096; /* Grey button */
-    --bg-button-hover: #8090a8; /* Lighter grey on hover */
-    --text-button: #ffffff; /* White text for buttons */
-
-    /* Scrollbar for dark theme */
-    --scrollbar-track: #1f2937;
-    --scrollbar-thumb: #4a5568;
-    --scrollbar-thumb-hover: #616e87;
-}
-
-/* Base Body Styles */
+/* Ensure body takes full height and uses Inter font */
 body {
     font-family: 'Inter', sans-serif;
     height: 100vh;
-    overflow: hidden;
-    display: flex;
-    background-color: var(--bg-100); /* Apply theme background */
-    color: var(--text-body); /* Apply theme text color */
+    overflow: hidden; /* Prevent body scroll to manage scrolling within main/aside */
+    display: flex; /* Use flexbox for layout */
 }
-
-/* Sidebar */
-aside {
-    background: linear-gradient(to bottom right, var(--bg-sidebar-from), var(--bg-sidebar-to));
-    border-right: 1px solid var(--border-sidebar-line);
-}
-aside h2 {
-    border-color: var(--border-sidebar-line);
-}
-aside h2 i {
-    color: var(--text-accent);
-}
-aside h2 span {
-    color: var(--text-sidebar-count);
-}
-aside nav a {
-    background-color: var(--bg-sidebar-active);
-    color: var(--text-accent); /* Active link color */
-}
-aside nav button {
-    color: var(--text-sidebar-link);
-}
-aside nav button:hover {
-    background-color: var(--bg-sidebar-hover);
-}
-aside h3 {
-    color: var(--text-sidebar-heading);
-}
-
-/* Main Content */
-main {
-    background: var(--bg-main);
-    color: var(--text-body);
-}
-main h2 {
-    color: var(--text-heading);
-}
-
-/* Top Right Buttons (Admin and Theme Toggle) */
-#adminButton, #themeToggle {
-    background-color: var(--bg-button);
-    color: var(--text-button);
-}
-#adminButton:hover, #themeToggle:hover {
-    background-color: var(--bg-button-hover);
-}
-
-/* Search Overlay */
-#searchOverlay {
-    background-color: var(--bg-search-overlay);
-}
-#closeSearchBtn {
-    color: var(--text-search-overlay-close);
-}
-#closeSearchBtn:hover {
-    color: var(--text-search-overlay-close-hover);
-}
-#searchInput {
-    background-color: var(--bg-input);
-    color: var(--text-input);
-    border: 1px solid var(--border-input);
-}
-#searchInput::placeholder {
-    color: var(--placeholder-input);
-}
-#searchInput:focus {
-    border-color: var(--ring-accent);
-    box-shadow: 0 0 0 2px var(--ring-accent);
-}
-#searchResults {
-    background-color: var(--bg-search-results);
-}
-#searchResults .music-item {
-    background-color: var(--bg-search-item);
-    color: var(--text-search-item);
-}
-#searchResults .music-item:hover {
-    background-color: var(--bg-search-item-hover);
-}
-#searchResults .music-item.bg-indigo-600 { /* Active/selected search item */
-    background-color: var(--bg-accent);
-    color: var(--text-button);
-}
-#searchResults .music-item.bg-indigo-600:hover { /* Active/selected search item */
-    background-color: var(--bg-accent-hover);
-}
-
-/* Upcoming Songs */
-.upcoming-song-item {
-    flex: 0 0 auto;
-    width: 180px;
-    background-color: var(--bg-upcoming-item);
-    border-radius: 12px;
-    padding: 16px;
-    text-align: center;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
-    cursor: pointer;
-    scroll-snap-align: start;
-    color: var(--text-body); /* Default text color */
-}
-
-.upcoming-song-item:hover {
-    transform: translateY(-5px) scale(1.02);
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
-}
-
-.upcoming-song-item img {
-    width: 120px;
-    height: 120px;
-    border-radius: 8px;
-    object-fit: cover;
-    margin: 0 auto 12px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-
-.upcoming-song-item .song-title {
-    font-weight: 600;
-    color: var(--text-upcoming-title);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    margin-bottom: 4px;
-}
-
-.upcoming-song-item .song-artist {
-    font-size: 0.875rem;
-    color: var(--text-upcoming-artist);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.upcoming-song-item.ring-2 { /* Active state */
-    border: 2px solid var(--ring-upcoming-active);
-    background-color: var(--bg-upcoming-active);
-}
-.upcoming-song-item.text-indigo-800 { /* Active state */
-    color: var(--text-upcoming-active);
-}
-.upcoming-song-item.bg-indigo-100 { /* Active state */
-    background-color: var(--bg-upcoming-active);
-}
-
-/* Scroll Buttons for Upcoming Songs */
-#scrollLeftUpcoming, #scrollRightUpcoming {
-    background-color: var(--bg-scroll-button);
-    color: var(--text-scroll-button);
-}
-#scrollLeftUpcoming:hover, #scrollRightUpcoming:hover {
-    background-color: var(--bg-scroll-button-hover);
-}
-
 
 /* Hide default audio player controls completely */
 audio {
    width: 100%;
-   max-width: 500px;
-   margin-top: 1rem;
-   filter: invert(15%) sepia(5%) saturate(1200%) hue-rotate(190deg) brightness(95%) contrast(90%);
-   border-radius: 999px;
-   opacity: 0;
-   pointer-events: none;
-   height: 0px;
-   visibility: hidden;
-   position: absolute;
+   max-width: 500px; /* Limit player width on larger screens */
+   margin-top: 1rem; /* Space above player */
+   filter: invert(15%) sepia(5%) saturate(1200%) hue-rotate(190deg) brightness(95%) contrast(90%); /* Subtle color adjustment */
+   border-radius: 999px; /* Fully rounded corners */
+   opacity: 0; /* Hide completely */
+   pointer-events: none; /* Disable interaction */
+   height: 0px; /* No height */
+   visibility: hidden; /* Hide it completely */
+   position: absolute; /* Remove from layout flow */
 }
 
 /* Custom progress bar styling */
@@ -351,7 +41,7 @@ input[type="range"] {
     appearance: none;
     width: 100%;
     height: 6px;
-    background: var(--seek-bar-track);
+    background: #e5e7eb; /* Lighter track color (gray-200) */
     border-radius: 3px;
     cursor: pointer;
     outline: none;
@@ -359,17 +49,17 @@ input[type="range"] {
 
 /* Progress fill for seek bar */
 input[type="range"].seek-bar::-webkit-slider-runnable-track {
-    background: linear-gradient(to right, var(--seek-bar-thumb) var(--progress, 0%), var(--seek-bar-track) var(--progress, 0%));
+    background: linear-gradient(to right, #4f46e5 var(--progress, 0%), #e5e7eb var(--progress, 0%));
     height: 6px;
     border-radius: 3px;
 }
 input[type="range"].seek-bar::-moz-range-progress {
-    background-color: var(--seek-bar-thumb);
+    background-color: #4f46e5;
     height: 6px;
      border-radius: 3px;
 }
  input[type="range"].seek-bar::-moz-range-track {
-     background-color: var(--seek-bar-track);
+     background-color: #e5e7eb;
      height: 6px;
      border-radius: 3px;
  }
@@ -380,44 +70,35 @@ input[type="range"]::-webkit-slider-thumb {
     appearance: none;
     width: 16px;
     height: 16px;
-    background: var(--seek-bar-thumb);
+    background: #4f46e5; /* Indigo thumb color */
     border-radius: 50%;
     cursor: pointer;
-    margin-top: -5px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    margin-top: -5px; /* Center thumb vertically */
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2); /* Add a subtle shadow */
 }
 input[type="range"]::-moz-range-thumb {
     width: 16px;
     height: 16px;
-    background: var(--seek-bar-thumb);
+    background: #4f46e5; /* Indigo thumb color */
     border-radius: 50%;
     cursor: pointer;
-    border: none;
-     box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    border: none; /* Remove default border in Firefox */
+     box-shadow: 0 1px 3px rgba(0,0,0,0.2); /* Add a subtle shadow */
 }
 
 /* Volume bar specific thumb styling */
-input[type="range"].volume-bar {
-    background: var(--volume-bar-track);
-}
 input[type="range"].volume-bar::-webkit-slider-thumb {
-    background: var(--volume-bar-thumb);
+    background: #6b7280; /* Gray thumb for volume */
      width: 12px;
      height: 12px;
-    margin-top: -3px;
-     box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    margin-top: -3px; /* Center thumb vertically */
+     box-shadow: 0 1px 3px rgba(0,0,0,0.2); /* Add a subtle shadow */
 }
  input[type="range"].volume-bar::-moz-range-thumb {
-    background: var(--volume-bar-thumb);
+    background: #6b7280; /* Gray thumb for volume */
     width: 12px;
     height: 12px;
-    border: none;
-     box-shadow: 0 1px 3px rgba(0,0,0,0.2);
-}
-input[type="range"].volume-bar::-moz-range-track {
-     background-color: var(--volume-bar-track);
-     height: 6px;
-     border-radius: 3px;
+     box-shadow: 0 1px 3px rgba(0,0,0,0.2); /* Add a subtle shadow */
 }
 
 
@@ -428,60 +109,21 @@ input[type="range"].volume-bar::-moz-range-track {
 
 /* Style for the custom player controls container */
 .custom-player-controls {
-    background-color: var(--bg-player-controls);
-    backdrop-filter: blur(10px);
-    border-radius: 16px;
-    padding: 15px 25px;
-    margin-top: 1.5rem;
-    box-shadow: 0 6px 25px rgba(0, 0, 0, 0.15);
+    background-color: rgba(255, 255, 255, 0.9); /* Slightly more opaque white */
+    backdrop-filter: blur(10px); /* Stronger blur effect */
+    border-radius: 16px; /* More rounded */
+    padding: 15px 25px; /* Adjust padding */
+    margin-top: 1.5rem; /* Space above controls */
+    box-shadow: 0 6px 25px rgba(0, 0, 0, 0.15); /* Softer, larger shadow */
     width: 100%;
-    max-width: 500px;
-    border: 1px solid var(--border-player-controls);
-    color: var(--text-body);
-}
-
-/* Player elements */
-#coverImage {
-    border-color: var(--border-cover);
-}
-#currentSongTitle {
-    color: var(--text-heading);
-}
-#currentTime, #totalDuration {
-    color: var(--text-player-time);
-}
-#playPauseBtn {
-    background-color: var(--bg-accent);
-    color: var(--text-player-button);
-}
-#playPauseBtn:hover {
-    background-color: var(--bg-accent-hover);
-}
-#prevBtn, #nextBtn, #volumeIcon {
-    color: var(--text-player-control);
-}
-#prevBtn:hover, #nextBtn:hover, #volumeIcon:hover {
-    color: var(--text-player-control-hover);
+    max-width: 500px; /* Match audio player max-width */
+    border: 1px solid rgba(255, 255, 255, 0.3); /* Subtle border */
 }
 
 /* Styling for disabled buttons */
 button:disabled {
     opacity: 0.4;
     cursor: not-allowed;
-}
-
-/* Music list items (desktop and search results) */
-.music-item {
-    color: var(--text-sidebar-link); /* Default for desktop and search results */
-}
-#musicListDesktop .music-item {
-    background-color: var(--bg-sidebar-hover); /* Default background in sidebar */
-}
-#musicListDesktop .music-item:hover {
-    background-color: var(--bg-sidebar-hover); /* Hover background in sidebar */
-}
-#musicListDesktop .music-item.bg-indigo-600 { /* Active/selected desktop music item */
-    background-color: var(--bg-sidebar-active);
 }
 
 /* Mobile Music List Modal */
@@ -491,13 +133,13 @@ button:disabled {
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: rgba(0, 0, 0, 0.7);
-    backdrop-filter: blur(5px);
-    z-index: 1000;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    opacity: 0;
+    background-color: rgba(0, 0, 0, 0.7); /* Darker overlay */
+    backdrop-filter: blur(5px); /* Subtle blur */
+    z-index: 1000; /* Significantly increased z-index */
+    display: flex; /* Always use flexbox for centering */
+    align-items: center; /* Center vertically */
+    justify-content: center; /* Center horizontally */
+    opacity: 0; /* Start hidden */
     visibility: hidden;
     transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
 }
@@ -508,240 +150,210 @@ button:disabled {
 }
 
 #mobileMusicListContent {
-    background-color: var(--bg-modal);
-    color: var(--text-modal);
+    background-color: #1e293b; /* Slate-800 */
+    color: white;
     padding: 20px;
     border-radius: 12px;
-    max-width: 90%;
-    width: 300px;
-    max-height: 80vh;
-    overflow-y: auto;
-    position: relative;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    max-width: 90%; /* Max width on small screens */
+    width: 300px; /* A fixed width for the modal content */
+    max-height: 80vh; /* Limit height to prevent overflow */
+    overflow-y: auto; /* Add scrolling if content exceeds max height */
+    position: relative; /* For close button positioning */
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3); /* More prominent shadow */
 }
 
  #mobileMusicListContent h2 {
-     font-size: 1.5rem;
-     font-weight: 700;
-     border-bottom: 1px solid var(--border-sidebar-line); /* Use sidebar line color */
-     padding-bottom: 12px;
-     margin-bottom: 16px;
+     font-size: 1.5rem; /* Text-2xl */
+     font-weight: 700; /* Font-bold */
+     border-bottom: 1px solid #475569; /* Slate-600 */
+     padding-bottom: 12px; /* pb-3 */
+     margin-bottom: 16px; /* mb-4 */
      display: flex;
      align-items: center;
-     gap: 12px;
+     gap: 12px; /* gap-3 */
  }
-#mobileMusicListContent h2 i {
-    color: var(--text-accent);
-}
-#mobileMusicListContent button {
-    color: var(--text-modal-close);
-}
-#mobileMusicListContent button:hover {
-    color: var(--text-modal-close-hover);
-}
-#mobileMusicListContent .music-item {
-    background-color: var(--bg-sidebar-hover);
-    color: var(--text-sidebar-link);
-}
-#mobileMusicListContent .music-item:hover {
-    background-color: var(--bg-sidebar-hover);
-}
-#mobileMusicListContent .music-item.bg-indigo-600 { /* Active/selected mobile music item */
-    background-color: var(--bg-sidebar-active);
-    color: var(--text-accent);
+
+/* New Header Styling */
+header {
+    /* Existing Tailwind classes for header */
 }
 
+/* Sidebar navigation links */
+.nav-link {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem; /* gap-3 */
+    padding: 0.75rem; /* p-3 */
+    border-radius: 0.5rem; /* rounded-lg */
+    transition: all 0.2s ease-in-out; /* transition-colors */
+}
 
-/* Admin Panel */
-#adminPanel {
-    background-color: var(--bg-admin-overlay);
-    color: var(--text-admin-panel);
+.nav-link:hover {
+    background-color: #334155; /* gray-700 */
 }
-#adminPanel > div {
-    background-color: var(--bg-admin-panel);
+
+.nav-link.active-link {
+    background-color: #4f46e5; /* indigo-600 */
+    font-weight: 600; /* font-semibold */
 }
-#closeAdminPanelBtn {
-    color: var(--text-admin-panel-close);
+
+/* Music Card Styling (for grid layouts) */
+.music-card {
+    background-color: #1e293b; /* Slate-800 */
+    border-radius: 0.75rem; /* rounded-xl */
+    padding: 1rem; /* p-4 */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    cursor: pointer;
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
 }
-#closeAdminPanelBtn:hover {
-    color: var(--text-admin-panel-close-hover);
+
+.music-card:hover {
+    transform: translateY(-5px) scale(1.02);
+    box-shadow: 0 8px 15px rgba(0,0,0,0.3);
 }
-#adminPanel h2 i {
-    color: var(--text-accent);
+
+.music-card img {
+    width: 120px; /* Fixed size for card images */
+    height: 120px;
+    border-radius: 0.5rem; /* rounded-md */
+    object-fit: cover;
+    margin-bottom: 0.75rem; /* mb-3 */
+    border: 2px solid rgba(255,255,255,0.1);
 }
-#loginForm p {
-    color: var(--text-admin-panel-info);
+
+.music-card h4 {
+    font-size: 1rem; /* text-base */
+    font-weight: 600; /* font-semibold */
+    color: white;
+    margin-bottom: 0.25rem; /* mb-1 */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 100%;
 }
-#loggedInUserEmail {
-    color: var(--text-admin-panel-info);
-}
-#adminPanel input[type="email"],
-#adminPanel input[type="password"],
-#adminPanel input[type="text"],
-#adminPanel select {
-    background-color: var(--bg-input);
-    color: var(--text-input);
-    border: 1px solid var(--border-input);
-}
-#adminPanel input::placeholder,
-#adminPanel select::placeholder {
-    color: var(--placeholder-input);
-}
-#adminPanel input:focus,
-#adminPanel select:focus {
-    border-color: var(--ring-accent);
-    box-shadow: 0 0 0 2px var(--ring-accent);
-}
-#signInBtn {
-    background-color: var(--bg-accent);
-    color: var(--text-button);
-}
-#signInBtn:hover {
-    background-color: var(--bg-accent-hover);
-}
-#signOutBtn {
-    background-color: var(--bg-delete-button);
-    color: var(--text-button);
-}
-#signOutBtn:hover {
-    background-color: var(--bg-delete-button-hover);
-}
-#adminPanel hr {
-    border-color: var(--border-admin-panel-line);
-}
-#adminPanel h3 {
-    color: var(--text-heading);
-    border-color: var(--border-admin-panel-line);
-}
-#adminPanel label {
-    color: var(--text-admin-panel-label);
-}
-#adminPanel input[type="file"] {
-    color: var(--text-input); /* General text color for file input */
-}
-#adminPanel input[type="file"]::file-selector-button {
-    background-color: var(--file-input-bg);
-    color: var(--file-input-text);
-}
-#adminPanel input[type="file"]::file-selector-button:hover {
-    background-color: var(--file-input-bg-hover);
-}
-#addMusicBtn {
-    background-color: var(--bg-success-button);
-    color: var(--text-button);
-}
-#addMusicBtn:hover {
-    background-color: var(--bg-success-button-hover);
-}
-#deleteMusicBtn {
-    background-color: var(--bg-delete-button);
-    color: var(--text-button);
-}
-#deleteMusicBtn:hover {
-    background-color: var(--bg-delete-button-hover);
+
+.music-card p {
+    font-size: 0.875rem; /* text-sm */
+    color: #94a3b8; /* slate-400 */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 100%;
 }
 
 
 /* Responsive layout for sidebar and main content */
 @media (max-width: 767px) { /* Apply below md breakpoint */
     body {
-        flex-direction: column;
-        overflow-y: auto;
+        flex-direction: column; /* Stack elements vertically on small screens */
+        overflow-y: auto; /* Allow scrolling on the body when stacked */
     }
     aside {
-        display: none !important;
+        display: none !important; /* Hide desktop sidebar on mobile with high priority */
     }
 
     main {
-        width: 100%;
-        height: auto;
-        flex-grow: 1;
-         overflow-y: visible;
-         padding-top: 1rem;
-         padding-bottom: 6rem;
+        width: 100%; /* Main content takes full width */
+        height: auto; /* Auto height */
+        flex-grow: 1; /* Allow main content to take remaining space */
+         overflow-y: visible; /* Main content handles its own potential scrolling */
+         padding-top: 1rem; /* Adjust padding */
+         padding-bottom: 6rem; /* Add padding at the bottom for controls */
     }
      .custom-player-controls {
-         padding: 10px 15px;
-         margin-top: 1rem;
+         padding: 10px 15px; /* Reduce padding on small screens */
+         margin-top: 1rem; /* Adjust margin */
      }
-     #adminButton, #themeToggle { /* Position these correctly on mobile */
-         position: static; /* Remove absolute positioning */
-         margin-left: auto; /* Push them to the right */
-         margin-right: 0.5rem; /* Small right margin */
-         margin-top: 0.5rem; /* Small top margin */
+     /* Hide the top buttons container on mobile */
+     .top-buttons-mobile {
+         display: none;
+     }
+     /* Hide admin button on mobile */
+     #adminButtonHeader {
+         display: none;
      }
      #coverImage {
-         width: 250px;
+         width: 250px; /* Smaller cover image on mobile */
          height: 250px;
-         margin-bottom: 1rem;
+         margin-bottom: 1rem; /* Adjust margin */
      }
      #player {
-         padding-top: 0;
+         padding-top: 0; /* Remove extra top padding */
      }
-     #songCountMobile {
+     /* Hide search bar and greeting in header on mobile */
+     header #searchBar, header #headerGreeting {
          display: none;
      }
-     #songCountDesktop {
-         display: none;
+     header {
+         padding: 1rem; /* Adjust padding */
+         justify-content: center; /* Center "Müzik" title */
      }
-     #upcomingSongsContainer {
-         justify-content: flex-start;
+     header h1 {
+         margin-right: auto; /* Push "Müzik" to left */
+         margin-left: auto; /* Push "Müzik" to center */
+     }
+     /* Mobile music list trigger will be present in main */
+     #openMobileMusicListBtn {
+         display: block; /* Show a button in main to open mobile list */
+         margin-top: 1rem;
      }
 }
 
  @media (min-width: 768px) { /* Apply from md breakpoint */
     body {
-        flex-direction: row;
+        flex-direction: row; /* Side-by-side layout */
     }
+     /* Show desktop sidebar on desktop */
     aside {
         display: flex;
-        width: 18rem;
-        height: 100vh;
-        overflow-y: auto;
-         position: static;
-         left: auto;
+        width: 18rem; /* md:w-72 */
+        height: 100vh; /* Full height */
+        overflow-y: auto; /* Allow scrolling */
+         position: static; /* Static position on desktop */
+         left: auto; /* Reset left property */
     }
      main {
-        flex-grow: 1;
-        height: 100vh;
-        overflow-y: auto;
-        padding-top: 2.5rem;
-        padding-bottom: 2.5rem;
+        flex-grow: 1; /* Main content takes remaining space */
+        height: 100vh; /* Full height */
+        overflow-y: auto; /* Allow scrolling */
+        padding-top: 1rem; /* Adjust padding */
+        padding-bottom: 2.5rem; /* bottom-10 */
      }
-     #adminButton, #themeToggle {
-         position: absolute;
-         top: 1.25rem;
-         right: 1.25rem;
-         display: flex;
-         padding: 0.5rem 0.75rem;
-         /* Ensure enough space for both buttons */
-         margin-left: 0;
-         margin-right: 0;
-         margin-top: 0;
+     /* Hide mobile menu button on desktop */
+     .menu-button-mobile {
+         display: none !important;
      }
-     #adminButton {
-         right: 6rem; /* Adjust position for admin button to make space for theme toggle */
+     /* Hide mobile button container on desktop */
+     .top-buttons-mobile {
+         display: none;
      }
-     #themeToggle {
-         right: 1.25rem; /* Keep theme toggle in original position */
+     #adminButtonHeader {
+         display: flex; /* Show admin button in header on desktop */
      }
-
-      #adminButton i, #themeToggle i {
-          margin: 0;
+      #adminButton { /* Original admin button that is now unused */
+         display: none;
       }
       #coverImage {
-         width: 300px;
+         width: 300px; /* Original size on larger screens */
          height: 300px;
-         margin-bottom: 1.5rem;
+         margin-bottom: 1.5rem; /* mb-6 */
      }
+     /* Hide mobile music list modal on desktop */
      #mobileMusicListModal {
          display: none !important;
      }
-     #songCountDesktop {
-         display: inline-block;
-         font-size: 1rem;
-         color: var(--text-sidebar-count);
-         font-weight: 500;
-         margin-left: auto;
+     /* Show search bar and greeting in header on desktop */
+     header #searchBar, header #headerGreeting {
+         display: block;
+     }
+     header {
+         justify-content: space-between;
+     }
+     #openMobileMusicListBtn {
+         display: none; /* Hide the mobile list trigger button on desktop */
      }
 }
