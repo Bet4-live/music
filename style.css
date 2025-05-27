@@ -168,6 +168,18 @@ button:disabled {
     gap: 12px;
 }
 
+/* Search Highlight */
+.highlight {
+    background-color: #4f46e5;
+    padding: 0 2px;
+    border-radius: 2px;
+}
+
+/* Clear Search Button */
+#clearSearchDesktop, #clearSearchMobile {
+    display: none; /* Varsayılan olarak gizli */
+}
+
 /* Responsive Design */
 @media (max-width: 767px) {
     body {
