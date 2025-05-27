@@ -4,149 +4,144 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Müzik Çalar</title>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
-    <link rel="shortcut icon" href="music.png" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js" defer></script>
+    <script src="script.js" defer></script>
 </head>
-<body class="dark-mode"> <main class="flex-1 p-8 relative flex flex-col items-center justify-center">
-
-        <button id="mobileMenuButton" class="menu-button-mobile md:hidden bg-gray-700 text-white p-3 rounded-lg fixed top-5 left-5 z-50 shadow-lg hover:bg-gray-600 transition-all transform hover:scale-105 active:scale-95 focus:outline-none">
-            <i class="fa fa-bars"></i>
-        </button>
-
-        <button id="adminButton" class="hidden md:block absolute top-5 right-[calc(320px+1.25rem)] bg-gray-700 text-white p-3 rounded-lg shadow-lg hover:bg-gray-600 transition-all transform hover:scale-105 active:scale-95 focus:outline-none">
-            <i class="fa fa-user-gear"></i>
-        </button>
-
-        <button id="themeToggleButton" class="absolute top-5 right-[calc(320px+5.5rem)] bg-gray-700 text-white p-3 rounded-full shadow-lg hover:bg-gray-600 transition-all transform hover:rotate-6 hover:scale-110 active:scale-95 focus:outline-none z-50">
-            <i class="fa fa-sun"></i> </button>
-
-
-        <div class="flex flex-col items-center justify-center h-full w-full max-w-xl">
-            <div id="emptyStateMessage" class="text-3xl font-bold text-gray-500 animate-fade-in hidden">
-                Müzik Seçin
-            </div>
-            <img id="coverImage" src="default-cover.jpg" alt="Müzik Kapağı" class="w-64 h-64 md:w-80 md:h-80 rounded-xl shadow-lg mb-6 transform transition-all duration-300">
-            <h2 id="songTitle" class="text-4xl font-bold text-gray-100 text-center mb-2">Başlık</h2>
-            <p id="artistName" class="text-xl text-gray-400 text-center">Sanatçı</p>
-        </div>
-
-
-        <div id="alertMessage" class="fixed top-10 md:top-20 z-50 bg-red-600 text-white px-6 py-3 rounded-lg shadow-xl hidden transition-all duration-300 ease-out transform -translate-y-full opacity-0">
-            </div>
-
-        <div id="loadingOverlay" class="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 hidden">
-            <div class="spinner border-t-4 border-indigo-500 border-solid rounded-full w-12 h-12 animate-spin"></div>
-        </div>
-
-    </main>
-
-    <aside class="w-80 bg-gray-950 p-5 flex flex-col shadow-lg rounded-l-3xl border-l border-gray-800 relative z-30">
-        <button id="homeButton" class="text-2xl font-bold border-b-2 border-indigo-600 pb-3 mb-4 flex items-center justify-center gap-2 text-indigo-400 hover:text-indigo-300 transition-all transform hover:scale-105 active:scale-95 focus:outline-none bg-transparent">
-            <i class="fa fa-headphones-alt"></i> Müzikler
-        </button>
-
-        <div id="songCountContainer" class="text-sm text-gray-400 mb-4 text-center">
-            Toplam <span id="songCount" class="font-semibold text-indigo-400">0</span> Müzik
-        </div>
-
-        <div id="musicListContainer" class="flex-1 overflow-y-auto custom-scrollbar pr-2 mb-4">
-            <div id="musicList" class="space-y-3">
-                </div>
-        </div>
-
-        <div class="flex items-center justify-between mt-auto">
-            <h3 class="text-gray-400 text-sm">Yaklaşan Şarkılar (Yakında...)</h3>
-        </div>
-        <div id="upcomingSongsContainer" class="flex overflow-x-auto custom-scrollbar mt-2 p-2 bg-gray-800 rounded-lg space-x-3 hidden"> </div>
-        <div class="flex justify-between mt-3 hidden"> <button id="scrollLeftUpcoming" class="bg-gray-700 text-gray-300 px-3 py-1 rounded-full text-sm hover:bg-gray-600 transition-all transform hover:scale-105 active:scale-95 focus:outline-none">
-                <i class="fa fa-chevron-left"></i>
-            </button>
-            <button id="scrollRightUpcoming" class="bg-gray-700 text-gray-300 px-3 py-1 rounded-full text-sm hover:bg-gray-600 transition-all transform hover:scale-105 active:scale-95 focus:outline-none">
-                <i class="fa fa-chevron-right"></i>
-            </button>
-        </div>
+<body class="bg-gray-900 text-white">
+    <aside class="bg-gray-800 p-4 flex flex-col">
+        <h1 class="text-xl font-bold mb-4 flex items-center gap-2">
+            <i class="fa fa-music"></i> Müzikler
+        </h1>
+        <span id="songCountDesktop" class="text-gray-400">0 Şarkı</span>
+        <div id="musicListDesktop" class="mt-4 flex-1 overflow-y-auto"></div>
     </aside>
 
-    <div id="musicPlayerContainer" class="fixed bottom-0 left-0 right-80 bg-gray-800 bg-opacity-90 backdrop-blur-sm p-4 z-40 flex flex-col items-center justify-center shadow-lg rounded-t-xl">
-        <audio id="audioPlayer" src=""></audio>
-        <div class="w-full max-w-xl mb-4">
-            <input type="range" id="progressBar" value="0" step="0.01" class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer custom-range-slider">
-        </div>
-        <div id="timeDisplay" class="text-sm text-gray-400 mb-4">00:00 / 00:00</div>
-        <div class="flex items-center space-x-6 mb-4">
-            <button id="prevBtn" class="text-indigo-400 hover:text-indigo-300 transition-all transform hover:scale-110 active:scale-90 focus:outline-none">
-                <i class="fa fa-backward text-3xl"></i>
+    <main class="p-6 flex flex-col items-center relative">
+        <div class="top-buttons-mobile flex gap-2 mb-4 md:hidden">
+            <button id="mobileMenuBtn" class="bg-indigo-600 p-2 rounded" aria-label="Müzik Listesini Aç">
+                <i class="fa fa-bars"></i>
             </button>
-            <button id="playPauseBtn" class="bg-indigo-600 text-white p-4 rounded-full shadow-lg hover:bg-indigo-500 transition-all transform hover:scale-110 active:scale-90 focus:outline-none">
-                <i class="fa fa-play text-2xl"></i>
-            </button>
-            <button id="nextBtn" class="text-indigo-400 hover:text-indigo-300 transition-all transform hover:scale-110 active:scale-90 focus:outline-none">
-                <i class="fa fa-forward text-3xl"></i>
+            <button id="searchButton" class="bg-indigo-600 p-2 rounded" aria-label="Müzik Ara">
+                <i class="fa fa-search"></i>
             </button>
         </div>
-        <div class="flex items-center w-full max-w-xs gap-3">
-            <i id="volumeIcon" class="fa fa-volume-high text-gray-400 text-lg"></i>
-            <input type="range" id="volumeBar" value="1" min="0" max="1" step="0.01" class="flex-grow h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer custom-range-slider">
-        </div>
-    </div>
 
+        <button id="adminButton" class="bg-indigo-600 p-2 rounded absolute top-5 right-5 hidden md:flex items-center gap-2" aria-label="Admin Panelini Aç">
+            <i class="fa fa-user-shield"></i> Admin
+        </button>
 
-    <div id="mobileMusicListModal" class="fixed inset-0 bg-gray-900 bg-opacity-95 z-50 flex flex-col hidden md:hidden p-5 animate-fade-in">
-        <div class="flex justify-between items-center border-b border-gray-700 pb-3 mb-4">
-            <h2 class="text-2xl font-bold text-white flex items-center gap-2"><i class="fa fa-list"></i> Müzik Listesi</h2>
-            <button id="closeMobileListBtn" class="bg-gray-700 text-white p-3 rounded-lg hover:bg-gray-600 transition-all transform hover:scale-105 active:scale-95 focus:outline-none">
-                <i class="fa fa-times"></i>
-            </button>
-        </div>
-        <div id="mobileMusicListContent" class="flex-1 overflow-y-auto custom-scrollbar pr-2">
+        <section id="player" class="text-center">
+            <img id="coverImage" src="https://placehold.co/300x300/e2e8f0/94a3b8?text=Müzik+Seçin" alt="Albüm Kapağı" class="rounded-lg mb-6 mx-auto">
+            <h2 id="currentSongTitle" class="text-xl font-semibold mb-4">Müzik Seçin</h2>
+            <audio id="audioPlayer" preload="metadata"></audio>
+            <div class="custom-player-controls flex flex-col items-center gap-4">
+                <div class="flex gap-4">
+                    <button id="prevBtn" class="text-gray-600 hover:text-gray-900 disabled:opacity-40" aria-label="Önceki Şarkı">
+                        <i class="fa fa-backward fa-lg"></i>
+                    </button>
+                    <button id="playPauseBtn" class="text-gray-600 hover:text-gray-900" aria-label="Oynat/Duraklat">
+                        <i class="fa fa-play fa-lg"></i>
+                    </button>
+                    <button id="nextBtn" class="text-gray-600 hover:text-gray-900 disabled:opacity-40" aria-label="Sonraki Şarkı">
+                        <i class="fa fa-forward fa-lg"></i>
+                    </button>
+                </div>
+                <div class="w-full flex items-center gap-2">
+                    <span id="currentTime" class="text-sm">0:00</span>
+                    <input type="range" id="seekBar" min="0" max="100" value="0" class="seek-bar flex-1" aria-label="Şarkı İlerlemesi">
+                    <span id="totalDuration" class="text-sm">0:00</span>
+                </div>
+                <div class="flex items-center gap-2 w-32">
+                    <i id="volumeIcon" class="fa fa-volume-high text-gray-600 hover:text-gray-900 cursor-pointer w-5 text-center" aria-label="Ses Kontrolü"></i>
+                    <input type="range" id="volumeBar" min="0" max="1" step="0.01" value="1" class="volume-bar" aria-label="Ses Seviyesi">
+                </div>
             </div>
-    </div>
+        </section>
 
-    <div id="adminPanelModal" class="fixed inset-0 bg-gray-900 bg-opacity-95 z-50 flex items-center justify-center p-5 hidden animate-fade-in">
-        <div class="bg-gray-800 p-8 rounded-lg shadow-xl w-full max-w-md relative custom-scrollbar overflow-y-auto">
-            <button id="closeAdminPanelBtn" class="absolute top-5 right-5 bg-gray-700 text-white p-3 rounded-lg hover:bg-gray-600 transition-all transform hover:scale-105 active:scale-95 focus:outline-none">
-                <i class="fa fa-times"></i>
-            </button>
-            <h2 class="text-3xl font-bold text-indigo-400 mb-6 text-center">Admin Paneli</h2>
-
-            <div class="space-y-6">
-                <h3 class="text-xl font-semibold text-gray-200 border-b border-gray-700 pb-2">Müzik Ekle</h3>
-                <label for="musicTitleInput" class="block text-sm font-medium text-gray-300">Şarkı Adı:</label>
-                <input type="text" id="musicTitleInput" placeholder="Şarkı Adı" class="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-white placeholder-gray-400">
-
-                <label for="artistInput" class="block text-sm font-medium text-gray-300">Sanatçı Adı:</label>
-                <input type="text" id="artistInput" placeholder="Sanatçı Adı" class="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-white placeholder-gray-400">
-
-                <label for="musicFileInput" class="block text-sm font-medium text-gray-300">Müzik Dosyası (MP3/WAV):</label>
-                <input type="file" id="musicFileInput" accept="audio/*" class="w-full text-sm text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-indigo-600 file:text-white hover:file:bg-indigo-700 cursor-pointer transition-all">
-
-                <label for="musicImageInput" class="block text-sm font-medium text-gray-300">Kapak Resmi (JPG/PNG):</label>
-                <input type="file" id="musicImageInput" accept="image/*" class="w-full text-sm text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-indigo-600 file:text-white hover:file:bg-indigo-700 cursor-pointer transition-all">
-
-                <button id="addMusicBtn" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded-lg transition-all flex items-center justify-center gap-2 transform hover:scale-105 active:scale-95 focus:outline-none">
-                    <i class="fa fa-plus"></i> Müziği Ekle
+        <section id="upcoming" class="mt-6 w-full max-w-2xl">
+            <h3 class="text-lg font-semibold mb-2">Yaklaşan Şarkılar</h3>
+            <div class="relative">
+                <button id="scrollLeftUpcoming" class="absolute left-0 top-1/2 transform -translate-y-1/2 bg-gray-700 p-2 rounded-full" aria-label="Sola Kaydır">
+                    <i class="fa fa-chevron-left"></i>
                 </button>
-
-                <hr class="border-gray-600 my-4">
-
-                <h3 class="text-xl font-semibold text-gray-200 border-b border-gray-700 pb-2">Müzik Sil</h3>
-                <label for="deleteSelect" class="block text-sm font-medium text-gray-300">Silinecek Müziği Seç:</label>
-                <select id="deleteSelect" class="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-white">
-                    <option value="" disabled selected>Silmek için seçin...</option>
-                </select>
-                <button id="deleteMusicBtn" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-4 rounded-lg transition-all flex items-center justify-center gap-2 transform hover:scale-105 active:scale-95 focus:outline-none">
-                    <i class="fa fa-trash"></i> Müziği Sil
+                <div id="upcomingSongsContainer" class="flex gap-4 overflow-x-auto pb-4 snap-x snap-mandatory"></div>
+                <button id="scrollRightUpcoming" class="absolute right-0 top-1/2 transform -translate-y-1/2 bg-gray-700 p-2 rounded-full" aria-label="Sağa Kaydır">
+                    <i class="fa fa-chevron-right"></i>
                 </button>
             </div>
+        </section>
+    </main>
+
+    <div id="mobileMusicListModal" class="fixed inset-0 bg-black bg-opacity-70 hidden" role="dialog" aria-label="Mobil Müzik Listesi">
+        <div id="mobileMusicListContent" class="bg-gray-800 p-4 rounded-lg w-11/12 max-w-md">
+            <h2 class="text-xl font-bold mb-4 flex items-center gap-2">
+                <i class="fa fa-music"></i> Müzikler
+            </h2>
+            <div id="musicListMobile" class="max-h-96 overflow-y-auto"></div>
+            <button id="closeMobileListBtn" class="mt-4 bg-red-600 p-2 rounded w-full" aria-label="Listeyi Kapat">
+                <i class="fa fa-times"></i> Kapat
+            </button>
         </div>
     </div>
 
-    <script src="script.js"></script>
+    <div id="searchOverlay" class="fixed inset-0 bg-black bg-opacity-70 hidden items-center justify-center" role="dialog" aria-label="Müzik Arama">
+        <div class="bg-gray-800 p-4 rounded-lg w-11/12 max-w-md">
+            <input id="searchInput" type="text" placeholder="Müzik ara..." class="w-full p-2 mb-4 rounded bg-gray-700 text-white" aria-label="Arama Kutusu">
+            <div id="searchResults" class="max-h-96 overflow-y-auto"></div>
+            <button id="closeSearchBtn" class="mt-4 bg-red-600 p-2 rounded w-full" aria-label="Aramayı Kapat">
+                <i class="fa fa-times"></i> Kapat
+            </button>
+        </div>
+    </div>
+
+    <div id="adminPanel" class="fixed inset-0 bg-black bg-opacity-70 hidden items-center justify-center" role="dialog" aria-label="Admin Paneli">
+        <div class="bg-gray-800 p-6 rounded-lg w-11/12 max-w-md">
+            <button id="closeAdminPanelBtn" class="absolute top-2 right-2 text-gray-400 hover:text-white" aria-label="Admin Panelini Kapat">
+                <i class="fa fa-times"></i>
+            </button>
+            <h2 class="text-xl font-bold mb-4">Admin Paneli</h2>
+            <div id="loginForm" class="flex flex-col gap-4">
+                <p>Giriş Yapın</p>
+                <input id="authEmail" type="email" placeholder="Email" class="p-2 rounded bg-gray-700" aria-label="Email">
+                <input id="authPass" type="password" placeholder="Şifre" class="p-2 rounded bg-gray-700" aria-label="Şifre">
+                <button id="signInBtn" class="bg-indigo-600 p-2 rounded flex items-center justify-center gap-2" aria-label="Giriş Yap">
+                    <i class="fa fa-sign-in-alt"></i> Giriş Yap
+                </button>
+            </div>
+            <div id="adminControls" class="hidden flex-col gap-4">
+                <span id="loggedInUserEmail" class="text-gray-400"></span>
+                <button id="signOutBtn" class="bg-red-600 p-2 rounded flex items-center justify-center gap-2" aria-label="Çıkış Yap">
+                    <i class="fa fa-sign-out-alt"></i> Çıkış Yap
+                </button>
+                <div>
+                    <h3 class="font-semibold mb-2">Müzik Ekle</h3>
+                    <input id="musicName" type="text" placeholder="Müzik Adı" class="w-full p-2 mb-2 rounded bg-gray-700" aria-label="Müzik Adı">
+                    <input id="musicFile" type="file" accept="audio/*" class="w-full mb-2" aria-label="Müzik Dosyası">
+                    <input id="musicImage" type="file" accept="image/*" class="w-full mb-2" aria-label="Kapak Resmi">
+                    <div id="uploadProgress" class="hidden w-full bg-gray-700 rounded h-2 mb-2">
+                        <div class="bg-indigo-600 h-full rounded" style="width: 0%"></div>
+                    </div>
+                    <button id="addMusicBtn" class="bg-green-600 p-2 rounded w-full flex items-center justify-center gap-2" aria-label="Müzik Ekle">
+                        <i class="fa fa-plus"></i> Müziği Ekle
+                    </button>
+                </div>
+                <div>
+                    <h3 class="font-semibold mb-2">Müzik Sil</h3>
+                    <select id="deleteSelect" class="w-full p-2 mb-2 rounded bg-gray-700" aria-label="Silinecek Müzik">
+                        <option value="" disabled selected>Silmek için seçin...</option>
+                    </select>
+                    <button id="deleteMusicBtn" class="bg-red-600 p-2 rounded w-full flex items-center justify-center gap-2" aria-label="Müzik Sil">
+                        <i class="fa fa-trash"></i> Seçilen Müziği Sil
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="loadingOverlay" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center" aria-hidden="true">
+        <i class="fa fa-spinner fa-spin text-4xl text-white"></i>
+    </div>
 </body>
 </html>
