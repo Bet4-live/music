@@ -3,15 +3,46 @@
     width: 8px;
 }
 ::-webkit-scrollbar-track {
-    background: #2d2d3f; /* Sidebar track color */
+    background: var(--bg-secondary); /* Sidebar track color, adapts to theme */
 }
 ::-webkit-scrollbar-thumb {
-    background: #555;
+    background: var(--accent-color-dark); /* Thumb color, adapts to theme */
     border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
-    background: #777;
+    background: var(--accent-color); /* Hover thumb color */
 }
+
+/* CSS Custom Properties (Değişkenler) for theming */
+:root {
+    --bg-primary: #1a202c; /* body background */
+    --bg-secondary: #2d3748; /* aside, modal background */
+    --bg-tertiary: #111827; /* player container background */
+    --text-color-light: #e2e8f0; /* primary text */
+    --text-color-dark: #a0aec0; /* secondary text */
+    --border-color: #4a5568; /* borders */
+    --accent-color: #6366f1; /* Indigo 500 */
+    --accent-color-hover: #4f46e5; /* Indigo 600 */
+    --accent-color-dark: #3730a3; /* Indigo 800 */
+    --success-color: #10b981; /* Green 500 */
+    --error-color: #ef4444; /* Red 500 */
+}
+
+/* Light mode (optional, for future expansion) */
+body.light-mode {
+    --bg-primary: #f8f8f8;
+    --bg-secondary: #ffffff;
+    --bg-tertiary: #f0f0f0;
+    --text-color-light: #2d3748;
+    --text-color-dark: #4a5568;
+    --border-color: #e2e8f0;
+    --accent-color: #4f46e5;
+    --accent-color-hover: #4338ca;
+    --accent-color-dark: #312e81;
+    --success-color: #059669;
+    --error-color: #dc2626;
+}
+
 
 /* Ensure body takes full height and uses Inter font */
 body {
@@ -19,326 +50,226 @@ body {
     height: 100vh;
     overflow: hidden; /* Prevent body scroll to manage scrolling within main/aside */
     display: flex; /* Use flexbox for layout */
+    background-color: var(--bg-primary); /* Use custom property */
+    color: var(--text-color-light); /* Use custom property */
+}
+
+/* Base styles for aside */
+aside {
+    background-color: var(--bg-secondary);
+}
+
+/* Base styles for main */
+main {
+    background-color: var(--bg-primary);
+    color: var(--text-color-light);
 }
 
 /* Hide default audio player controls completely */
 audio {
-   width: 100%;
-   max-width: 500px; /* Limit player width on larger screens */
-   margin-top: 1rem; /* Space above player */
-   filter: invert(15%) sepia(5%) saturate(1200%) hue-rotate(190deg) brightness(95%) contrast(90%); /* Subtle color adjustment */
-   border-radius: 999px; /* Fully rounded corners */
    opacity: 0; /* Hide completely */
    pointer-events: none; /* Disable interaction */
    height: 0px; /* No height */
    visibility: hidden; /* Hide it completely */
-   position: absolute; /* Remove from layout flow */
+   position: absolute; /* Remove from document flow */
 }
 
-/* Custom progress bar styling */
-input[type="range"] {
-    -webkit-appearance: none;
-    appearance: none;
-    width: 100%;
-    height: 6px;
-    background: #e5e7eb; /* Lighter track color (gray-200) */
-    border-radius: 3px;
-    cursor: pointer;
-    outline: none;
+/* Spinner for loading overlay */
+.spinner {
+    border-color: var(--accent-color) !important;
+    border-right-color: transparent !important;
 }
 
-/* Progress fill for seek bar */
-input[type="range"].seek-bar::-webkit-slider-runnable-track {
-    background: linear-gradient(to right, #4f46e5 var(--progress, 0%), #e5e7eb var(--progress, 0%));
-    height: 6px;
-    border-radius: 3px;
+/* Custom range slider (progress bar and volume bar) */
+.custom-range-slider {
+    -webkit-appearance: none; /* Hides the default slider */
+    background: var(--border-color); /* Track background */
+    outline: none; /* Remove outline */
+    opacity: 0.7; /* Opacity for styling */
+    transition: opacity .2s; /* Smooth transition on hover */
+    height: 6px; /* Track height */
+    border-radius: 999px; /* Rounded track */
 }
-input[type="range"].seek-bar::-moz-range-progress {
-    background-color: #4f46e5;
-    height: 6px;
-     border-radius: 3px;
-}
- input[type="range"].seek-bar::-moz-range-track {
-     background-color: #e5e7eb;
-     height: 6px;
-     border-radius: 3px;
- }
 
-/* Thumb styling for seek bar */
-input[type="range"]::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    appearance: none;
-    width: 16px;
-    height: 16px;
-    background: #4f46e5; /* Indigo thumb color */
+.custom-range-slider:hover {
+    opacity: 1;
+}
+
+.custom-range-slider::-webkit-slider-thumb {
+    -webkit-appearance: none; /* Hides the default slider thumb */
+    width: 18px; /* Thumb width */
+    height: 18px; /* Thumb height */
+    border-radius: 50%; /* Make it round */
+    background: var(--accent-color); /* Thumb color */
+    cursor: grab; /* Cursor for dragging */
+    box-shadow: 0 0 5px rgba(0,0,0,0.3); /* Subtle shadow */
+    transition: background-color 0.2s, transform 0.2s; /* Smooth transition */
+}
+
+.custom-range-slider::-webkit-slider-thumb:active {
+    cursor: grabbing;
+    transform: scale(1.1); /* Slightly enlarge on active */
+}
+
+.custom-range-slider::-moz-range-thumb {
+    width: 18px;
+    height: 18px;
     border-radius: 50%;
-    cursor: pointer;
-    margin-top: -5px; /* Center thumb vertically */
-    box-shadow: 0 1px 3px rgba(0,0,0,0.2); /* Add a subtle shadow */
-}
-input[type="range"]::-moz-range-thumb {
-    width: 16px;
-    height: 16px;
-    background: #4f46e5; /* Indigo thumb color */
-    border-radius: 50%;
-    cursor: pointer;
-    border: none; /* Remove default border in Firefox */
-     box-shadow: 0 1px 3px rgba(0,0,0,0.2); /* Add a subtle shadow */
+    background: var(--accent-color);
+    cursor: grab;
+    box-shadow: 0 0 5px rgba(0,0,0,0.3);
+    transition: background-color 0.2s, transform 0.2s;
 }
 
-/* Volume bar specific thumb styling */
-input[type="range"].volume-bar {
-    background: #e5e7eb; /* Lighter track color (gray-200) */
-}
-input[type="range"].volume-bar::-webkit-slider-thumb {
-    background: #6b7280; /* Gray thumb for volume */
-     width: 12px;
-     height: 12px;
-    margin-top: -3px; /* Center thumb vertically */
-     box-shadow: 0 1px 3px rgba(0,0,0,0.2); /* Add a subtle shadow */
-}
- input[type="range"].volume-bar::-moz-range-thumb {
-    background: #6b7280; /* Gray thumb for volume */
-    width: 12px;
-    height: 12px;
-    border: none; /* Remove default border in Firefox */
-     box-shadow: 0 1px 3px rgba(0,0,0,0.2); /* Add a subtle shadow */
-}
-input[type="range"].volume-bar::-moz-range-track {
-     background-color: #e5e7eb;
-     height: 6px;
-     border-radius: 3px;
+.custom-range-slider::-moz-range-thumb:active {
+    cursor: grabbing;
+    transform: scale(1.1);
 }
 
+/* Animations */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
 
-/* Basic transition for hover effects */
-.transition-all {
+@keyframes fadeOut {
+    from { opacity: 1; transform: translateY(0); }
+    to { opacity: 0; transform: translateY(-20px); }
+}
+
+.animate-fade-in {
+    animation: fadeIn 0.5s ease-out forwards;
+}
+
+.animate-fade-out {
+    animation: fadeOut 0.5s ease-in forwards;
+}
+
+/* Specific button animations (Tailwind provides some, but we can enhance) */
+button {
     transition: all 0.2s ease-in-out;
 }
 
-/* Style for the custom player controls container */
-.custom-player-controls {
-    background-color: rgba(255, 255, 255, 0.9); /* Slightly more opaque white */
-    backdrop-filter: blur(10px); /* Stronger blur effect */
-    border-radius: 16px; /* More rounded */
-    padding: 15px 25px; /* Adjust padding */
-    margin-top: 1.5rem; /* Space above controls */
-    box-shadow: 0 6px 25px rgba(0, 0, 0, 0.15); /* Softer, larger shadow */
-    width: 100%;
-    max-width: 500px; /* Match audio player max-width */
-    border: 1px solid rgba(255, 255, 255, 0.3); /* Subtle border */
+button:hover {
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
 }
 
-/* Styling for disabled buttons */
-button:disabled {
-    opacity: 0.4;
-    cursor: not-allowed;
+button:active {
+    transform: scale(0.95);
 }
 
-/* Mobile Music List Modal */
-#mobileMusicListModal {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba(0, 0, 0, 0.7); /* Darker overlay */
-    backdrop-filter: blur(5px); /* Subtle blur */
-    z-index: 1000; /* Significantly increased z-index */
-    display: flex; /* Always use flexbox for centering */
-    align-items: center; /* Center vertically */
-    justify-content: center; /* Center horizontally */
-    opacity: 0; /* Start hidden */
-    visibility: hidden;
-    transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+/* Override default Tailwind for certain elements if needed */
+.text-indigo-400 { color: var(--accent-color); }
+.hover\:text-indigo-300:hover { color: var(--accent-color-hover); }
+.bg-indigo-600 { background-color: var(--accent-color); }
+.hover\:bg-indigo-500:hover { background-color: var(--accent-color-hover); }
+
+/* Custom class for music list items */
+.music-list-item {
+    background-color: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    color: var(--text-color-light);
+    transition: background-color 0.2s ease, transform 0.1s ease;
+}
+.music-list-item:hover {
+    background-color: var(--bg-secondary); /* Darker on hover */
+    transform: translateY(-2px); /* Slight lift */
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+.music-list-item.active {
+    background-color: var(--accent-color-dark); /* Active background */
+    border-color: var(--accent-color);
+    box-shadow: 0 0 15px rgba(99, 102, 241, 0.4); /* Glow effect */
+    transform: translateY(-2px);
+}
+.music-list-item.active .text-gray-100 {
+    color: white; /* Active song title color */
+}
+.music-list-item.active .text-gray-400 {
+    color: var(--text-color-light); /* Active song artist color */
 }
 
-#mobileMusicListModal.open {
-    opacity: 1;
-    visibility: visible;
+/* Admin panel input/select styles */
+.admin-panel-modal input,
+.admin-panel-modal select {
+    background-color: var(--bg-tertiary);
+    border-color: var(--border-color);
+    color: var(--text-color-light);
+}
+.admin-panel-modal input::placeholder {
+    color: var(--text-color-dark);
+}
+.admin-panel-modal input:focus,
+.admin-panel-modal select:focus {
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 2px var(--accent-color);
 }
 
-#mobileMusicListContent {
-    background-color: #1e293b; /* Slate-800 */
-    color: white;
-    padding: 20px;
-    border-radius: 12px;
-    max-width: 90%; /* Max width on small screens */
-    width: 300px; /* A fixed width for the modal content */
-    max-height: 80vh; /* Limit height to prevent overflow */
-    overflow-y: auto; /* Add scrolling if content exceeds max height */
-    position: relative; /* For close button positioning */
-    box-shadow: 0 10px 30px rgba(0,0,0,0.3); /* More prominent shadow */
-}
-
- #mobileMusicListContent h2 {
-     font-size: 1.5rem; /* Text-2xl */
-     font-weight: 700; /* Font-bold */
-     border-bottom: 1px solid #475569; /* Slate-600 */
-     padding-bottom: 12px; /* pb-3 */
-     margin-bottom: 16px; /* mb-4 */
-     display: flex;
-     align-items: center;
-     gap: 12px; /* gap-3 */
- }
-
-/* Upcoming Songs Container Styling */
-#upcomingSongsContainer {
-    -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
-    scrollbar-width: none; /* Hide scrollbar for Firefox */
-}
-
-#upcomingSongsContainer::-webkit-scrollbar {
-    display: none; /* Hide scrollbar for Chrome, Safari, Opera */
-}
-
-.upcoming-song-item {
-    flex: 0 0 auto; /* Prevent stretching */
-    width: 180px; /* Fixed width for each item */
-    background-color: #fff;
-    border-radius: 12px;
-    padding: 16px;
-    text-align: center;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
-    cursor: pointer;
-    scroll-snap-align: start; /* Snap items to start */
-}
-
-.upcoming-song-item:hover {
-    transform: translateY(-5px) scale(1.02);
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
-}
-
-.upcoming-song-item img {
-    width: 120px;
-    height: 120px;
-    border-radius: 8px;
-    object-fit: cover;
-    margin: 0 auto 12px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-
-.upcoming-song-item .song-title {
-    font-weight: 600;
-    color: #333;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    margin-bottom: 4px;
-}
-
-.upcoming-song-item .song-artist {
-    font-size: 0.875rem;
-    color: #666;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-
-/* Responsive layout for sidebar and main content */
-@media (max-width: 767px) { /* Apply below md breakpoint */
-    body {
-        flex-direction: column; /* Stack elements vertically on small screens */
-        overflow-y: auto; /* Allow scrolling on the body when stacked */
-    }
-    aside {
-        display: none !important; /* Hide desktop sidebar on mobile with high priority */
-    }
-
+/* Specific styles for responsive design */
+@media (min-width: 768px) {
+    /* Main content adjustment for desktop */
     main {
-        width: 100%; /* Main content takes full width */
-        height: auto; /* Auto height */
-        flex-grow: 1; /* Allow main content to take remaining space */
-         overflow-y: visible; /* Main content handles its own potential scrolling */
-         padding-top: 1rem; /* Adjust padding */
-         padding-bottom: 6rem; /* Add padding at the bottom for controls */
-    }
-     .custom-player-controls {
-         padding: 10px 15px; /* Reduce padding on small screens */
-         margin-top: 1rem; /* Adjust margin */
-     }
-     /* Hide the top buttons container on mobile */
-     .top-buttons-mobile {
-         display: none;
-     }
-     /* Hide admin button on mobile */
-     #adminButton {
-         display: none;
-     }
-     #coverImage {
-         width: 250px; /* Smaller cover image on mobile */
-         height: 250px;
-         margin-bottom: 1rem; /* Adjust margin */
-     }
-     #player {
-         padding-top: 0; /* Remove extra top padding */
-     }
-     /* Hide mobile song count on mobile (as the container is hidden) */
-     #songCountMobile {
-         display: none;
-     }
-     #upcomingSongsContainer {
-         justify-content: flex-start; /* Align items to the start on mobile */
-     }
-}
-
- @media (min-width: 768px) { /* Apply from md breakpoint */
-    body {
-        flex-direction: row; /* Side-by-side layout */
-    }
-     /* Show desktop sidebar on desktop */
-    aside {
-        display: flex;
-        width: 18rem; /* md:w-72 */
-        height: 100vh; /* Full height */
-        overflow-y: auto; /* Allow scrolling */
-         position: static; /* Static position on desktop */
-         left: auto; /* Reset left property */
-    }
-     main {
-        flex-grow: 1; /* Main content takes remaining space */
+        width: calc(100vw - 20rem); /* Adjust width for aside */
         height: 100vh; /* Full height */
         overflow-y: auto; /* Allow scrolling */
         padding-top: 2.5rem; /* top-10 */
-        padding-bottom: 2.5rem; /* bottom-10 */
-     }
-     /* Hide mobile menu button on desktop */
-     .menu-button-mobile {
-         display: none !important;
-     }
-     /* Hide mobile button container on desktop */
-     .top-buttons-mobile {
-         display: none;
-     }
-     #adminButton {
-         position: absolute; /* Absolute positioning on larger screens */
-         top: 1.25rem; /* top-5 */
-         right: 1.25rem; /* right-5 */
-         display: flex; /* Show admin button on desktop */
-         padding: 0.5rem 0.75rem; /* Adjust padding for icon-only button */
-     }
-      #adminButton i {
-          margin: 0; /* Remove margin next to text */
-      }
-      #coverImage {
-         width: 300px; /* Original size on larger screens */
-         height: 300px;
-         margin-bottom: 1.5rem; /* mb-6 */
-     }
-     /* Hide mobile music list modal on desktop */
-     #mobileMusicListModal {
-         display: none !important;
-     }
-     #songCountMobile {
-         display: none; /* Hide mobile song count on desktop */
-     }
-     #songCountDesktop {
-         display: inline-block; /* Show desktop song count */
-         font-size: 1rem; /* text-base */
-         color: #9ca3af; /* gray-400 */
-         font-weight: 500; /* font-medium */
-         margin-left: auto; /* Push to the right */
-     }
+        padding-bottom: 10rem; /* Add padding for fixed player at bottom */
+        display: flex; /* Ensure flex for centering */
+        align-items: center; /* Center items vertically */
+        justify-content: center; /* Center items horizontally */
+    }
+
+    /* Hide mobile menu button on desktop */
+    .menu-button-mobile {
+        display: none !important;
+    }
+    /* Hide mobile button container on desktop */
+    .top-buttons-mobile {
+        display: none;
+    }
+    #adminButton {
+        position: absolute; /* Absolute positioning on larger screens */
+        top: 1.25rem; /* top-5 */
+        right: 1.25rem; /* right-5 */
+        display: flex; /* Show admin button on desktop */
+        padding: 0.75rem; /* Square padding for icon-only button */
+        border-radius: 9999px; /* Make it circular */
+    }
+    #adminButton i {
+        margin: 0; /* Remove margin next to text */
+    }
+    #themeToggleButton {
+        top: 1.25rem; /* Align with admin button */
+        right: 4.5rem; /* Position next to admin button */
+        padding: 0.75rem;
+    }
+    #coverImage {
+        width: 300px; /* Original size on larger screens */
+        height: 300px;
+        margin-bottom: 1.5rem; /* mb-6 */
+    }
+    /* Hide mobile music list modal on desktop */
+    #mobileMusicListModal {
+        display: none !important;
+    }
+    #songCountMobile {
+        display: none; /* Hide mobile song count on desktop */
+    }
+
+    /* Adjust the music player container for desktop */
+    #musicPlayerContainer {
+        padding: 1.5rem; /* Slightly more padding on desktop */
+        flex-direction: row; /* Align items horizontally */
+        justify-content: center; /* Center items horizontally */
+        gap: 2rem; /* Space between components */
+    }
+    #musicPlayerContainer .w-full.max-w-xl {
+        margin-bottom: 0; /* Remove bottom margin for horizontal layout */
+    }
+    #musicPlayerContainer #timeDisplay {
+        margin-bottom: 0; /* Remove bottom margin */
+    }
+    #musicPlayerContainer .flex.items-center.space-x-6 {
+        margin-bottom: 0;
+    }
 }
