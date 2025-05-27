@@ -20,12 +20,17 @@
         <h2 class="text-2xl font-bold mb-4 flex items-center gap-3">
             <i class="fa fa-music"></i> Müzikler
         </h2>
-        <div class="relative w-full mb-4">
+        <div class="relative w-full mb-2">
             <input type="text" id="searchBarDesktop" placeholder="Müzik ara..." class="w-full p-2 bg-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
             <button id="clearSearchDesktop" class="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white hidden">
                 <i class="fa fa-times"></i>
             </button>
         </div>
+        <select id="searchTypeDesktop" class="w-full p-2 bg-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 mb-4">
+            <option value="name">Şarkı Adına Göre</option>
+            <option value="duration">Süreye Göre (dakika)</option>
+            <option value="date">Eklenme Tarihine Göre</option>
+        </select>
         <div id="musicListDesktop" class="space-y-2 flex-grow"></div>
         <span id="songCountDesktop" class="text-gray-400 mt-4">0 Şarkı</span>
     </aside>
@@ -64,12 +69,17 @@
                 <i class="fa fa-music"></i> Müzikler
                 <button id="closeMobileListBtn" class="ml-auto text-gray-400 hover:text-white"><i class="fa fa-times"></i></button>
             </h2>
-            <div class="relative w-full mb-4">
+            <div class="relative w-full mb-2">
                 <input type="text" id="searchBarMobile" placeholder="Müzik ara..." class="w-full p-2 bg-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
                 <button id="clearSearchMobile" class="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white hidden">
                     <i class="fa fa-times"></i>
                 </button>
             </div>
+            <select id="searchTypeMobile" class="w-full p-2 bg-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 mb-4">
+                <option value="name">Şarkı Adına Göre</option>
+                <option value="duration">Süreye Göre (dakika)</option>
+                <option value="date">Eklenme Tarihine Göre</option>
+            </select>
             <div id="musicListMobile" class="space-y-2"></div>
         </div>
     </div>
