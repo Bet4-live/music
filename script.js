@@ -1,5 +1,5 @@
 const SUPABASE_URL = 'https://skhbykqwdbwjcvqmwvft.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNraGJ5a3F3ZGJ3amN2cW13dmZ0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDU3Nzg0NDYsImV4cCI6MjA2MTM1NDQ0Nn0.e8pbfF7O_rTtSKxtFzzc_zZTsegsxsNaluHNFBbWbMs';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNraGJ5a3F3ZGJ3amN2cW13dmZ0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDA3Nzg0NDYsImV4cCI6MjA2MTM1NDQ0Nn0.e8pbfF7O_rTtSKxtFzzc_zZTsegsxsNaluHNFBbWbMs';
 
 document.addEventListener('DOMContentLoaded', async () => {
     if (typeof window.supabase === 'undefined') {
@@ -42,6 +42,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         volumeIcon: document.getElementById('volumeIcon'),
         searchBarDesktop: document.getElementById('searchBarDesktop'),
         searchBarMobile: document.getElementById('searchBarMobile'),
+        clearSearchDesktop: document.getElementById('clearSearchDesktop'),
+        clearSearchMobile: document.getElementById('clearSearchMobile'),
         closeMobileListBtn: document.getElementById('closeMobileListBtn'),
         closeAdminPanelBtn: document.getElementById('closeAdminPanelBtn'),
         addMusicBtn: document.getElementById('addMusicBtn'),
@@ -60,6 +62,15 @@ document.addEventListener('DOMContentLoaded', async () => {
         musicData: [],
         lastVolume: 1,
         filteredMusicData: [],
+    };
+
+    // Debounce Function for Search
+    const debounce = (func, delay) => {
+        let timeoutId;
+        return (...args) => {
+            clearTimeout(timeoutId);
+            timeoutId = setTimeout(() => func(...args), delay);
+        };
     };
 
     // Helper Functions
@@ -233,12 +244,32 @@ document.addEventListener('DOMContentLoaded', async () => {
     };
 
     const filterMusicList = () => {
-        const query = (elements.searchBarDesktop.value || elements.searchBarMobile.value || '').toLowerCase();
+        const query = (elements.searchBarDesktop.value || elements.searchBarMobile.value || '').trim().toLowerCase();
         state.filteredMusicData = state.musicData.filter(music => music.name.toLowerCase().includes(query));
+        
+        // Show/Hide clear buttons based on search input
+        elements.clearSearchDesktop.style.display = query ? 'block' : 'none';
+        elements.clearSearchMobile.style.display = query ? 'block' : 'none';
+        
+        renderMusicList(query);
+    };
+
+    const clearSearch = () => {
+        elements.searchBarDesktop.value = '';
+        elements.searchBarMobile.value = '';
+        elements.clearSearchDesktop.style.display = 'none';
+        elements.clearSearchMobile.style.display = 'none';
+        state.filteredMusicData = [...state.musicData];
         renderMusicList();
     };
 
-    const renderMusicList = async () => {
+    const highlightText = (text, query) => {
+        if (!query) return text;
+        const regex = new RegExp(`(${query})`, 'gi');
+        return text.replace(regex, '<span class="highlight">$1</span>');
+    };
+
+    const renderMusicList = async (query = '') => {
         elements.musicListDesktop.innerHTML = '';
         elements.musicListMobile.innerHTML = '';
         elements.deleteSelect.innerHTML = '<option value="" disabled selected>Silmek için seçin...</option>';
@@ -252,7 +283,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             if (error) throw new Error(error.message);
 
             state.musicData = data || [];
-            state.filteredMusicData = [...state.musicData];
+            if (!query) state.filteredMusicData = [...state.musicData];
             elements.songCountDesktop.textContent = `${state.musicData.length} Şarkı`;
             elements.songCountMobile.textContent = `${state.musicData.length} Şarkı`;
 
@@ -269,6 +300,13 @@ document.addEventListener('DOMContentLoaded', async () => {
                     elements.currentSongTitle.textContent = "Müzik Seçin";
                 }
                 updatePlayerUIState();
+                return;
+            }
+
+            if (state.filteredMusicData.length === 0 && query) {
+                const noResultsMessage = `<p class="text-gray-400 text-center mt-4">"${query}" için sonuç bulunamadı.</p>`;
+                elements.musicListDesktop.innerHTML = noResultsMessage;
+                elements.musicListMobile.innerHTML = noResultsMessage;
                 return;
             }
 
@@ -303,7 +341,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
                     const title = document.createElement('span');
                     title.className = "font-medium truncate flex-grow";
-                    title.innerText = music.name;
+                    title.innerHTML = highlightText(music.name, query);
                     div.appendChild(title);
 
                     div.onclick = () => loadAndPlayMusic(index);
@@ -574,8 +612,16 @@ document.addEventListener('DOMContentLoaded', async () => {
     elements.closeAdminPanelBtn.addEventListener('click', closeAdminPanel);
     elements.addMusicBtn.addEventListener('click', addMusic);
     elements.deleteMusicBtn.addEventListener('click', deleteMusic);
-    elements.searchBarDesktop.addEventListener('input', filterMusicList);
-    elements.searchBarMobile.addEventListener('input', filterMusicList);
+
+    // Debounced search handler
+    const debouncedFilterMusicList = debounce(filterMusicList, 300);
+    elements.searchBarDesktop.addEventListener('input', debouncedFilterMusicList);
+    elements.searchBarMobile.addEventListener('input', debouncedFilterMusicList);
+
+    // Clear search button listeners
+    elements.clearSearchDesktop.addEventListener('click', clearSearch);
+    elements.clearSearchMobile.addEventListener('click', clearSearch);
+
     document.querySelector('.menu-button-mobile').addEventListener('click', toggleMobileMusicList);
 
     // Initial Setup
