@@ -219,20 +219,6 @@ main {
         grid-template-columns: 1fr;
         padding-bottom: 6rem;
     }
-
-    /* Remove upcoming music specific styles on mobile */
-    #upcomingMusicContainerWrapper {
-        padding-bottom: 0.5rem; /* For scrollbar space */
-    }
-    /* Make upcoming song arrows smaller on mobile */
-    #upcomingPrevBtn, #upcomingNextBtn {
-        width: 1.75rem; /* w-7 */
-        height: 1.75rem; /* h-7 */
-    }
-    #upcomingPrevBtn i, #upcomingNextBtn i {
-        font-size: 0.875rem; /* text-sm */
-    }
-
 }
 
 @media (min-width: 768px) { /* Apply from md breakpoint (desktop) */
@@ -244,35 +230,4 @@ main {
     #adminButton { /* Keep desktop styling for admin button */
       /* No changes needed, uses default from HTML */
     }
-    /* These were for upcoming music, now removed */
-    /* #upcomingMusicContainerWrapper {
-        padding-left: 0;
-        padding-right: 0;
-    } */
 }
-
-/* Styles for horizontal scrolling in upcoming music */
-/* Removed as upcoming music section is removed */
-/* #upcomingMusicContainerWrapper {
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: thin;
-    scrollbar-color: #475569 #1e293b;
-}
-
-#upcomingMusicContainerWrapper::-webkit-scrollbar {
-    height: 8px;
-}
-
-#upcomingMusicContainerWrapper::-webkit-scrollbar-track {
-    background: #1e293b;
-}
-
-#upcomingMusicContainerWrapper::-webkit-scrollbar-thumb {
-    background: #475569;
-    border-radius: 4px;
-}
-
-#upcomingMusicContainerWrapper::-webkit-scrollbar-thumb:hover {
-    background: #64748b;
-} */
