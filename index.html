@@ -29,13 +29,13 @@
             <h2 class="text-xl font-semibold mb-3">Kitaplığın</h2>
             <ul class="space-y-2">
                 <li>
-                    <a href="#" class="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-700 transition-colors active-link">
+                    <a href="#" id="homeButton" class="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-700 transition-colors active-link">
                         <i class="fa fa-home text-xl"></i>
                         <span class="font-medium">Ana Sayfa</span>
                     </a>
                 </li>
                 <li>
-                    <a href="#" class="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-700 transition-colors">
+                    <a href="#" id="sidebarSearchButton" class="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-700 transition-colors">
                         <i class="fa fa-magnifying-glass text-xl"></i>
                         <span class="font-medium">Ara</span>
                     </a>
@@ -43,85 +43,61 @@
             </ul>
         </div>
 
-        <div class="mb-6">
+        <div class="mb-6 flex-grow">
             <h2 class="text-xl font-semibold mb-3">Çalma listeleri</h2>
             <ul class="space-y-2" id="musicListDesktop">
                 <p class="text-gray-400 text-center mt-4">Müzikler yükleniyor...</p>
             </ul>
         </div>
-
-        <div class="mb-6">
-            <h2 class="text-xl font-semibold mb-3">Keşfet</h2>
-            <ul class="space-y-2">
-                <li>
-                    <a href="#" class="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-700 transition-colors">
-                        <i class="fa-solid fa-list-ul text-xl"></i>
-                        <span class="font-medium">Çalma listeleri</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="#" class="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-700 transition-colors">
-                        <i class="fa-solid fa-microphone-alt text-xl"></i>
-                        <span class="font-medium">Sanatçılar</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="#" class="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-700 transition-colors">
-                        <i class="fa-solid fa-compact-disc text-xl"></i>
-                        <span class="font-medium">Albümler</span>
-                    </a>
-                </li>
-            </ul>
-        </div>
     </aside>
 
     <main class="flex-1 bg-gradient-to-br from-gray-900 to-slate-900 text-white p-6 md:p-8 relative overflow-y-auto pb-28">
-        <div class="flex items-center mb-8">
-            <div class="flex-grow">
-                <h2 class="text-4xl font-bold mb-2">Merhaba!</h2>
-                <p class="text-gray-400 text-lg">Senin için hazırlandı.</p>
+        <div id="searchArea" class="hidden sticky top-0 z-10 mb-6 backdrop-blur-md p-4 rounded-lg">
+            <div class="relative">
+                <input type="text" id="searchInput" placeholder="Müzik veya sanatçı ara..." class="w-full p-3 bg-slate-800 border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-white placeholder-gray-400">
+                <i class="fa fa-search absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
             </div>
-            <div class="hidden md:flex items-center bg-slate-800 rounded-full px-4 py-2 text-gray-300 border border-gray-700">
-                <i class="fa fa-search mr-2"></i>
-                <input type="text" placeholder="Ara..." class="bg-transparent outline-none flex-grow">
-            </div>
+            <div id="searchResults" class="mt-2 max-h-60 overflow-y-auto bg-slate-800 rounded-lg shadow-lg">
+                </div>
         </div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6" id="musicCardsContainer">
-            <div class="bg-slate-800 p-4 rounded-lg shadow-lg flex flex-col items-center text-center hover:bg-slate-700 transition-colors cursor-pointer">
-                <img src="https://placehold.co/150x150/7f9cf5/ffffff?text=Senin+İçin" alt="Playlist Cover" class="w-full h-auto rounded-md mb-3 object-cover">
-                <h4 class="font-semibold text-lg truncate w-full">Popüler Şarkılar</h4>
-                <p class="text-sm text-gray-400 truncate w-full">En çok dinlenenler</p>
+        <div id="mainContent">
+            <div class="flex items-center mb-8">
+                <div class="flex-grow">
+                    <h2 class="text-4xl font-bold mb-2">Merhaba!</h2>
+                    <p class="text-gray-400 text-lg">Senin için hazırlandı.</p>
+                </div>
+                </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6" id="musicCardsContainer">
+                <div class="bg-slate-800 p-4 rounded-lg shadow-lg flex flex-col items-center text-center hover:bg-slate-700 transition-colors cursor-pointer">
+                    <img src="https://placehold.co/150x150/7f9cf5/ffffff?text=Senin+İçin" alt="Playlist Cover" class="w-full h-auto rounded-md mb-3 object-cover">
+                    <h4 class="font-semibold text-lg truncate w-full">Popüler Şarkılar</h4>
+                    <p class="text-sm text-gray-400 truncate w-full">En çok dinlenenler</p>
+                </div>
             </div>
-             <div class="bg-slate-800 p-4 rounded-lg shadow-lg flex flex-col items-center text-center hover:bg-slate-700 transition-colors cursor-pointer">
-                <img src="https://placehold.co/150x150/f57f9c/ffffff?text=Yeni+Çıkanlar" alt="Playlist Cover" class="w-full h-auto rounded-md mb-3 object-cover">
-                <h4 class="font-semibold text-lg truncate w-full">Yeni Çıkanlar</h4>
-                <p class="text-sm text-gray-400 truncate w-full">Haftanın en yenileri</p>
-            </div>
-             <div class="bg-slate-800 p-4 rounded-lg shadow-lg flex flex-col items-center text-center hover:bg-slate-700 transition-colors cursor-pointer">
-                <img src="https://placehold.co/150x150/9cf57f/ffffff?text=Workout" alt="Playlist Cover" class="w-full h-auto rounded-md mb-3 object-cover">
-                <h4 class="font-semibold text-lg truncate w-full">Enerjik Çalışma</h4>
-                <p class="text-sm text-gray-400 truncate w-full">Antrenman için müzikler</p>
-            </div>
-             <div class="bg-slate-800 p-4 rounded-lg shadow-lg flex flex-col items-center text-center hover:bg-slate-700 transition-colors cursor-pointer">
-                <img src="https://placehold.co/150x150/7f94f5/ffffff?text=Rahatla" alt="Playlist Cover" class="w-full h-auto rounded-md mb-3 object-cover">
-                <h4 class="font-semibold text-lg truncate w-full">Sakin Akşamlar</h4>
-                <p class="text-sm text-gray-400 truncate w-full">Günün yorgunluğunu atın</p>
-            </div>
-             <div class="bg-slate-800 p-4 rounded-lg shadow-lg flex flex-col items-center text-center hover:bg-slate-700 transition-colors cursor-pointer">
-                <img src="https://placehold.co/150x150/f57ff4/ffffff?text=Keşfet" alt="Playlist Cover" class="w-full h-auto rounded-md mb-3 object-cover">
-                <h4 class="font-semibold text-lg truncate w-full">Mix Keşif</h4>
-                <p class="text-sm text-gray-400 truncate w-full">Rastgele yeni parçalar</p>
+
+            <div class="mt-12">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-3xl font-bold">Yaklaşan Şarkılar</h2>
+                    <div class="flex gap-2">
+                        <button id="upcomingPrevBtn" class="bg-slate-700 hover:bg-indigo-600 text-white p-2 rounded-full w-8 h-8 flex items-center justify-center transition-colors" aria-label="Önceki Yaklaşan Şarkılar">
+                            <i class="fa fa-chevron-left"></i>
+                        </button>
+                        <button id="upcomingNextBtn" class="bg-slate-700 hover:bg-indigo-600 text-white p-2 rounded-full w-8 h-8 flex items-center justify-center transition-colors" aria-label="Sonraki Yaklaşan Şarkılar">
+                            <i class="fa fa-chevron-right"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="relative">
+                    <div id="upcomingMusicContainerWrapper" class="overflow-hidden">
+                        <div id="upcomingMusicContainer" class="flex gap-6 transition-transform duration-300 ease-in-out pb-2">
+                            <p class="text-gray-400 text-center col-span-full">Yaklaşan şarkı bulunmamaktadır.</p>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
-
-        <div class="mt-12">
-            <h2 class="text-3xl font-bold mb-6">Yaklaşan Şarkılar</h2>
-            <div id="upcomingMusicContainer" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
-                <p class="text-gray-400 text-center col-span-full">Yaklaşan şarkı bulunmamaktadır.</p>
-            </div>
-        </div>
-
     </main>
 
     <footer class="fixed bottom-0 left-0 right-0 bg-slate-900 border-t border-gray-700 p-4 flex items-center justify-between z-30 shadow-2xl">
@@ -129,7 +105,7 @@
             <img id="coverImage" src="https://placehold.co/60x60/e2e8f0/94a3b8?text=Müzik+Seçin" alt="Albüm Kapağı" width="60" height="60" class="rounded-md shadow-md object-cover border border-gray-700"/>
             <div class="flex flex-col">
                 <h4 id="currentSongTitle" class="text-white font-semibold text-lg truncate w-40">Müzik Seçin</h4>
-                <p class="text-gray-400 text-sm">Bilinmeyen Sanatçı</p>
+                <p id="currentSongArtist" class="text-gray-400 text-sm">Bilinmeyen Sanatçı</p>
             </div>
         </div>
 
@@ -159,10 +135,8 @@
                 <i class="fa-solid fa-list-music"></i>
             </button>
         </div>
-        <audio id="audioPlayer" class="hidden"></audio> </footer>
-
-    <div id="mobileMusicListModal" class="hidden">
-        </div>
+        <audio id="audioPlayer" class="hidden"></audio>
+    </footer>
 
     <div id="adminPanel" class="fixed inset-0 bg-black bg-opacity-80 backdrop-blur-sm text-white flex items-center justify-center z-50 hidden p-5">
         <div class="bg-slate-800 p-6 md:p-8 rounded-xl shadow-2xl w-full max-w-md relative">
@@ -179,7 +153,7 @@
                  <button id="signInBtn" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded-lg transition-all flex items-center justify-center gap-2">
                      <i class="fa fa-sign-in-alt"></i> Giriş Yap
                  </button>
-                 </div>
+             </div>
 
             <div id="adminControls" class="hidden flex-col space-y-4">
                 <p id="loggedInUserEmail" class="text-gray-300 text-center font-medium"></p>
