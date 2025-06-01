@@ -17,210 +17,263 @@
 
     <aside class="w-64 md:w-72 lg:w-80 bg-gradient-to-br from-gray-900 to-slate-800 text-white p-5 flex flex-col shadow-lg overflow-y-auto z-20">
         <div class="flex items-center justify-between mb-8">
-            <h1 class="text-2xl font-bold text-indigo-400 flex items-center gap-2">
-                <i class="fas fa-compact-disc"></i> Muzika
-            </h1>
-            <button id="adminButton" class="text-gray-400 hover:text-indigo-400 transition-colors hidden md:block" title="Admin Paneli">
-                <i class="fas fa-user-cog text-xl"></i>
+            <h1 class="text-3xl font-bold text-indigo-400">Müzik Çalar</h1>
+            <button id="mobileMenuBtn" class="md:hidden text-gray-400 hover:text-white transition-colors text-2xl focus:outline-none">
+                <i class="fa fa-bars"></i>
             </button>
         </div>
 
-        <div class="mb-6">
-            <label for="searchInput" class="sr-only">Müzik Ara</label>
-            <div class="relative">
-                <input type="text" id="searchInput" placeholder="Müziklerde ara..." class="w-full p-3 pl-10 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-white placeholder-gray-400">
-                <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+        <div class="mb-6 relative">
+            <input type="text" id="searchInput" placeholder="Müzik veya sanatçı ara..." class="w-full py-2 pl-10 pr-4 rounded-full bg-gray-700 text-gray-200 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+            <i class="fa fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+        </div>
+
+        <div class="flex-grow overflow-y-auto scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-gray-800">
+            <h2 class="text-xl font-semibold text-gray-200 mb-4 border-b border-gray-700 pb-2">Şarkılar</h2>
+            <div id="musicListContainer" class="space-y-3">
+                <p class="text-gray-400 text-center">Müzikler yükleniyor...</p>
             </div>
         </div>
 
-        <h2 class="text-lg font-semibold text-gray-200 mb-4 border-b border-gray-700 pb-2">Müzik Listesi</h2>
-        <div id="musicListContainer" class="flex-grow space-y-3 pr-2 overflow-y-auto">
-            <p class="text-gray-400 text-center">Müzikler yükleniyor...</p>
+        <div class="mt-6 hidden md:block">
+            <button id="adminButton" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded-lg transition-all flex items-center justify-center gap-2">
+                <i class="fa fa-user-shield"></i> Admin Paneli
+            </button>
         </div>
     </aside>
 
-    <main class="flex-1 flex flex-col bg-gray-900 text-white relative overflow-hidden">
-
-        <header class="md:hidden bg-gray-800 p-4 flex justify-end items-center shadow-md z-10">
-            <button id="adminButtonMobile" class="text-gray-400 hover:text-indigo-400 transition-colors" title="Admin Paneli">
-                <i class="fas fa-user-cog text-xl"></i>
+    <div id="mobileMenuOverlay" class="fixed inset-0 bg-black bg-opacity-75 z-40 hidden md:hidden">
+        <div class="w-64 bg-gradient-to-br from-gray-900 to-slate-800 text-white h-full p-5 flex flex-col shadow-lg relative">
+            <button id="closeMobileMenuBtn" class="absolute top-4 right-4 text-gray-400 hover:text-white transition-colors text-2xl focus:outline-none">
+                <i class="fa fa-times"></i>
             </button>
-        </header>
-
-        <section class="flex-1 flex flex-col items-center justify-center p-4 md:p-8 overflow-hidden relative">
-            <div class="current-song text-center mb-8 w-full max-w-xl">
-                <img id="coverImage" src="https://via.placeholder.com/150/0f172a/94a3b8?text=Müzik" alt="Kapak Resmi" class="w-48 h-48 md:w-64 md:h-64 object-cover rounded-xl shadow-lg mx-auto mb-4 border border-gray-700">
-                <h2 id="currentSongTitle" class="text-3xl md:text-4xl font-bold text-indigo-300 truncate">Müzik Adı</h2>
-                <p id="currentSongArtist" class="text-lg md:text-xl text-gray-400 truncate">Sanatçı Adı</p>
+            <h1 class="text-3xl font-bold text-indigo-400 mb-8">Müzik Çalar</h1>
+            <div class="mb-6 relative">
+                <input type="text" id="mobileSearchInput" placeholder="Müzik veya sanatçı ara..." class="w-full py-2 pl-10 pr-4 rounded-full bg-gray-700 text-gray-200 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                <i class="fa fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
             </div>
-
-            <div class="w-full relative px-4 md:px-0">
-                <h3 class="text-xl font-semibold text-gray-300 mb-4 text-center">Yaklaşan Müzikler</h3>
-                <div class="relative">
-                    <button id="upcomingPrevBtn" class="absolute left-0 top-1/2 -translate-y-1/2 bg-gray-700 hover:bg-gray-600 rounded-full w-8 h-8 flex items-center justify-center text-gray-300 z-10 shadow-lg">
-                        <i class="fa fa-chevron-left"></i>
-                    </button>
-                    <div id="upcomingMusicContainerWrapper" class="flex overflow-x-auto space-x-4 pb-4 md:pb-0 px-2 scrollbar-hide">
-                        <p class="text-gray-400 text-center w-full">Yaklaşan müzikler yükleniyor...</p>
+            <div class="flex-grow overflow-y-auto scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-gray-800">
+                <h2 class="text-xl font-semibold text-gray-200 mb-4 border-b border-gray-700 pb-2">Şarkılar</h2>
+                <div id="mobileMusicListContainer" class="space-y-3">
                     </div>
-                    <button id="upcomingNextBtn" class="absolute right-0 top-1/2 -translate-y-1/2 bg-gray-700 hover:bg-gray-600 rounded-full w-8 h-8 flex items-center justify-center text-gray-300 z-10 shadow-lg">
-                        <i class="fa fa-chevron-right"></i>
+            </div>
+            <div class="mt-6">
+                <button id="adminButtonMobile" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded-lg transition-all flex items-center justify-center gap-2">
+                    <i class="fa fa-user-shield"></i> Admin Paneli
+                </button>
+            </div>
+        </div>
+    </div>
+
+
+    <main class="flex-grow flex flex-col bg-gray-900 text-white relative px-4 md:px-8 py-6 md:py-8 overflow-hidden">
+        <h2 class="text-2xl md:text-3xl font-bold text-gray-100 mb-6">Şimdi Çalıyor</h2>
+        <div class="flex flex-col md:flex-row items-center bg-gray-800 p-6 rounded-xl shadow-lg mb-8">
+            <img id="coverImage" src="https://via.placeholder.com/150/0f172a/94a3b8?text=Müzik" alt="Album Cover" class="w-32 h-32 md:w-40 md:h-40 rounded-lg shadow-md object-cover mb-4 md:mb-0 md:mr-6">
+            <div class="flex-grow text-center md:text-left">
+                <h3 id="currentSongTitle" class="text-xl md:text-2xl font-bold text-gray-100 truncate">Müzik Başlığı</h3>
+                <p id="currentSongArtist" class="text-gray-400 text-md md:text-lg">Sanatçı Adı</p>
+                <div class="flex items-center justify-center md:justify-start space-x-4 mt-4">
+                    <button id="prevBtn" class="text-indigo-400 hover:text-indigo-300 transition-colors text-xl md:text-2xl">
+                        <i class="fa fa-backward"></i>
+                    </button>
+                    <button id="playPauseBtn" class="text-indigo-400 hover:text-indigo-300 transition-colors text-3xl md:text-4xl">
+                        <i class="fa fa-play"></i>
+                    </button>
+                    <button id="nextBtn" class="text-indigo-400 hover:text-indigo-300 transition-colors text-xl md:text-2xl">
+                        <i class="fa fa-forward"></i>
                     </button>
                 </div>
             </div>
-        </section>
+        </div>
 
-        <footer class="bg-gray-800 p-4 md:p-6 flex flex-col md:flex-row items-center justify-between shadow-t-lg z-20">
-            <audio id="audioPlayer" src="" preload="auto"></audio>
-
-            <div class="flex items-center space-x-2 text-sm text-gray-400 mb-3 md:mb-0 order-2 md:order-1 w-full md:w-auto justify-center md:justify-start">
+        <div class="mb-8">
+            <input type="range" id="progressBar" value="0" min="0" max="100" class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-indigo-500">
+            <div class="flex justify-between text-xs text-gray-400 mt-2">
                 <span id="currentSongTime">0:00</span>
-                <input type="range" id="progressBar" value="0" min="0" max="100" class="w-full md:flex-1 h-1 bg-gray-600 rounded-lg appearance-none cursor-pointer range-slider">
                 <span id="totalSongTime">0:00</span>
             </div>
+        </div>
 
-            <div class="flex items-center space-x-4 order-1 md:order-2 mb-3 md:mb-0">
-                <button id="prevBtn" class="bg-indigo-600 hover:bg-indigo-700 text-white rounded-full w-10 h-10 flex items-center justify-center shadow-lg transition-transform transform hover:scale-105">
-                    <i class="fa fa-backward"></i>
-                </button>
-                <button id="playPauseBtn" class="bg-indigo-600 hover:bg-indigo-700 text-white rounded-full w-14 h-14 flex items-center justify-center shadow-xl transition-transform transform hover:scale-110 text-xl">
-                    <i class="fa fa-play"></i>
-                </button>
-                <button id="nextBtn" class="bg-indigo-600 hover:bg-indigo-700 text-white rounded-full w-10 h-10 flex items-center justify-center shadow-lg transition-transform transform hover:scale-105">
-                    <i class="fa fa-forward"></i>
-                </button>
-            </div>
+        <div class="flex items-center justify-center space-x-3 mb-8">
+            <button id="volumeIcon" class="text-gray-400 hover:text-gray-200 transition-colors text-lg">
+                <i class="fa fa-volume-up"></i>
+            </button>
+            <input type="range" id="volumeBar" value="1" min="0" max="1" step="0.01" class="flex-grow h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-indigo-500 max-w-xs">
+        </div>
 
-            <div class="flex items-center space-x-3 order-3 w-full md:w-auto justify-center md:justify-end">
-                <button id="volumeIcon" class="text-gray-400 hover:text-white transition-colors text-lg">
-                    <i class="fa fa-volume-up"></i>
-                </button>
-                <input type="range" id="volumeBar" min="0" max="1" step="0.01" value="1" class="w-24 h-1 bg-gray-600 rounded-lg appearance-none cursor-pointer volume-slider">
+        <h2 class="text-xl md:text-2xl font-semibold text-gray-100 mb-4 border-b border-gray-700 pb-2">Yaklaşan Müzikler</h2>
+        <div class="relative flex items-center mb-8">
+            <button id="upcomingPrevBtn" class="absolute left-0 z-10 p-2 bg-gray-800 rounded-full shadow-lg text-indigo-400 hover:bg-gray-700 transition-colors hidden md:block">
+                <i class="fa fa-chevron-left text-lg"></i>
+            </button>
+            <div id="upcomingMusicContainerWrapper" class="flex flex-grow overflow-x-scroll scrollbar-hide space-x-4 p-2">
+                <p class="text-gray-400 text-center flex-shrink-0 w-full">Yaklaşan müzikler yükleniyor...</p>
             </div>
-        </footer>
+            <button id="upcomingNextBtn" class="absolute right-0 z-10 p-2 bg-gray-800 rounded-full shadow-lg text-indigo-400 hover:bg-gray-700 transition-colors hidden md:block">
+                <i class="fa fa-chevron-right text-lg"></i>
+            </button>
+        </div>
+
     </main>
 
     <div id="adminPanel" class="hidden fixed top-0 left-0 w-full h-full bg-gray-800 bg-opacity-95 backdrop-blur-md z-30 p-4 md:p-8 overflow-y-auto">
-        <div class="max-w-4xl mx-auto bg-gray-900 rounded-xl shadow-2xl p-6 relative">
+        <div id="adminPanelContent" class="max-w-4xl mx-auto bg-gray-900 rounded-xl shadow-2xl p-6 relative">
             <button id="closeAdminPanelBtn" class="absolute top-4 right-4 text-gray-400 hover:text-white transition-colors">
                 <i class="fa fa-times text-2xl"></i>
             </button>
 
-            <h2 class="text-3xl font-bold text-indigo-400 mb-6 text-center border-b border-indigo-700 pb-3">Admin Paneli</h2>
+            <h2 class="text-3xl font-bold text-indigo-400 mb-6 text-center border-b border-indigo-700 pb-3">Admin Paneli <span id="loggedInUserEmail" class="text-sm text-gray-500 font-normal"></span></h2>
+
+            <div id="loginSection" class="mb-6 flex flex-col items-center justify-center">
+                <h3 class="text-xl font-semibold text-gray-200 mb-4">Giriş Yap</h3>
+                <form id="loginForm" class="w-full max-w-sm space-y-4">
+                    <div>
+                        <label for="email" class="sr-only">E-posta</label>
+                        <input type="email" id="email" placeholder="E-posta" required class="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-white placeholder-gray-400">
+                    </div>
+                    <div>
+                        <label for="password" class="sr-only">Şifre</label>
+                        <input type="password" id="password" placeholder="Şifre" required class="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-white placeholder-gray-400">
+                    </div>
+                    <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded-lg transition-all flex items-center justify-center gap-2">
+                        <i class="fa fa-sign-in-alt"></i> Giriş Yap
+                    </button>
+                </form>
+                <button id="logoutBtn" class="bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-4 rounded-lg transition-all flex items-center justify-center gap-2 mt-4 hidden">
+                    <i class="fa fa-sign-out-alt"></i> Çıkış Yap
+                </button>
+                <div id="loginMessage" class="mt-4 text-center text-sm font-medium"></div>
+            </div>
 
             <div class="mb-6 border-b border-gray-700">
                 <nav class="-mb-px flex space-x-4 md:space-x-8 overflow-x-auto" aria-label="Tabs">
                     <a href="#" id="addMusicTab" class="whitespace-nowrap py-3 px-1 border-b-2 font-medium text-sm border-transparent text-gray-400 hover:text-gray-200 hover:border-gray-300 transition-colors ui-selected:border-indigo-500 ui-selected:text-indigo-400">Müzik Ekle</a>
                     <a href="#" id="manageMusicTab" class="whitespace-nowrap py-3 px-1 border-b-2 font-medium text-sm border-transparent text-gray-400 hover:text-gray-200 hover:border-gray-300 transition-colors">Müzikleri Yönet</a>
-                    </nav>
+                </nav>
             </div>
 
             <div id="addMusicContent" class="admin-content-section">
-                <h3 class="text-xl font-semibold text-gray-200 border-b border-gray-700 pb-2 mb-4">Yeni Müzik Ekle</h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <h3 class="text-xl font-semibold text-gray-200 mb-4 border-b border-gray-700 pb-2">Yeni Müzik Ekle</h3>
+                <form id="addMusicForm" class="space-y-4">
                     <div>
-                        <label for="musicName" class="block text-sm font-medium text-gray-300 mb-1">Müzik Adı:</label>
-                        <input type="text" id="musicName" placeholder="Şarkı Adı" class="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-white placeholder-gray-400">
+                        <label for="musicName" class="block text-sm font-medium text-gray-300">Müzik Adı:</label>
+                        <input type="text" id="musicName" placeholder="Şarkı Adı" required class="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-white placeholder-gray-400">
                     </div>
                     <div>
-                        <label for="artistName" class="block text-sm font-medium text-gray-300 mb-1">Sanatçı Adı:</label>
-                        <input type="text" id="artistName" placeholder="Sanatçı Adı" class="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-white placeholder-gray-400">
+                        <label for="artistName" class="block text-sm font-medium text-gray-300">Sanatçı Adı:</label>
+                        <input type="text" id="artistName" placeholder="Sanatçı" required class="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-white placeholder-gray-400">
                     </div>
-                    <div class="md:col-span-2">
-                        <label for="musicFile" class="block text-sm font-medium text-gray-300 mb-1">Müzik Dosyası (MP3/WAV):</label>
-                        <input type="file" id="musicFile" accept="audio/*" class="w-full text-sm text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-indigo-100 file:text-indigo-700 hover:file:bg-indigo-200 cursor-pointer">
+                    <div>
+                        <label for="musicFile" class="block text-sm font-medium text-gray-300">Müzik Dosyası (MP3, WAV vb.):</label>
+                        <input type="file" id="musicFile" accept="audio/*" required class="w-full text-sm text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-indigo-100 file:text-indigo-700 hover:file:bg-indigo-200 cursor-pointer">
                     </div>
-                    <div class="md:col-span-2">
-                        <label for="musicImage" class="block text-sm font-medium text-gray-300 mb-1">Kapak Resmi (JPG/PNG):</label>
+                    <div>
+                        <label for="musicImage" class="block text-sm font-medium text-gray-300">Kapak Resmi (JPG, PNG vb.):</label>
                         <input type="file" id="musicImage" accept="image/*" class="w-full text-sm text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-indigo-100 file:text-indigo-700 hover:file:bg-indigo-200 cursor-pointer">
                     </div>
-                </div>
 
-                <button id="addMusicBtn" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded-lg transition-all flex items-center justify-center gap-2 mt-6">
-                    <i class="fa fa-plus"></i> Müziği Ekle
-                </button>
+                    <button id="addMusicBtn" type="button" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded-lg transition-all flex items-center justify-center gap-2">
+                        <i class="fa fa-plus"></i> Müziği Ekle
+                    </button>
+                </form>
                 <div id="addMusicMessage" class="mt-4 text-center text-sm font-medium"></div>
-
-                <hr class="border-gray-600 my-8">
-
-                <h3 class="text-xl font-semibold text-gray-200 border-b border-gray-700 pb-2 mb-4">Müzik Sil (Eski Yöntem - Tablodan silme önerilir)</h3>
-                <label for="deleteSelect" class="block text-sm font-medium text-gray-300 mb-1">Silinecek Müziği Seç:</label>
-                <select id="deleteSelect" class="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-white">
-                    <option value="" disabled selected>Silmek için seçin...</option>
-                </select>
-                <button id="deleteMusicBtn" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-4 rounded-lg transition-all flex items-center justify-center gap-2 mt-4">
-                    <i class="fa fa-trash"></i> Seçilen Müziği Sil
-                </button>
-                <div id="deleteMusicMessage" class="mt-4 text-center text-sm font-medium"></div>
             </div>
 
             <div id="manageMusicContent" class="admin-content-section hidden">
-                <h3 class="text-xl font-semibold text-gray-200 border-b border-gray-700 pb-2 mb-4">Müzikleri Yönet</h3>
-
-                <div class="mb-4">
-                    <input type="text" id="adminMusicSearch" placeholder="Müziklerde ara..." class="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-white placeholder-gray-400">
+                <h3 class="text-xl font-semibold text-gray-200 mb-4 border-b border-gray-700 pb-2">Müzikleri Yönet</h3>
+                <div class="mb-4 relative">
+                    <input type="text" id="adminMusicSearch" placeholder="Müzikleri ara..." class="w-full py-2 pl-10 pr-4 rounded-full bg-gray-700 text-gray-200 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    <i class="fa fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
                 </div>
-
-                <div class="overflow-x-auto rounded-lg shadow-md">
-                    <table class="min-w-full divide-y divide-gray-700 bg-gray-800">
+                <div class="overflow-x-auto rounded-lg shadow-lg">
+                    <table class="min-w-full divide-y divide-gray-700">
                         <thead class="bg-gray-700">
                             <tr>
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Kapak</th>
-                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Adı</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Başlık</th>
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Sanatçı</th>
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">İşlemler</th>
                             </tr>
                         </thead>
-                        <tbody id="musicManagementTableBody" class="divide-y divide-gray-700">
-                            <tr>
-                                <td colspan="4" class="px-6 py-4 whitespace-nowrap text-center text-gray-400">Müzikler yükleniyor...</td>
-                            </tr>
+                        <tbody id="musicManagementTableBody" class="bg-gray-800 divide-y divide-gray-700">
+                            <tr><td colspan="4" class="px-6 py-4 whitespace-nowrap text-center text-gray-400">Müzikler yükleniyor...</td></tr>
                         </tbody>
                     </table>
                 </div>
                 <div id="manageMusicMessage" class="mt-4 text-center text-sm font-medium"></div>
+                <hr class="border-gray-600 my-4">
+                <h3 class="text-xl font-semibold text-gray-200 border-b border-gray-700 pb-2">Müzik Sil (Eski Yöntem)</h3>
+                <label for="deleteSelect" class="block text-sm font-medium text-gray-300">Silinecek Müziği Seç:</label>
+                <select id="deleteSelect" class="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-white">
+                    <option value="" disabled selected>Silmek için seçin...</option>
+                </select>
+                <button id="deleteMusicBtn" type="button" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-4 rounded-lg transition-all flex items-center justify-center gap-2 mt-4">
+                    <i class="fa fa-trash"></i> Seçilen Müziği Sil
+                </button>
+                <div id="deleteMusicMessage" class="mt-4 text-center text-sm font-medium"></div>
             </div>
         </div>
     </div>
 
-    <div id="editMusicModal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 hidden p-4">
-        <div class="bg-gray-900 rounded-lg shadow-xl p-8 w-full max-w-md relative">
+    <div id="editMusicModal" class="hidden fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-40 p-4">
+        <div class="bg-gray-900 rounded-lg shadow-xl p-8 w-full max-w-lg relative">
             <button id="closeEditModalBtn" class="absolute top-4 right-4 text-gray-400 hover:text-white transition-colors">
                 <i class="fa fa-times text-2xl"></i>
             </button>
             <h3 class="text-2xl font-bold text-indigo-400 mb-6 text-center">Müziği Düzenle</h3>
-
-            <div class="space-y-4">
+            <form class="space-y-4">
+                <input type="hidden" id="editMusicId">
                 <div>
-                    <label for="editMusicId" class="sr-only">Müzik ID</label>
-                    <input type="hidden" id="editMusicId">
+                    <label for="editMusicName" class="block text-sm font-medium text-gray-300">Müzik Adı:</label>
+                    <input type="text" id="editMusicName" required class="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-white placeholder-gray-400">
                 </div>
                 <div>
-                    <label for="editMusicName" class="block text-sm font-medium text-gray-300 mb-1">Müzik Adı:</label>
-                    <input type="text" id="editMusicName" class="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-white">
+                    <label for="editArtistName" class="block text-sm font-medium text-gray-300">Sanatçı Adı:</label>
+                    <input type="text" id="editArtistName" required class="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-white placeholder-gray-400">
                 </div>
                 <div>
-                    <label for="editArtistName" class="block text-sm font-medium text-gray-300 mb-1">Sanatçı Adı:</label>
-                    <input type="text" id="editArtistName" class="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-white">
-                </div>
-                <div>
-                    <label for="editMusicFile" class="block text-sm font-medium text-gray-300 mb-1">Müzik Dosyası (Değiştirmek için seçin):</label>
+                    <label for="editMusicFile" class="block text-sm font-medium text-gray-300">Yeni Müzik Dosyası (seçimlik):</label>
                     <input type="file" id="editMusicFile" accept="audio/*" class="w-full text-sm text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-indigo-100 file:text-indigo-700 hover:file:bg-indigo-200 cursor-pointer">
-                    <p id="currentMusicFileName" class="text-xs text-gray-400 mt-1">Mevcut Dosya: Yok</p>
+                    <p id="currentMusicFileName" class="text-xs text-gray-400 mt-1"></p>
                 </div>
                 <div>
-                    <label for="editMusicImage" class="block text-sm font-medium text-gray-300 mb-1">Kapak Resmi (Değiştirmek için seçin):</label>
+                    <label for="editMusicImage" class="block text-sm font-medium text-gray-300">Yeni Kapak Resmi (seçimlik):</label>
                     <input type="file" id="editMusicImage" accept="image/*" class="w-full text-sm text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-indigo-100 file:text-indigo-700 hover:file:bg-indigo-200 cursor-pointer">
-                    <img id="currentMusicImagePreview" class="mt-2 rounded-md max-h-24 w-auto object-cover" src="" alt="Kapak Resmi Önizlemesi">
+                    <img id="currentMusicImagePreview" src="https://via.placeholder.com/150/0f172a/94a3b8?text=Müzik" alt="Current Cover" class="w-20 h-20 rounded-md object-cover mt-2">
                 </div>
-            </div>
-
-            <button id="saveEditMusicBtn" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded-lg transition-all flex items-center justify-center gap-2 mt-6">
-                <i class="fa fa-save"></i> Değişiklikleri Kaydet
-            </button>
+                <button id="saveEditMusicBtn" type="button" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded-lg transition-all flex items-center justify-center gap-2">
+                    <i class="fa fa-save"></i> Değişiklikleri Kaydet
+                </button>
+            </form>
             <div id="editMusicMessage" class="mt-4 text-center text-sm font-medium"></div>
         </div>
     </div>
+
+    <div id="authModal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-40 hidden p-4">
+        <div class="bg-gray-900 rounded-lg shadow-xl p-8 w-full max-w-sm relative">
+            <button id="closeAuthModalBtn" class="absolute top-4 right-4 text-gray-400 hover:text-white transition-colors">
+                <i class="fa fa-times text-2xl"></i>
+            </button>
+            <h3 class="text-2xl font-bold text-indigo-400 mb-6 text-center">Admin Girişi</h3>
+            <form id="authLoginForm" class="space-y-4"> <div>
+                    <label for="email" class="block text-sm font-medium text-gray-300 mb-1">E-posta:</label>
+                    <input type="email" id="email" placeholder="admin@example.com" required class="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-white placeholder-gray-400">
+                </div>
+                <div>
+                    <label for="password" class="block text-sm font-medium text-gray-300 mb-1">Şifre:</label>
+                    <input type="password" id="password" placeholder="Şifreniz" required class="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-white placeholder-gray-400">
+                </div>
+                <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded-lg transition-all flex items-center justify-center gap-2">
+                    <i class="fa fa-sign-in-alt"></i> Giriş Yap
+                </button>
+            </form>
+            <div id="loginMessage" class="mt-4 text-center text-sm font-medium"></div>
+        </div>
+    </div>
+
+
+    <audio id="audioPlayer" src=""></audio>
 
     <script src="script.js"></script>
 </body>
