@@ -467,7 +467,7 @@ function createMusicCard(music, index, isMainList) {
     card.className = `bg-gray-700 rounded-lg shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden ${isMainList ? 'relative' : 'flex-shrink-0 w-40 md:w-48 lg:w-56'}`;
 
     card.innerHTML = `
-        <img src="${music.image_path ? supabaseClient.storage.from('music_images').getPublicUrl(music.image_path).data.publicUrl : defaultCover}" 
+        <img src="${music.image_path ? supabaseClient.storage.from('music_images').getPublicUrl(music.image_path).data.publicUrl : defaultCover}"
              alt="${music.name}" class="w-full ${isMainList ? 'h-48' : 'h-32'} object-cover cursor-pointer" onclick="playMusic(${index})">
         <div class="p-4 ${isMainList ? '' : 'text-sm'}">
             <h3 class="font-semibold text-lg ${isMainList ? 'truncate' : 'truncate'}" title="${music.name}">${music.name}</h3>
