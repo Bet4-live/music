@@ -61,6 +61,17 @@ const currentMusicImagePreview = document.getElementById('currentMusicImagePrevi
 const saveEditMusicBtn = document.getElementById('saveEditMusicBtn');
 const editMusicMessage = document.getElementById('editMusicMessage');
 
+// --- NEW AUTH ELEMENTS ---
+const authModal = document.getElementById('authModal');
+const closeAuthModalBtn = document.getElementById('closeAuthModalBtn');
+const loginForm = document.getElementById('loginForm');
+const emailInput = document.getElementById('email');
+const passwordInput = document.getElementById('password');
+const loginMessage = document.getElementById('loginMessage');
+const logoutBtn = document.getElementById('logoutBtn');
+const adminPanelContent = document.getElementById('adminPanelContent'); // Yeni eklenen, admin panelinin iç içeriği
+const loggedInUserEmail = document.getElementById('loggedInUserEmail'); // Yeni eklenen
+const loginSection = document.getElementById('loginSection'); // Yeni eklenen
 
 // --- Variables ---
 let currentPlayingIndex = -1;
@@ -69,6 +80,7 @@ let currentPlaylist = []; // Array of music objects currently being played/displ
 let defaultCover = 'https://via.placeholder.com/150/0f172a/94a3b8?text=Müzik';
 let defaultArtist = 'Bilinmeyen Sanatçı';
 let lastVolume = 1.0; // To store last volume before mute
+let currentUser = null; // To store logged-in user
 
 // --- Helper Functions ---
 
@@ -89,6 +101,7 @@ function displayMessage(element, message, type = 'info') {
 // Supabase Storage URL helper
 function getPublicUrl(path) {
     if (!supabaseClient) return null; // Ensure client is initialized
+    // Supabase storage public URL yapısı değişebilir, getPublicUrl daha güvenli
     const { data } = supabaseClient.storage.from('music_files').getPublicUrl(path);
     return data.publicUrl;
 }
@@ -110,10 +123,12 @@ async function fetchMusics(searchTerm = '') {
         currentPlaylist = data; // Initially, playlist is all musics
         renderMusics(); // Re-render main music list
         populateDeleteSelect(); // Update delete dropdown
-        renderMusicManagementTable(); // Update admin management table
+        // renderMusicManagementTable(); // This will be called when manage tab is selected in admin panel
     } catch (error) {
         console.error('Müzikler yüklenirken hata oluştu:', error.message);
-        displayMessage(document.getElementById('musicListContainer').parentElement, `Müzikler yüklenirken hata oluştu: ${error.message}`, 'error');
+        // Ana müzik listesi için bir hata mesajı gösterebiliriz
+        musicListContainer.innerHTML = `<p class="text-red-400 text-center col-span-full">Müzikler yüklenirken hata oluştu: ${error.message}</p>`;
+        upcomingMusicContainerWrapper.innerHTML = `<p class="text-red-400 text-center w-full">Müzikler yüklenirken hata oluştu.</p>`;
     }
 }
 
@@ -154,7 +169,7 @@ function renderMusics(searchTerm = '') {
 
         // Upcoming music list item
         const upcomingMusicItem = document.createElement('div');
-        upcomingMusicItem.className = 'flex-shrink-0 w-44 bg-gray-800 rounded-lg shadow-md overflow-hidden text-center cursor-pointer hover:bg-gray-700 transition-colors group';
+        upcomingMusicItem.className = 'flex-shrink-0 w-44 bg-gray-800 rounded-lg shadow-md overflow-hidden text-center cursor-pointer hover:bg-gray-700 transition-colors group relative'; // Added relative for positioning play-btn-upcoming
         upcomingMusicItem.dataset.index = index;
         upcomingMusicItem.dataset.id = music.id; // Store ID for player
         upcomingMusicItem.innerHTML = `
@@ -177,7 +192,7 @@ function attachPlayEventListeners() {
     document.querySelectorAll('.music-item, .flex-shrink-0').forEach(item => {
         item.addEventListener('click', (event) => {
             const index = parseInt(item.dataset.index);
-            const musicId = item.dataset.id;
+            // const musicId = item.dataset.id; // Not directly used here but useful
             // Check if click was on the button itself or the container
             if (event.target.closest('.play-btn') || event.target.closest('.play-btn-upcoming')) {
                 playMusic(index);
@@ -290,6 +305,12 @@ function populateDeleteSelect() {
 }
 
 async function addMusic() {
+    // Check if user is logged in
+    if (!currentUser) {
+        displayMessage(addMusicMessage, 'Müzik eklemek için lütfen giriş yapın.', 'error');
+        return;
+    }
+
     const title = musicNameInput.value.trim();
     const artist = artistNameInput.value.trim();
     const musicFile = musicFileInput.files[0];
@@ -307,6 +328,7 @@ async function addMusic() {
     try {
         // Upload Music File
         const musicFileName = `${Date.now()}_${musicFile.name}`;
+        // Ensure path includes a folder structure, e.g., 'musics/'
         const { data: musicUploadData, error: musicUploadError } = await supabaseClient.storage
             .from('music_files')
             .upload(`musics/${musicFileName}`, musicFile);
@@ -321,7 +343,7 @@ async function addMusic() {
             const coverFileName = `${Date.now()}_${musicImage.name}`;
             const { data: imageUploadData, error: imageUploadError } = await supabaseClient.storage
                 .from('music_files')
-                .upload(`covers/${coverFileName}`, musicImage);
+                .upload(`covers/${coverFileName}`, musicImage); // Ensure path includes 'covers/'
 
             if (imageUploadError) throw imageUploadError;
             coverUrl = getPublicUrl(`covers/${coverFileName}`);
@@ -353,18 +375,25 @@ async function addMusic() {
 }
 
 async function deleteMusic(musicIdToDelete) {
+    // Check if user is logged in
+    if (!currentUser) {
+        displayMessage(manageMusicMessage, 'Müzik silmek için lütfen giriş yapın.', 'error');
+        return;
+    }
+
     if (!confirm('Bu müziği silmek istediğinizden emin misiniz?')) {
         return;
     }
 
     // Determine which message element to use
-    const messageElement = adminPanel.classList.contains('hidden') ? document.getElementById('deleteMusicMessage') : document.getElementById('manageMusicMessage');
+    const messageElement = manageMusicMessage; // Always use manage music message for table deletions
     
     // Disable the delete button that was clicked or the old delete button
-    if (event.target.closest('.delete-btn')) {
-        event.target.closest('.delete-btn').disabled = true;
-        event.target.closest('.delete-btn').innerHTML = '<i class="fas fa-spinner fa-spin"></i> Siliniyor...';
-    } else if (deleteMusicBtn) { // For the old delete button
+    const clickedButton = event.target.closest('.delete-btn');
+    if (clickedButton) {
+        clickedButton.disabled = true;
+        clickedButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Siliniyor...';
+    } else if (deleteMusicBtn) { // For the old delete button (still present in the HTML)
         deleteMusicBtn.disabled = true;
         deleteMusicBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Siliniyor...';
     }
@@ -383,20 +412,32 @@ async function deleteMusic(musicIdToDelete) {
 
         // Delete music file from storage
         if (musicData.music_url) {
-            const musicPath = musicData.music_url.split('/public/music_files/')[1];
-            const { error: musicDeleteError } = await supabaseClient.storage
-                .from('music_files')
-                .remove([musicPath]);
-            if (musicDeleteError) console.warn('Müzik dosyası silinirken hata oluştu:', musicDeleteError.message);
+            // Extract path relative to the bucket.
+            // Assuming URLs are like: https://[project_id].supabase.co/storage/v1/object/public/music_files/musics/filename.mp3
+            const musicPathSegments = musicData.music_url.split('/music_files/');
+            if (musicPathSegments.length > 1) {
+                const musicPath = musicPathSegments[1];
+                const { error: musicDeleteError } = await supabaseClient.storage
+                    .from('music_files')
+                    .remove([musicPath]);
+                if (musicDeleteError) console.warn('Müzik dosyası silinirken hata oluştu:', musicDeleteError.message);
+            } else {
+                 console.warn('Müzik dosyası URL formatı beklenenden farklı:', musicData.music_url);
+            }
         }
 
-        // Delete cover image from storage (if not default)
+        // Delete cover image from storage (if not default placeholder)
         if (musicData.cover_url && musicData.cover_url !== defaultCover) {
-            const coverPath = musicData.cover_url.split('/public/music_files/')[1];
-            const { error: coverDeleteError } = await supabaseClient.storage
-                .from('music_files')
-                .remove([coverPath]);
-            if (coverDeleteError) console.warn('Kapak resmi silinirken hata oluştu:', coverDeleteError.message);
+            const coverPathSegments = musicData.cover_url.split('/music_files/');
+            if (coverPathSegments.length > 1) {
+                const coverPath = coverPathSegments[1];
+                const { error: coverDeleteError } = await supabaseClient.storage
+                    .from('music_files')
+                    .remove([coverPath]);
+                if (coverDeleteError) console.warn('Kapak resmi silinirken hata oluştu:', coverDeleteError.message);
+            } else {
+                 console.warn('Kapak resmi URL formatı beklenenden farklı:', musicData.cover_url);
+            }
         }
 
         // Delete from database
@@ -409,14 +450,15 @@ async function deleteMusic(musicIdToDelete) {
 
         displayMessage(messageElement, 'Müzik başarıyla silindi!', 'success');
         await fetchMusics(); // Refresh music list
+        renderMusicManagementTable(adminMusicSearchInput.value.trim()); // Refresh table
     } catch (error) {
         console.error('Müzik silinirken hata:', error.message);
         displayMessage(messageElement, `Müzik silinirken hata oluştu: ${error.message}`, 'error');
     } finally {
         // Re-enable the appropriate delete button
-        if (event.target.closest('.delete-btn')) {
-            event.target.closest('.delete-btn').disabled = false;
-            event.target.closest('.delete-btn').innerHTML = '<i class="fa fa-trash"></i> Sil';
+        if (clickedButton) {
+            clickedButton.disabled = false;
+            clickedButton.innerHTML = '<i class="fa fa-trash"></i> Sil';
         } else if (deleteMusicBtn) {
             deleteMusicBtn.disabled = false;
             deleteMusicBtn.innerHTML = '<i class="fa fa-trash"></i> Seçilen Müziği Sil';
@@ -472,6 +514,12 @@ function renderMusicManagementTable(searchTerm = '') {
 
 // Open Edit Modal
 async function openEditModal(musicId) {
+    // Check if user is logged in
+    if (!currentUser) {
+        displayMessage(manageMusicMessage, 'Müzik düzenlemek için lütfen giriş yapın.', 'error');
+        return;
+    }
+
     const music = musics.find(m => m.id === musicId);
     if (!music) {
         displayMessage(editMusicMessage, 'Düzenlenecek müzik bulunamadı!', 'error');
@@ -484,10 +532,12 @@ async function openEditModal(musicId) {
     
     // Display current music file name, stripping timestamp and path
     if (music.music_url) {
-        const urlParts = music.music_url.split('/');
-        const fileNameWithTimestamp = urlParts[urlParts.length - 1].split('?')[0]; // Get filename and remove query params
-        const originalFileName = fileNameWithTimestamp.substring(fileNameWithTimestamp.indexOf('_') + 1); // Remove timestamp
-        currentMusicFileNameElement.textContent = `Mevcut Dosya: ${originalFileName}`;
+        const urlParts = music.music_url.split('/music_files/');
+        let fileName = urlParts.length > 1 ? urlParts[1] : music.music_url; // Get path after 'music_files/'
+        fileName = fileName.split('/').pop(); // Get actual filename from path
+        fileName = fileName.split('?')[0]; // Remove query parameters
+        fileName = fileName.substring(fileName.indexOf('_') + 1); // Remove timestamp if present
+        currentMusicFileNameElement.textContent = `Mevcut Dosya: ${fileName}`;
     } else {
         currentMusicFileNameElement.textContent = 'Mevcut Dosya: Yok';
     }
@@ -509,6 +559,12 @@ function closeEditModal() {
 
 // Save Edited Music
 async function saveEditedMusic() {
+    // Check if user is logged in
+    if (!currentUser) {
+        displayMessage(editMusicMessage, 'Değişiklikleri kaydetmek için lütfen giriş yapın.', 'error');
+        return;
+    }
+
     const musicId = editMusicIdInput.value;
     const newTitle = editMusicNameInput.value.trim();
     const newArtist = editArtistNameInput.value.trim();
@@ -533,10 +589,13 @@ async function saveEditedMusic() {
             // First, delete old music file from storage if it exists and is not default
             const oldMusic = musics.find(m => m.id === musicId);
             if (oldMusic && oldMusic.music_url) {
-                const oldMusicPath = oldMusic.music_url.split('/public/music_files/')[1];
-                // Check if path exists and is not a default path (to prevent deleting non-uploaded assets)
-                if (oldMusicPath && !oldMusicPath.startsWith('http')) { 
-                    await supabaseClient.storage.from('music_files').remove([oldMusicPath]);
+                 const oldMusicPathSegments = oldMusic.music_url.split('/music_files/');
+                if (oldMusicPathSegments.length > 1) {
+                    const oldMusicPath = oldMusicPathSegments[1];
+                    // Check if path exists and is not a default path (to prevent deleting non-uploaded assets)
+                    if (oldMusicPath && !oldMusicPath.startsWith('http')) { 
+                        await supabaseClient.storage.from('music_files').remove([oldMusicPath]);
+                    }
                 }
             }
 
@@ -553,10 +612,13 @@ async function saveEditedMusic() {
             // First, delete old cover image from storage if it exists and is not default
             const oldMusic = musics.find(m => m.id === musicId);
             if (oldMusic && oldMusic.cover_url && oldMusic.cover_url !== defaultCover) {
-                const oldCoverPath = oldMusic.cover_url.split('/public/music_files/')[1];
-                // Check if path exists and is not a default path
-                if (oldCoverPath && !oldCoverPath.startsWith('http')) {
-                    await supabaseClient.storage.from('music_files').remove([oldCoverPath]);
+                const oldCoverPathSegments = oldMusic.cover_url.split('/music_files/');
+                if (oldCoverPathSegments.length > 1) {
+                    const oldCoverPath = oldCoverPathSegments[1];
+                    // Check if path exists and is not a default path
+                    if (oldCoverPath && !oldCoverPath.startsWith('http')) {
+                        await supabaseClient.storage.from('music_files').remove([oldCoverPath]);
+                    }
                 }
             }
 
@@ -583,6 +645,7 @@ async function saveEditedMusic() {
 
         displayMessage(editMusicMessage, 'Müzik başarıyla güncellendi!', 'success');
         await fetchMusics(); // Refresh music list
+        renderMusicManagementTable(adminMusicSearchInput.value.trim()); // Refresh table
         closeEditModal();
     } catch (error) {
         console.error('Müzik güncellenirken hata:', error.message);
@@ -590,6 +653,67 @@ async function saveEditedMusic() {
     } finally {
         saveEditMusicBtn.disabled = false;
         saveEditMusicBtn.innerHTML = '<i class="fa fa-save"></i> Değişiklikleri Kaydet';
+    }
+}
+
+// --- NEW: Authentication Functions ---
+
+async function signInUser(email, password) {
+    loginMessage.textContent = 'Giriş yapılıyor...';
+    loginMessage.className = 'mt-4 text-center text-sm font-medium text-gray-400';
+    try {
+        const { data, error } = await supabaseClient.auth.signInWithPassword({
+            email: email,
+            password: password,
+        });
+
+        if (error) throw error;
+
+        currentUser = data.user;
+        updateAuthUI(currentUser);
+        displayMessage(loginMessage, 'Giriş başarılı!', 'success');
+        authModal.classList.add('hidden'); // Close auth modal on success
+        adminPanel.classList.remove('hidden'); // Open admin panel directly after login
+        addMusicTab.click(); // Default to Add Music tab
+        // Optionally fetch musics again if RLS depends on auth status for viewing certain musics
+        // await fetchMusics();
+
+    } catch (error) {
+        console.error('Giriş Hatası:', error.message);
+        displayMessage(loginMessage, `Giriş başarısız: ${error.message}`, 'error');
+    }
+}
+
+async function signOutUser() {
+    try {
+        const { error } = await supabaseClient.auth.signOut();
+        if (error) throw error;
+        currentUser = null;
+        updateAuthUI(currentUser);
+        adminPanel.classList.add('hidden'); // Close admin panel on logout
+        // Optionally fetch musics again if RLS changes after logout
+        // await fetchMusics();
+        console.log('Başarıyla çıkış yapıldı.');
+    } catch (error) {
+        console.error('Çıkış hatası:', error.message);
+        alert(`Çıkış yapılırken hata oluştu: ${error.message}`);
+    }
+}
+
+function updateAuthUI(user) {
+    if (user) {
+        loggedInUserEmail.textContent = `(${user.email})`;
+        loginSection.classList.add('hidden'); // Hide login form
+        logoutBtn.classList.remove('hidden'); // Show logout button
+        adminButton.classList.remove('hidden'); // Ensure admin button is visible for logged-in users
+        adminButtonMobile.classList.remove('hidden'); // Ensure admin button is visible for logged-in users
+    } else {
+        loggedInUserEmail.textContent = '';
+        loginSection.classList.remove('hidden'); // Show login form
+        logoutBtn.classList.add('hidden'); // Hide logout button
+        adminPanel.classList.add('hidden'); // Hide admin panel if user logs out
+        // adminButton.classList.add('hidden'); // Maybe hide admin button if no user? Or show to prompt login.
+        // For now, keep visible but will open auth modal.
     }
 }
 
@@ -607,20 +731,66 @@ document.addEventListener('DOMContentLoaded', async () => {
         supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
         console.log("Supabase client oluşturuldu.");
 
+        // --- NEW: Check session on load ---
+        const { data: { user } } = await supabaseClient.auth.getUser();
+        currentUser = user;
+        updateAuthUI(currentUser);
+
+        // Supabase Auth State Change Listener
+        supabaseClient.auth.onAuthStateChange((event, session) => {
+            currentUser = session?.user || null;
+            updateAuthUI(currentUser);
+            if (event === 'SIGNED_OUT') {
+                adminPanel.classList.add('hidden'); // Close admin panel on sign out
+                alert('Başarıyla çıkış yaptınız.');
+            } else if (event === 'SIGNED_IN') {
+                 // Nothing specific needed here as updateAuthUI handles it
+            }
+        });
+
         // Admin Panel Toggle (Desktop and Mobile buttons)
-        if (adminButton && adminPanel && closeAdminPanelBtn) {
-            adminButton.addEventListener('click', () => {
-                adminPanel.classList.toggle('hidden');
-                addMusicTab.click(); // Default to Add Music tab
-            });
-            adminButtonMobile.addEventListener('click', () => { // Add listener for mobile button
-                adminPanel.classList.toggle('hidden');
-                addMusicTab.click(); // Default to Add Music tab
-            });
+        if (adminButton && adminPanel && closeAdminPanelBtn && authModal) {
+            const openAdminPanel = () => {
+                if (currentUser) {
+                    adminPanel.classList.toggle('hidden');
+                    addMusicTab.click(); // Default to Add Music tab
+                } else {
+                    authModal.classList.remove('hidden'); // Show auth modal if not logged in
+                }
+            };
+            adminButton.addEventListener('click', openAdminPanel);
+            adminButtonMobile.addEventListener('click', openAdminPanel);
             closeAdminPanelBtn.addEventListener('click', () => {
                 adminPanel.classList.add('hidden');
             });
         }
+
+        // --- NEW: Auth Modal Controls ---
+        if (closeAuthModalBtn) {
+            closeAuthModalBtn.addEventListener('click', () => {
+                authModal.classList.add('hidden');
+                loginMessage.textContent = ''; // Clear message
+            });
+        }
+
+        if (loginForm) {
+            loginForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const email = emailInput.value.trim();
+                const password = passwordInput.value.trim();
+                if (email && password) {
+                    await signInUser(email, password);
+                } else {
+                    displayMessage(loginMessage, 'Lütfen e-posta ve şifre girin.', 'error');
+                }
+            });
+        }
+
+        if (logoutBtn) {
+            logoutBtn.addEventListener('click', signOutUser);
+        }
+        // --- END NEW AUTH ELEMENTS ---
+
 
         // Admin Panel Tab Switching
         if (addMusicTab && manageMusicTab && addMusicContent && manageMusicContent) {
@@ -651,11 +821,15 @@ document.addEventListener('DOMContentLoaded', async () => {
             manageMusicTab.addEventListener('click', (e) => {
                 e.preventDefault();
                 showAdminSection('manageMusicContent');
-                renderMusicManagementTable(adminMusicSearchInput.value.trim()); // Refresh table when tab is opened
+                if (currentUser) { // Only render table if logged in
+                    renderMusicManagementTable(adminMusicSearchInput.value.trim()); // Refresh table when tab is opened
+                } else {
+                    manageMusicTableBody.innerHTML = '<tr><td colspan="4" class="px-6 py-4 whitespace-nowrap text-center text-red-400">Bu içeriği görmek için giriş yapmalısınız.</td></tr>';
+                }
             });
 
             // Default to 'Müzik Ekle' tab
-            showAdminSection('addMusicContent');
+            // showAdminSection('addMusicContent'); // Don't call directly, will be handled by admin button click logic
         }
 
         // Add Music Button
@@ -663,9 +837,13 @@ document.addEventListener('DOMContentLoaded', async () => {
             addMusicBtn.addEventListener('click', addMusic);
         }
 
-        // Delete Music Button (Old Method)
+        // Delete Music Button (Old Method - now mostly superseded by table delete)
         if (deleteMusicBtn) {
             deleteMusicBtn.addEventListener('click', () => {
+                if (!currentUser) {
+                    displayMessage(deleteMusicMessage, 'Müzik silmek için lütfen giriş yapın.', 'error');
+                    return;
+                }
                 const selectedMusicId = deleteSelect.value;
                 if (selectedMusicId) {
                     deleteMusic(selectedMusicId);
@@ -678,7 +856,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         // Admin Music Search
         if (adminMusicSearchInput) {
             adminMusicSearchInput.addEventListener('input', () => {
-                renderMusicManagementTable(adminMusicSearchInput.value.trim());
+                if (currentUser) {
+                    renderMusicManagementTable(adminMusicSearchInput.value.trim());
+                }
             });
         }
 
