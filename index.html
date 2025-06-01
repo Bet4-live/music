@@ -65,7 +65,6 @@
         </div>
     </div>
 
-
     <main class="flex-grow flex flex-col bg-gray-900 text-white relative px-4 md:px-8 py-6 md:py-8 overflow-hidden">
         <h2 class="text-2xl md:text-3xl font-bold text-gray-100 mb-6">Şimdi Çalıyor</h2>
         <div class="flex flex-col md:flex-row items-center bg-gray-800 p-6 rounded-xl shadow-lg mb-8">
@@ -127,14 +126,13 @@
 
             <div id="loginSection" class="mb-6 flex flex-col items-center justify-center">
                 <h3 class="text-xl font-semibold text-gray-200 mb-4">Giriş Yap</h3>
-                <form id="loginForm" class="w-full max-w-sm space-y-4">
-                    <div>
-                        <label for="email" class="sr-only">E-posta</label>
-                        <input type="email" id="email" placeholder="E-posta" required class="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-white placeholder-gray-400">
+                <form id="adminLoginForm" class="w-full max-w-sm space-y-4"> <div>
+                        <label for="adminEmail" class="sr-only">E-posta</label>
+                        <input type="email" id="adminEmail" placeholder="E-posta" required class="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-white placeholder-gray-400">
                     </div>
                     <div>
-                        <label for="password" class="sr-only">Şifre</label>
-                        <input type="password" id="password" placeholder="Şifre" required class="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-white placeholder-gray-400">
+                        <label for="adminPassword" class="sr-only">Şifre</label>
+                        <input type="password" id="adminPassword" placeholder="Şifre" required class="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-white placeholder-gray-400">
                     </div>
                     <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded-lg transition-all flex items-center justify-center gap-2">
                         <i class="fa fa-sign-in-alt"></i> Giriş Yap
@@ -143,8 +141,7 @@
                 <button id="logoutBtn" class="bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-4 rounded-lg transition-all flex items-center justify-center gap-2 mt-4 hidden">
                     <i class="fa fa-sign-out-alt"></i> Çıkış Yap
                 </button>
-                <div id="loginMessage" class="mt-4 text-center text-sm font-medium"></div>
-            </div>
+                <div id="adminLoginMessage" class="mt-4 text-center text-sm font-medium"></div> </div>
 
             <div class="mb-6 border-b border-gray-700">
                 <nav class="-mb-px flex space-x-4 md:space-x-8 overflow-x-auto" aria-label="Tabs">
@@ -202,16 +199,6 @@
                     </table>
                 </div>
                 <div id="manageMusicMessage" class="mt-4 text-center text-sm font-medium"></div>
-                <hr class="border-gray-600 my-4">
-                <h3 class="text-xl font-semibold text-gray-200 border-b border-gray-700 pb-2">Müzik Sil (Eski Yöntem)</h3>
-                <label for="deleteSelect" class="block text-sm font-medium text-gray-300">Silinecek Müziği Seç:</label>
-                <select id="deleteSelect" class="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-white">
-                    <option value="" disabled selected>Silmek için seçin...</option>
-                </select>
-                <button id="deleteMusicBtn" type="button" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-4 rounded-lg transition-all flex items-center justify-center gap-2 mt-4">
-                    <i class="fa fa-trash"></i> Seçilen Müziği Sil
-                </button>
-                <div id="deleteMusicMessage" class="mt-4 text-center text-sm font-medium"></div>
             </div>
         </div>
     </div>
@@ -256,22 +243,22 @@
                 <i class="fa fa-times text-2xl"></i>
             </button>
             <h3 class="text-2xl font-bold text-indigo-400 mb-6 text-center">Admin Girişi</h3>
-            <form id="authLoginForm" class="space-y-4"> <div>
-                    <label for="email" class="block text-sm font-medium text-gray-300 mb-1">E-posta:</label>
-                    <input type="email" id="email" placeholder="admin@example.com" required class="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-white placeholder-gray-400">
+            <form id="authLoginForm" class="space-y-4">
+                <div>
+                    <label for="authEmail" class="block text-sm font-medium text-gray-300 mb-1">E-posta:</label>
+                    <input type="email" id="authEmail" placeholder="admin@example.com" required class="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-white placeholder-gray-400">
                 </div>
                 <div>
-                    <label for="password" class="block text-sm font-medium text-gray-300 mb-1">Şifre:</label>
-                    <input type="password" id="password" placeholder="Şifreniz" required class="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-white placeholder-gray-400">
+                    <label for="authPassword" class="block text-sm font-medium text-gray-300 mb-1">Şifre:</label>
+                    <input type="password" id="authPassword" placeholder="Şifreniz" required class="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-white placeholder-gray-400">
                 </div>
                 <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded-lg transition-all flex items-center justify-center gap-2">
                     <i class="fa fa-sign-in-alt"></i> Giriş Yap
                 </button>
             </form>
-            <div id="loginMessage" class="mt-4 text-center text-sm font-medium"></div>
+            <div id="authLoginMessage" class="mt-4 text-center text-sm font-medium"></div>
         </div>
     </div>
-
 
     <audio id="audioPlayer" src=""></audio>
 
