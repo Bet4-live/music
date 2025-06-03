@@ -118,7 +118,7 @@
     </footer>
 
     <div id="adminPanel" class="fixed inset-0 bg-black bg-opacity-80 backdrop-blur-sm text-white flex items-center justify-center z-50 hidden p-5">
-        <div class="bg-slate-800 p-6 md:p-8 rounded-xl shadow-2xl w-full max-w-md relative">
+        <div class="bg-slate-800 p-6 md:p-8 rounded-xl shadow-2xl w-full max-w-2xl relative">
             <button id="closeAdminPanelBtn" class="absolute top-3 right-3 text-gray-400 hover:text-white text-2xl transition-colors">
                 <i class="fa fa-times"></i>
             </button>
@@ -134,7 +134,7 @@
                  </button>
              </div>
 
-            <div id="adminControls" class="hidden flex-col space-y-4">
+            <div id="adminControls" class="hidden flex-col space-y-6">
                 <p id="loggedInUserEmail" class="text-gray-300 text-center font-medium"></p>
                 <button id="signOutBtn" class="w-max mx-auto bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg transition-all flex items-center justify-center gap-2 text-sm">
                      <i class="fa fa-sign-out-alt"></i> Çıkış Yap
@@ -142,32 +142,79 @@
 
                 <hr class="border-gray-600 my-4">
 
-                <h3 class="text-xl font-semibold text-gray-200 border-b border-gray-700 pb-2">Müzik Ekle</h3>
-                <input type="text" id="musicName" placeholder="Müzik Adı" class="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-white placeholder-gray-400">
+                <div class="flex border-b border-gray-700">
+                    <button id="addMusicTab" class="py-3 px-6 text-lg font-medium border-b-2 border-transparent text-gray-400 hover:text-white hover:border-indigo-500 transition-colors duration-200 tab-button active-tab">Müzik Ekle</button>
+                    <button id="manageMusicTab" class="py-3 px-6 text-lg font-medium border-b-2 border-transparent text-gray-400 hover:text-white hover:border-indigo-500 transition-colors duration-200 tab-button">Müzikleri Yönet</button>
+                </div>
 
-                <label class="block text-sm font-medium text-gray-300">Müzik Dosyası (MP3, WAV...):</label>
-                <input type="file" id="musicFile" accept="audio/*" class="w-full text-sm text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-indigo-100 file:text-indigo-700 hover:file:bg-indigo-200 cursor-pointer">
+                <div id="addMusicSection" class="tab-content space-y-4">
+                    <h3 class="text-xl font-semibold text-gray-200 border-b border-gray-700 pb-2">Müzik Ekle</h3>
+                    <input type="text" id="musicName" placeholder="Müzik Adı" class="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-white placeholder-gray-400">
+                    <input type="text" id="musicArtist" placeholder="Sanatçı Adı (İsteğe Bağlı)" class="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-white placeholder-gray-400">
 
-                <label class="block text-sm font-medium text-gray-300">Kapak Resmi (İsteğe Bağlı):</label>
-                <input type="file" id="musicImage" accept="image/*" class="w-full text-sm text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-indigo-100 file:text-indigo-700 hover:file:bg-indigo-200 cursor-pointer">
+                    <label class="block text-sm font-medium text-gray-300">Müzik Dosyası (MP3, WAV...):</label>
+                    <input type="file" id="musicFile" accept="audio/*" class="w-full text-sm text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-indigo-100 file:text-indigo-700 hover:file:bg-indigo-200 cursor-pointer">
 
-                <button id="addMusicBtn" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded-lg transition-all flex items-center justify-center gap-2">
-                    <i class="fa fa-plus"></i> Müziği Ekle
-                </button>
+                    <label class="block text-sm font-medium text-gray-300">Kapak Resmi (İsteğe Bağlı, Maks 5MB):</label>
+                    <input type="file" id="musicImage" accept="image/*" class="w-full text-sm text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-indigo-100 file:text-indigo-700 hover:file:bg-indigo-200 cursor-pointer">
 
-                <hr class="border-gray-600 my-4">
+                    <button id="addMusicBtn" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded-lg transition-all flex items-center justify-center gap-2">
+                        <i class="fa fa-plus"></i> Müziği Ekle
+                    </button>
+                </div>
 
-                <h3 class="text-xl font-semibold text-gray-200 border-b border-gray-700 pb-2">Müzik Sil</h3>
-                <label for="deleteSelect" class="block text-sm font-medium text-gray-300">Silinecek Müziği Seç:</label>
-                <select id="deleteSelect" class="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-white">
-                    <option value="" disabled selected>Silmek için seçin...</option>
-                </select>
-                <button id="deleteMusicBtn" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-4 rounded-lg transition-all flex items-center justify-center gap-2">
-                    <i class="fa fa-trash"></i> Seçilen Müziği Sil
+                <div id="manageMusicSection" class="tab-content hidden space-y-4">
+                    <h3 class="text-xl font-semibold text-gray-200 border-b border-gray-700 pb-2">Müzikleri Yönet</h3>
+                    <div class="relative">
+                        <input type="text" id="manageMusicSearchInput" placeholder="Müzik veya sanatçıya göre ara..." class="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-white placeholder-gray-400">
+                        <i class="fa fa-search absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                    </div>
+                    <div id="musicManagementList" class="bg-gray-700 rounded-lg overflow-hidden shadow-md max-h-80 overflow-y-auto">
+                        <p class="text-gray-400 text-center p-4">Müzikler yükleniyor...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="editMusicModal" class="fixed inset-0 bg-black bg-opacity-80 backdrop-blur-sm text-white flex items-center justify-center z-50 hidden p-5">
+        <div class="bg-slate-800 p-6 md:p-8 rounded-xl shadow-2xl w-full max-w-md relative">
+            <button id="closeEditMusicModalBtn" class="absolute top-3 right-3 text-gray-400 hover:text-white text-2xl transition-colors">
+                <i class="fa fa-times"></i>
+            </button>
+            <h2 class="text-2xl font-semibold mb-6 text-center flex items-center justify-center gap-3"><i class="fa fa-edit text-indigo-400"></i> Müziği Düzenle</h2>
+
+            <div class="space-y-4">
+                <input type="hidden" id="editMusicId">
+                <label class="block text-sm font-medium text-gray-300">Müzik Adı:</label>
+                <input type="text" id="editMusicName" placeholder="Müzik Adı" class="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-white placeholder-gray-400">
+                <label class="block text-sm font-medium text-gray-300">Sanatçı Adı:</label>
+                <input type="text" id="editMusicArtist" placeholder="Sanatçı Adı" class="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-white placeholder-gray-400">
+                <label class="block text-sm font-medium text-gray-300">Yeni Kapak Resmi (İsteğe Bağlı, Maks 5MB):</label>
+                <input type="file" id="editMusicImage" accept="image/*" class="w-full text-sm text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-indigo-100 file:text-indigo-700 hover:file:bg-indigo-200 cursor-pointer">
+                <div class="flex items-center justify-center">
+                    <img id="currentEditCoverImage" src="https://placehold.co/100x100/7f9cf5/ffffff?text=Mevcut" alt="Mevcut Kapak" class="w-24 h-24 rounded-md object-cover border border-gray-600">
+                </div>
+                <button id="saveEditMusicBtn" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded-lg transition-all flex items-center justify-center gap-2">
+                    <i class="fa fa-save"></i> Değişiklikleri Kaydet
                 </button>
             </div>
         </div>
     </div>
+
+    <div id="songDescriptionModal" class="fixed inset-0 bg-black bg-opacity-80 backdrop-blur-sm text-white flex items-center justify-center z-50 hidden p-5">
+        <div class="bg-slate-800 p-6 md:p-8 rounded-xl shadow-2xl w-full max-w-md relative">
+            <button id="closeSongDescriptionModalBtn" class="absolute top-3 right-3 text-gray-400 hover:text-white text-2xl transition-colors">
+                <i class="fa fa-times"></i>
+            </button>
+            <h2 id="descriptionModalTitle" class="text-2xl font-semibold mb-4 text-center flex items-center justify-center gap-3"><i class="fa fa-info-circle text-indigo-400"></i> Şarkı Açıklaması</h2>
+            <p id="songDescriptionContent" class="text-gray-300 text-center leading-relaxed"></p>
+            <p id="descriptionLoadingIndicator" class="text-gray-400 text-center mt-4 hidden">
+                <i class="fa fa-spinner fa-spin mr-2"></i> Açıklama oluşturuluyor...
+            </p>
+        </div>
+    </div>
+
 
     <script src="script.js"></script>
 
