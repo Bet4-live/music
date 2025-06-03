@@ -296,7 +296,7 @@ footer button:hover:not(:disabled) {
 footer #playPauseBtn {
     background-color: #6366f1; /* Indigo-500 */
     width: 48px; /* w-12 */
-    height: 48px; /* h-12 */
+    height: 48px;
     font-size: 1.5rem; /* text-2xl */
 }
 footer #playPauseBtn:hover:not(:disabled) {
@@ -337,6 +337,32 @@ footer #volumeIcon {
 }
 #searchResults .search-result-item span {
     color: #e2e8f0; /* slate-200 */
+}
+
+/* Admin Panel Specific Styles */
+.tab-button.active-tab {
+    border-color: #6366f1; /* Indigo-500 */
+    color: white;
+}
+
+.music-management-item {
+    padding: 0.75rem 1rem;
+    background-color: #1e293b; /* Slate-800 */
+}
+.music-management-item:hover {
+    background-color: #334155; /* Slate-700 */
+}
+.music-management-item img {
+    border: 1px solid #475569;
+}
+.music-management-item button {
+    padding: 0.5rem 0.75rem; /* py-2 px-3 */
+    font-size: 0.875rem; /* text-sm */
+}
+
+/* Toast Notification Styles */
+#toastContainer {
+    /* Styles defined in JS for dynamic creation */
 }
 
 
@@ -418,6 +444,10 @@ footer #volumeIcon {
         height: 1.75rem; /* h-7 */
     }
     #upcomingPrevBtn i, #upcomingNextBtn i {
+        font-size: 0.875rem; /* text-sm */
+    }
+    .tab-button {
+        padding: 0.75rem 1rem; /* Smaller padding for tabs on mobile */
         font-size: 0.875rem; /* text-sm */
     }
 
