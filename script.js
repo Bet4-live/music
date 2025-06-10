@@ -895,7 +895,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             chatHistory.push({ role: "user", parts: [{ text: prompt }] });
 
             const payload = { contents: chatHistory };
-            const apiKey = ""; // Canvas will automatically provide this
+            const apiKey = "AIzaSyDEnakD8yKXC8oKQJYdjE49H6o-KQOu_uU"; // Canvas will automatically provide this
             const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
 
             try {
